@@ -5733,8 +5733,7 @@ html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go{background:
    Closed: the four square destination cards are unchanged. Open (mobile, the
    compact toolbar): the cards shrink into a row; the chosen one becomes a
    bookmark joined to the panel — white, text only and a little larger, its
-   lower edge fading into the page with curved corners flowing into the
-   panel's top line. The others stay ordinary rounded buttons above it.
+   lower edge fading into the page (v30.9.251: no curved corners). The others stay ordinary rounded buttons above it.
    The panel opens with a banner: the place's scene (layers animated once by
    js/daytrip-scenes.js) fading out on every side, its emoji and line on top. */
 #guide .sights-day-trips{--dt-page:#0D0D0D;--dt-tab:#F5F5F5;}
@@ -5751,19 +5750,6 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
     border-radius:11px 11px 0 0!important;border-color:transparent!important;
     background:linear-gradient(to bottom,var(--dt-tab) 0,var(--dt-tab) calc(100% - 15px),var(--dt-page) 100%) border-box no-repeat!important;
   }
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::before,
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::after{
-    content:"";position:absolute;bottom:0;width:10px;height:10px;pointer-events:none;
-    background:linear-gradient(to bottom,color-mix(in srgb,var(--dt-tab) 34%,var(--dt-page)),var(--dt-page));
-  }
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::before{
-    left:-10px;-webkit-mask-image:radial-gradient(circle at 0 0,transparent 9.5px,#000 10px);mask-image:radial-gradient(circle at 0 0,transparent 9.5px,#000 10px);
-  }
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]::after{
-    right:-10px;-webkit-mask-image:radial-gradient(circle at 100% 0,transparent 9.5px,#000 10px);mask-image:radial-gradient(circle at 100% 0,transparent 9.5px,#000 10px);
-  }
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]:first-child::before,
-  #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"]:last-child::after{content:none;}
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-icon{opacity:0;}
   #guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-name{
     top:42%!important;left:50%;font-size:13px!important;font-weight:800!important;letter-spacing:.02em;
@@ -5822,8 +5808,8 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
 }
 #guide .sights-day-trips .daytrip-scene.is-paused > .daytrip-layer{animation-play-state:paused!important;}
 /* Jiufen */
-#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--swing{animation-name:dt-gust;--base:8s;transform-origin:50% 0;animation-timing-function:linear;}
-#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--sway-far{animation-name:dt-gust-far;--base:8s;animation-timing-function:linear;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--swing{animation-name:dt-gust;--base:5.6s;transform-origin:50% 0;animation-timing-function:linear;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--sway-far{animation-name:dt-gust-far;--base:5.6s;animation-timing-function:linear;}
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--glow{animation-name:dt-glow;--base:6.5s;}
 /* Shifen */
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--float{
@@ -5834,8 +5820,12 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
 }
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--shimmer{animation-name:dt-shimmer;--base:4.8s;}
 /* Keelung */
-#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--bob{animation-name:dt-boat;--base:6s;transform-origin:50% 85%;}
-#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--breeze{animation-name:dt-breeze;--base:14s;animation-timing-function:linear;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--bob{animation-name:dt-boat;--base:5.2s;transform-origin:50% 85%;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--breeze{animation-name:dt-breeze;--base:8.5s;animation-timing-function:linear;transform-origin:50% 50%;filter:brightness(1.3);}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--gale{
+  animation-name:dt-gale;--base:6s;animation-timing-function:cubic-bezier(.3,.1,.5,1);transform-origin:50% 50%;
+  filter:brightness(1.25) drop-shadow(0 0 1.5px rgba(255,255,255,.85));
+}
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--ripple{animation-name:dt-ripple;--base:7s;}
 /* Yehliu */
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wave{animation-name:dt-surf;--base:6s;}
@@ -5843,14 +5833,14 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
 
 /* a gust: a few swings that shrink and slow, then calm with a faint breath */
 @keyframes dt-gust{
-  0%{transform:rotate(0)}6%{transform:rotate(calc(6.5deg * var(--a,1)))}13%{transform:rotate(calc(-4.6deg * var(--a,1)))}
-  21%{transform:rotate(calc(3deg * var(--a,1)))}30%{transform:rotate(calc(-1.8deg * var(--a,1)))}40%{transform:rotate(calc(1deg * var(--a,1)))}
-  51%{transform:rotate(calc(-.45deg * var(--a,1)))}62%{transform:rotate(calc(.2deg * var(--a,1)))}
-  76%{transform:rotate(calc(.35deg * var(--a,1)))}90%{transform:rotate(calc(-.25deg * var(--a,1)))}100%{transform:rotate(0)}
+  0%{transform:rotate(0)}6%{transform:rotate(calc(10deg * var(--a,1)))}13%{transform:rotate(calc(-7deg * var(--a,1)))}
+  21%{transform:rotate(calc(4.6deg * var(--a,1)))}30%{transform:rotate(calc(-2.8deg * var(--a,1)))}40%{transform:rotate(calc(1.5deg * var(--a,1)))}
+  51%{transform:rotate(calc(-.7deg * var(--a,1)))}62%{transform:rotate(calc(.3deg * var(--a,1)))}
+  76%{transform:rotate(calc(.5deg * var(--a,1)))}90%{transform:rotate(calc(-.35deg * var(--a,1)))}100%{transform:rotate(0)}
 }
 @keyframes dt-gust-far{
-  0%{transform:translateX(0)}7%{transform:translateX(1.2px)}15%{transform:translateX(-.85px)}24%{transform:translateX(.55px)}
-  34%{transform:translateX(-.3px)}46%{transform:translateX(.12px)}60%,100%{transform:translateX(0)}
+  0%{transform:translateX(0)}7%{transform:translateX(1.8px)}15%{transform:translateX(-1.3px)}24%{transform:translateX(.8px)}
+  34%{transform:translateX(-.45px)}46%{transform:translateX(.18px)}60%,100%{transform:translateX(0)}
 }
 @keyframes dt-glow{0%,100%{opacity:1}22%{opacity:.84}38%{opacity:.97}57%{opacity:.8}74%{opacity:1}88%{opacity:.9}}
 @keyframes dt-drift{
@@ -5862,10 +5852,11 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
 @keyframes dt-flicker-far{0%,100%{opacity:1}30%{opacity:.82}55%{opacity:.98}78%{opacity:.86}}
 @keyframes dt-shimmer{0%,100%{filter:brightness(1)}40%{filter:brightness(1.09)}70%{filter:brightness(.97)}}
 @keyframes dt-boat{
-  0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-1.3px) rotate(calc(-1.6deg * var(--a,1)))}
-  50%{transform:translateY(.2px) rotate(0)}75%{transform:translateY(1px) rotate(calc(1.4deg * var(--a,1)))}
+  0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2.3px) rotate(calc(-3deg * var(--a,1)))}
+  50%{transform:translateY(.3px) rotate(0)}75%{transform:translateY(1.8px) rotate(calc(2.6deg * var(--a,1)))}
 }
-@keyframes dt-breeze{0%{transform:translateX(-16px);opacity:0}22%{opacity:.95}72%{opacity:.95}100%{transform:translateX(18px);opacity:0}}
+@keyframes dt-breeze{0%{transform:translateX(-30px) scale(1.18);opacity:0}20%{opacity:1}75%{opacity:1}100%{transform:translateX(34px) scale(1.18);opacity:0}}
+@keyframes dt-gale{0%{transform:translateX(-44px) scale(1.3);opacity:0}16%{opacity:1}70%{opacity:1}100%{transform:translateX(52px) scale(1.3);opacity:0}}
 @keyframes dt-ripple{0%,100%{transform:translateX(0);opacity:.8}50%{transform:translateX(3px);opacity:1}}
 @keyframes dt-surf{0%{transform:translate(-6px,-1.6px);opacity:0}28%{opacity:1}62%{transform:translate(1px,0);opacity:1}100%{transform:translate(5px,1px);opacity:0}}
 @keyframes dt-surf-far{0%{transform:translateX(-3px);opacity:.2}35%{opacity:1}65%{transform:translateX(.5px);opacity:1}100%{transform:translateX(3px);opacity:.2}}
