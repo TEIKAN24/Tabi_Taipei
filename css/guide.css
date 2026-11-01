@@ -5822,10 +5822,8 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
 /* Keelung */
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--bob{animation-name:dt-boat;--base:5.2s;transform-origin:50% 85%;}
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--breeze{animation-name:dt-breeze;--base:8.5s;animation-timing-function:linear;transform-origin:50% 50%;filter:brightness(1.3);}
-#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--gale{
-  animation-name:dt-gale;--base:6s;animation-timing-function:cubic-bezier(.3,.1,.5,1);transform-origin:50% 50%;
-  filter:brightness(1.25) drop-shadow(0 0 1.5px rgba(255,255,255,.85));
-}
+/* Yehliu's ocean wind: the original soft streaks, passing more often and faster */
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wind{animation-name:dt-wind;--base:6.5s;animation-timing-function:linear;}
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--ripple{animation-name:dt-ripple;--base:7s;}
 /* Yehliu */
 #guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wave{animation-name:dt-surf;--base:6s;}
@@ -5856,7 +5854,7 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
   50%{transform:translateY(.3px) rotate(0)}75%{transform:translateY(1.8px) rotate(calc(2.6deg * var(--a,1)))}
 }
 @keyframes dt-breeze{0%{transform:translateX(-30px) scale(1.18);opacity:0}20%{opacity:1}75%{opacity:1}100%{transform:translateX(34px) scale(1.18);opacity:0}}
-@keyframes dt-gale{0%{transform:translateX(-44px) scale(1.3);opacity:0}16%{opacity:1}70%{opacity:1}100%{transform:translateX(52px) scale(1.3);opacity:0}}
+@keyframes dt-wind{0%{transform:translateX(-16px);opacity:0}22%{opacity:.95}72%{opacity:.95}100%{transform:translateX(18px);opacity:0}}
 @keyframes dt-ripple{0%,100%{transform:translateX(0);opacity:.8}50%{transform:translateX(3px);opacity:1}}
 @keyframes dt-surf{0%{transform:translate(-6px,-1.6px);opacity:0}28%{opacity:1}62%{transform:translate(1px,0);opacity:1}100%{transform:translate(5px,1px);opacity:0}}
 @keyframes dt-surf-far{0%{transform:translateX(-3px);opacity:.2}35%{opacity:1}65%{transform:translateX(.5px);opacity:1}100%{transform:translateX(3px);opacity:.2}}
