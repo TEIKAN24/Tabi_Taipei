@@ -5853,7 +5853,7 @@ html[data-theme="light"] #guide .sights-day-trips{--dt-page:#F7F8F7;--dt-tab:#20
   0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2.3px) rotate(calc(-3deg * var(--a,1)))}
   50%{transform:translateY(.3px) rotate(0)}75%{transform:translateY(1.8px) rotate(calc(2.6deg * var(--a,1)))}
 }
-@keyframes dt-breeze{0%{transform:translateX(-30px) scale(1.18);opacity:0}20%{opacity:1}75%{opacity:1}100%{transform:translateX(34px) scale(1.18);opacity:0}}
+@keyframes dt-breeze{0%{transform:translateX(-30px);opacity:0}20%{opacity:1}75%{opacity:1}100%{transform:translateX(34px);opacity:0}}
 @keyframes dt-wind{0%{transform:translateX(-16px);opacity:0}22%{opacity:.95}72%{opacity:.95}100%{transform:translateX(18px);opacity:0}}
 @keyframes dt-ripple{0%,100%{transform:translateX(0);opacity:.8}50%{transform:translateX(3px);opacity:1}}
 @keyframes dt-surf{0%{transform:translate(-6px,-1.6px);opacity:0}28%{opacity:1}62%{transform:translate(1px,0);opacity:1}100%{transform:translate(5px,1px);opacity:0}}
