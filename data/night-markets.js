@@ -576,7 +576,7 @@ window.TABI_NIGHT_MARKETS={
         },
         {
           "label": "蝦仁焿",
-          "query": "蝦仁焿"
+          "query": "蝦仁羹"
         }
       ],
       "destination": "樂華夜市",
