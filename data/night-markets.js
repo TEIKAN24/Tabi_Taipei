@@ -312,8 +312,8 @@ window.TABI_NIGHT_MARKETS={
       ],
       "destination": "華西街觀光夜市",
       "location": {
-        "lat": 25.0381,
-        "lng": 121.4985
+        "lat": 25.03925,
+        "lng": 121.49843
       }
     },
     {
