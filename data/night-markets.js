@@ -298,16 +298,16 @@ window.TABI_NIGHT_MARKETS={
       ],
       "specialties": [
         {
-          "label": "魯肉飯",
-          "query": "滷肉飯"
+          "label": "旗魚串",
+          "query": "旗魚串"
         },
         {
-          "label": "果汁",
-          "query": "果汁"
+          "label": "甜不辣",
+          "query": "甜不辣"
         },
         {
-          "label": "燒麻糬",
-          "query": "麻糬"
+          "label": "刈包",
+          "query": "刈包"
         }
       ],
       "destination": "華西街觀光夜市",
@@ -817,44 +817,6 @@ window.TABI_NIGHT_MARKETS={
       "location": {
         "lat": 25.04995,
         "lng": 121.54212
-      }
-    },
-    {
-      "id": "night-markets-mw0xp88e-avvnz",
-      "name": "艋舺夜市",
-      "lead": "屋台で食べ歩くというより、\n座ってじっくり味わう店が多いのが特徴です。",
-      "access": {
-        "type": "mrt",
-        "code": "BL10",
-        "color": "#0070BD",
-        "station": "龍山寺駅",
-        "exit": "1"
-      },
-      "hours": "18:00–24:00（目安）・年中無休",
-      "crowded": "19:00–21:00",
-      "features": [
-        "圧倒的なローカル感・下町情緒",
-        "3つの夜市が一体化",
-        "ミシュラン掲載店・老舗集結"
-      ],
-      "specialties": [
-        {
-          "label": "旗魚串",
-          "query": "旗魚串"
-        },
-        {
-          "label": "甜不辣",
-          "query": "甜不辣"
-        },
-        {
-          "label": "刈包",
-          "query": "刈包"
-        }
-      ],
-      "destination": "艋舺夜市",
-      "location": {
-        "lat": 25.0367,
-        "lng": 121.49912
       }
     },
     {
