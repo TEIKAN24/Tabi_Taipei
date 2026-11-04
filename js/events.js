@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.266.
+/* TAIPEI CITY GUIDE — イベントカレンダー (chapter 03, after 撮影スポット), v30.9.267.
    Data: data/events.js (window.TABI_EVENTS, edited with editor/directory.html).
 
    Month carousel: one card per month, from last month to the last month with an event.
@@ -8,7 +8,8 @@
    underneath are placed from its scroll position every frame.
    Week bars grow from the bottom whenever a month settles in the centre.
    Long-press (0.35 s; on the bars too, which switches to the heatmap) and drag to pick a
-   day; release to show that day's events. Double-tap the centred card: back to this month.
+   day; release to show that day's events. Double-tap the centred card: back to this month,
+   shown as bars.
    Status (開催中／開催予定／開催終了) is judged against today in Taipei.
    Events without announced dates (tbd) are listed in their expected months as 日程未定
    and are not counted anywhere.
@@ -540,8 +541,10 @@
   function backToToday() {
     const i = todayIndex();
     if (i < 0) return;
+    const wasHeat = isHeat();
+    if (wasHeat) toggleFace();                // the heatmap (and a picked day) goes back to bars
     if (i !== current) goTo(i);
-    else if (!reduce.matches) cards[i]?.querySelector(isHeat() ? '.ec-grid .is-today' : '.ec-bars')
+    else if (!wasHeat && !reduce.matches) cards[i]?.querySelector('.ec-bars')
       ?.animate([{transform: 'scale(1)'}, {transform: 'scale(1.12)'}, {transform: 'scale(1)'}], {duration: 360, easing: 'ease-out'});
   }
   scroller.addEventListener('click', ev => {
