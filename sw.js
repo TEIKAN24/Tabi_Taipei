@@ -1,4 +1,4 @@
-/* TAIPEI CITY GUIDE — offline copy (service worker), v30.9.276.
+/* TAIPEI CITY GUIDE — offline copy (service worker), v30.9.279.
    Keeps the whole site on the phone so it opens without a connection
    (MRT underground, mountains, roaming off). Nothing on screen changes.
 
@@ -71,6 +71,8 @@ const PRECACHE = [
   'assets/rail-logos/tra.svg',
   'assets/rail-logos/trtc.svg',
   'assets/rail-logos/tymc.svg',
+  'css/area-map.css',
+  'css/chapter-tabs.css',
   'css/events.css',
   'css/guide.css',
   'css/recommend.css',
@@ -90,6 +92,8 @@ const PRECACHE = [
   'food/recommend_notes.json',
   'food/synonyms.json',
   'js/areas.js',
+  'js/area-map.js',
+  'js/chapter-tabs.js',
   'js/daytrip-scenes.js',
   'js/directory.js',
   'js/events.js',

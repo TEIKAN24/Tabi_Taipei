@@ -28,12 +28,17 @@
      location:{lat, lng} }]}
    The visitor's position is used on this device only: never stored or sent.
    With ?debugLocation=1 the simulated position of the recommender is used. */
-(() => {
+// v30.9.279: the map is a reusable function, called below for 夜市 and by
+// js/area-map.js for 街歩きエリア. cfg: {host, section, items, key, noun,
+// mapLabel, listLabel, fallback, onSelect(item, from) (instead of the 夜市 details),
+// noFit (the box height comes from outside)}.
+function tabiSpotMap(cfg) {
   'use strict';
-  const host = document.getElementById('night-markets-tabs');
-  const section = document.getElementById('night-markets-section');
+  const host = cfg.host, section = cfg.section;
   if (!host || !section) return;
-  const doc = window.TABI_NIGHT_MARKETS;
+  const doc = {markets: Array.isArray(cfg.items) ? cfg.items : []};
+  const KEY = cfg.key || 'nm', NOUN = cfg.noun || '夜市';
+  const pick = (m, from) => m.onSelect ? m.onSelect(m.data, from) : cfg.onSelect ? cfg.onSelect(m.data, from) : openDetail(m, from);
   const VERSION = '30.9.260';
   const MAP_SRC = 'data/night-market-map.js?v=' + VERSION;
   const METRO_SRC = 'data/night-market-metro.js?v=' + VERSION;
@@ -78,20 +83,25 @@
   };
   const str = value => (typeof value === 'string' ? value : value == null ? '' : String(value)).trim();
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-  if (!doc || doc.schemaVersion !== 1 || doc.type !== 'night-markets' || !Array.isArray(doc.markets) || !doc.markets.length) {
-    host.replaceChildren(node('p', {class: 'directory-loading'}, '夜市を読み込めませんでした。ページを再読み込みしてください。'));
+  if (!doc.markets.length) {
+    host.replaceChildren(node('p', {class: 'directory-loading'}, NOUN + 'を読み込めませんでした。ページを再読み込みしてください。'));
     return;
   }
   const idOf = (value, index) => (typeof value === 'string' && /^[\w-]+$/.test(value)) ? value : `market-${index + 1}`;
   const color = value => /^#[0-9a-f]{6}$/i.test(str(value)) ? str(value).toUpperCase() : '#8C8C8C';
   const mapsUrl = destination => 'https://www.google.com/maps/dir/?api=1&travelmode=transit&destination=' + encodeURIComponent(destination);
 
-  const markets = doc.markets.filter(m => m && str(m.name)).map((m, i) => {
+  // v30.9.280: one map, several sets of places (夜市, 街歩きエリア). `markets` is the set
+  // on show; the others keep their pins hidden.
+  const makeItems = (list, set, onSelect) => list.filter(m => m && str(m.name)).map((m, i) => {
     const lat = Number(m.location?.lat), lng = Number(m.location?.lng);
     const placed = Number.isFinite(lat) && Number.isFinite(lng) && lat > 24 && lat < 26 && lng > 120.5 && lng < 122.5;
     const code = m.access?.type === 'mrt' ? str(m.access.code).toUpperCase() : '';
-    return {id: idOf(m.id, i), name: str(m.name), data: m, lat, lng, placed, order: i, x: 0, y: 0, w: 0, code};
+    return {id: set + ':' + idOf(m.id, i), name: str(m.name), data: m, lat, lng, placed, order: i, x: 0, y: 0, w: 0, code, set, onSelect};
   });
+  const nmItems = makeItems(doc.markets, KEY, null);
+  let markets = nmItems;
+  const allItems = nmItems.slice();
 
   // ---- Details ----------------------------------------------------------------
   function detailContent(m) {
@@ -149,7 +159,7 @@
   function detailParts(m, withIds) {
     const back = node('button', {type: 'button', class: 'nm-back', 'aria-label': '地図に戻る', tabindex: withIds ? null : '-1'});
     back.append(backIcon());
-    const title = node('h4', {class: 'nm-title', id: withIds ? 'nm-detail-title' : null}, m ? m.name : '');
+    const title = node('h4', {class: 'nm-title', id: withIds ? KEY + '-detail-title' : null}, m ? m.name : '');
     const head = node('div', {class: 'nm-detail-head'});
     head.append(back, title);
     const body = node('div', {class: 'nm-detail-body'});
@@ -161,7 +171,7 @@
   // ---- Markup -----------------------------------------------------------------
   const stage = node('div', {class: 'nm-stage', 'data-view': 'map'});
   const mapEl = node('div', {class: 'nm-map', role: 'region', tabindex: '0',
-    'aria-label': '夜市マップ。ドラッグで移動、ピンチで拡大・縮小。キーボードでは矢印キーで移動、＋と−で拡大・縮小'});
+    'aria-label': (cfg.mapLabel || '夜市マップ') + '。ドラッグで移動、ピンチで拡大・縮小。キーボードでは矢印キーで移動、＋と−で拡大・縮小'});
   const base = svg('svg', {class: 'nm-map-base', 'aria-hidden': 'true', focusable: 'false'});
   const world = svg('g', {class: 'nm-world'});
   const neighborLines = [0, 1, 2].map(i => svg('path', {class: 'nm-neighbor-lines nm-neighbor-' + i}));
@@ -191,7 +201,7 @@
   // Leaders above the pills, ending at their edge: an even line, never shaded.
   mapEl.append(base, stationsLayer, me, pinsLayer, leaders, edgesLayer, locateBtn, toast);
 
-  const detail = node('section', {class: 'nm-detail', 'aria-labelledby': 'nm-detail-title', 'aria-hidden': 'true'});
+  const detail = node('section', {class: 'nm-detail', 'aria-labelledby': KEY + '-detail-title', 'aria-hidden': 'true'});
   detail.inert = true;
   const live = detailParts(null, true);
   const {back, title, body} = live;
@@ -200,26 +210,29 @@
   const measurer = node('div', {class: 'nm-measure', 'aria-hidden': 'true'});
   measurer.inert = true;
 
-  const srList = node('ul', {class: 'nm-sr', 'aria-label': '夜市一覧'});
-  markets.forEach(m => {
+  const srList = node('ul', {class: 'nm-sr', 'aria-label': cfg.listLabel || '夜市一覧'});
+  nmItems.forEach(m => {
     const li = node('li');
     const b = node('button', {type: 'button', tabindex: '-1'}, m.name + 'の詳細');
-    b.addEventListener('click', () => openDetail(m, null));
+    b.addEventListener('click', () => pick(m, null));
     li.append(b); srList.append(li);
   });
   stage.append(mapEl, detail, measurer, srList, status);
   host.replaceChildren(stage);
   for (const el of [stage, mapEl]) el.addEventListener('scroll', () => { el.scrollTop = 0; el.scrollLeft = 0; });
 
-  markets.forEach(m => {
-    m.pin = node('button', {type: 'button', class: 'nm-pin', tabindex: '-1', 'aria-label': m.name + 'の詳細'}, m.name);
-    m.pin.addEventListener('click', () => openDetail(m, m.pin));
-    pinsLayer.append(m.pin);
-    m.leader = svg('g', {class: 'nm-leader'});
-    m.line = svg('line'); m.dot = svg('circle', {r: 3.1});
-    m.leader.append(m.line, m.dot);
-    leaders.append(m.leader);
-  });
+  function addPins(list) {
+    list.forEach(m => {
+      m.pin = node('button', {type: 'button', class: 'nm-pin', tabindex: '-1', 'aria-label': m.name + 'の詳細'}, m.name);
+      m.pin.addEventListener('click', () => pick(m, m.pin));
+      pinsLayer.append(m.pin);
+      m.leader = svg('g', {class: 'nm-leader'});
+      m.line = svg('line'); m.dot = svg('circle', {r: 3.1});
+      m.leader.append(m.line, m.dot);
+      leaders.append(m.leader);
+    });
+  }
+  addPins(nmItems);
   const clusterPool = [];
   function clusterButton(i) {
     if (!clusterPool[i]) {
@@ -286,7 +299,7 @@
     map.cities.forEach(c => { c.el = textEl(cityNames, 0, 0, c.name, c.neighbor ? 'is-neighbor' : ''); c.el.style.opacity = 0; });
     map.borderPool = Array.from({length: 6}, () => { const el = textEl(borderNames, 0, 0, ''); el.style.display = 'none'; return el; });
     regionRings = (data.regionRings || []).map(flat => { const r = []; for (let i = 0; i < flat.length; i += 2) r.push([flat[i], flat[i + 1]]); return r; });
-    markets.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
+    allItems.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
     if (metroData && metroData.type === 'night-market-metro') setupRail(metroData);
   }
   const marketCodes = new Set(markets.map(m => m.code).filter(Boolean));
@@ -637,6 +650,9 @@
     m.dot.setAttribute('cx', sx.toFixed(1)); m.dot.setAttribute('cy', sy.toFixed(1));
   }
   // Numbers in the outer band: off-view markets grouped by direction (within ~70°).
+  // v30.9.283: a number chip's width depends only on its digits: measured once, reused,
+  // so a frame never forces the whole page to lay out (that made animations stutter).
+  const edgeWidth = {};
   function placeEdges(off) {
     const cx = W / 2, cy = H / 2;
     const list = off.map(o => ({...o, a: Math.atan2(o.sy - cy, o.sx - cx)})).sort((p, q) => p.a - q.a);
@@ -663,10 +679,13 @@
       const ang = Math.atan2(my, mx), ux = Math.cos(ang), uy = Math.sin(ang);
       const n = g.items.length;
       chip._members = g.items.map(o => o.m);
-      chip._count.textContent = String(n);
+      const digits = String(n);
+      if (chip._count.textContent !== digits) chip._count.textContent = digits;
       if (n > chip._n && chip._n > 0) { chip.classList.remove('is-pop'); void chip.offsetWidth; chip.classList.add('is-pop'); }
       chip._n = n;
-      const cw = chip.offsetWidth || 32, ch = CLUSTER_H;
+      let cw = edgeWidth[digits.length];
+      if (!cw) { cw = chip.offsetWidth || 32; if (chip.offsetWidth) edgeWidth[digits.length] = cw; }
+      const ch = CLUSTER_H;
       const hx = W / 2 - 8 - cw / 2, hy = H / 2 - 8 - ch / 2;
       const t = Math.min(Math.abs(ux) > 1e-6 ? hx / Math.abs(ux) : Infinity, Math.abs(uy) > 1e-6 ? hy / Math.abs(uy) : Infinity);
       let px = cx + ux * t, py = cy + uy * t;
@@ -682,7 +701,8 @@
       chip._arrow.style.left = `calc(50% + ${dx * (cw / 2 + 5)}px)`;
       chip._arrow.style.top = `calc(50% + ${dy * (ch / 2 + 5)}px)`;
       chip._arrow.style.transform = `rotate(${dir * 45}deg)`;
-      chip.setAttribute('aria-label', DIR_JA[dir] + '方向の画面外の夜市 ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動');
+      const label = DIR_JA[dir] + '方向の画面外の' + NOUN + ' ' + n + '件（' + chip._members.map(m => m.name).join('、') + '）へ移動';
+      if (chip.getAttribute('aria-label') !== label) chip.setAttribute('aria-label', label);
       chip.style.transform = `translate3d(${px.toFixed(1)}px,${py.toFixed(1)}px,0) translate(-50%,-50%)`;
       chip.classList.add('is-on'); chip.tabIndex = 0; chip.removeAttribute('aria-hidden');
       pillBoxes.push(box(px, py, cw, ch));
@@ -1053,17 +1073,18 @@
   // pill strip and the longest market panel, measured in their old layout.
   let fittedFor = '';
   function fitHeight() {
+    if (cfg.noFit || (typeof inTab === 'function' && inTab())) return;
     const width = stage.clientWidth;
     if (!width) return;
     const key = String(width);
     if (key === fittedFor) return;
     const pills = node('div', {class: 'tab-pills', role: 'presentation'});
-    pills.append(node('button', {type: 'button', class: 'tab-pill', tabindex: '-1'}, markets[0].name));
+    pills.append(node('button', {type: 'button', class: 'tab-pill', tabindex: '-1'}, nmItems[0].name));
     const panel = node('div', {class: 'tab-panel night-market-panel'});
     measurer.replaceChildren(pills, panel);
     measurer.style.width = Math.max(200, width - 32) + 'px';
     let tallest = 0;
-    for (const m of markets) {
+    for (const m of nmItems) {
       panel.replaceChildren(node('h4', {class: 'nm-title'}, m.name), ...detailContent(m.data));
       tallest = Math.max(tallest, panel.offsetHeight);
     }
@@ -1127,7 +1148,7 @@
   }
   // ?debugLocation=1: a new simulated position moves the map there at once.
   document.addEventListener('tabi:debug-location', () => {
-    if (!section.open || !map || !W) return;
+    if (!isLive() || !map || !W) return;
     locate().then(pos => {
       userPos = pos; located = true; lastScale = NaN;
       flyTo({cx: (pos || project(...FALLBACK))[0], cy: (pos || project(...FALLBACK))[1], s: Math.max(view.s, sFocus)}, 900);
@@ -1138,36 +1159,120 @@
     fitHeight();
     loadMap().then(data => {
       setupMap(data);
-      if (!section.open) return;
+      if (!isLive()) return;
       const start = () => { if (!measure()) return false; sizeWaiter = null; intro(); return true; };
-      if (!start()) sizeWaiter = start;
+      // v30.9.283: while a chapter tab is still growing open, wait for it (they would slow each other down).
+      const busy = Math.max(0, (window.tabiTabsBusyUntil || 0) - performance.now());
+      if (busy) setTimeout(() => { if (isLive() && !start()) sizeWaiter = start; }, busy);
+      else if (!start()) sizeWaiter = start;
     }).catch(showFallbackList);
   }
   function onClose() { introToken++; stopMotion(); sizeWaiter = null; }
   new ResizeObserver(() => {
-    if (!section.open) return;
+    if (!isLive()) return;
     fitHeight();
     if (!map) return;
     if (sizeWaiter) { sizeWaiter(); return; }
     if (measure()) requestRender();
   }).observe(stage);
-  window.addEventListener('resize', () => { if (section.open) fitHeight(); });
+  window.addEventListener('resize', () => { if (isLive()) fitHeight(); });
+  // In a chapter tab the box sets the height: no need to measure the details (it is costly).
+  const inTab = () => !!stage.closest('details.ct-on');
+  // v30.9.278: in a chapter tab the box sets the map's height; re-measure when it changes.
+  window.addEventListener('ct-resize', () => { if (isLive()) { measure(); clampView(); requestRender(); } });
   if (document.fonts?.ready) document.fonts.ready.then(() => {
-    markets.forEach(m => { m.w = 0; }); fittedFor = '';
-    if (section.open) fitHeight();
+    allItems.forEach(m => { m.w = 0; }); fittedFor = '';
+    if (isLive()) fitHeight();
     lastScale = NaN; requestRender();
   });
   function showFallbackList() {
     const list = node('div', {class: 'nm-fallback'});
-    list.append(node('p', {class: 'nm-fallback-note'}, '地図を読み込めませんでした。夜市を選んでください。'));
+    list.append(node('p', {class: 'nm-fallback-note'}, cfg.fallback || '地図を読み込めませんでした。夜市を選んでください。'));
     const ul = node('ul');
     markets.forEach(m => {
       const li = node('li'), b = node('button', {type: 'button'}, m.name);
-      b.addEventListener('click', () => openDetail(m, b)); li.append(b); ul.append(li);
+      b.addEventListener('click', () => pick(m, b)); li.append(b); ul.append(li);
     });
     list.append(ul);
     mapEl.replaceChildren(list);
   }
-  section.addEventListener('toggle', () => { if (section.open) onOpen(); else onClose(); });
-  if (section.open) onOpen();
+  // ---- Sets and the sections that show the map (v30.9.280) ----------------------------
+  // The map lives in whichever section is open. Opening one right after another closed
+  // (a chapter tab switch) keeps the view: the old places fade out, the new fade in,
+  // then the map glides to the visitor (or 台北駅) as when it opens.
+  const isLive = () => !!(stage.isConnected && stage.closest('details')?.open);
+  const sets = {};
+  let liveSet = null, liveClosedAt = 0;
+  const layers = () => [pinsLayer, leaders, edgesLayer];
+  function hidePins(list) {
+    list.forEach(m => { m.pin.classList.remove('is-on'); m.pin.tabIndex = -1; m.leader.classList.remove('is-on'); m.cur = null; m.chasing = false; });
+  }
+  function useSet(S) {
+    if (markets !== S.items) { hidePins(markets); markets = S.items; prevGroup = new Map(); lastScale = NaN; }
+  }
+  function refocus() {
+    const token = ++introToken;
+    interacted = false;
+    const go = pos => { if (token === introToken && !interacted) flyTo({cx: pos[0], cy: pos[1], s: sFocus}, 1900); };
+    if (located) { go(userPos || project(...FALLBACK)); return; }
+    locate().then(pos => {
+      if (token !== introToken) return;
+      userPos = pos; located = true; lastScale = NaN; requestRender();
+      go(pos || project(...FALLBACK));
+    });
+  }
+  function swapTo(S) {
+    stopMotion(); introToken++;
+    setView('map');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fadeIn = () => {
+      useSet(S); measure(); clampView(); lastScale = NaN; render();
+      if (!reduceMotion) layers().forEach(el => el.animate([{opacity: 0}, {opacity: 1}], {duration: 460, easing: 'ease-out'}));
+      setTimeout(refocus, reduceMotion ? 0 : 520);
+    };
+    if (reduceMotion) { fadeIn(); return; }
+    const outs = layers().map(el => el.animate([{opacity: 1}, {opacity: 0}], {duration: 340, easing: 'ease-in', fill: 'forwards'}));
+    outs[0].finished.catch(() => {}).then(() => { fadeIn(); outs.forEach(a => a.cancel()); });
+  }
+  // v30.9.283: chapter tabs announce a switch before showing the new box: the map moves
+  // there in the same frame, so the new box is never empty.
+  let pendingSwitch = null;
+  document.addEventListener('ct-switch', ev => {
+    const to = Object.values(sets).find(S => S.section === ev.detail?.to);
+    const from = Object.values(sets).find(S => S.section === ev.detail?.from);
+    if (!to || !from || liveSet !== from || !from.section.open || !map || !W) return;
+    if (stage.parentElement !== to.host) to.host.replaceChildren(stage);
+    pendingSwitch = to;
+  });
+  function bindSet(S) {
+    sets[S.name] = S;
+    S.section.addEventListener('toggle', () => {
+      if (S.section.open) {
+        const prev = liveSet;
+        const switching = pendingSwitch === S || !!(prev && prev !== S && !prev.section.open && map && W &&
+          (!liveClosedAt || performance.now() - liveClosedAt < 600));
+        pendingSwitch = null;
+        if (stage.parentElement !== S.host) S.host.replaceChildren(stage);
+        liveSet = S; liveClosedAt = 0;
+        if (switching) swapTo(S); else { useSet(S); onOpen(); }
+      } else if (S === liveSet) { liveClosedAt = performance.now(); onClose(); }
+    });
+  }
+  bindSet({name: KEY, items: nmItems, section, host});
+  if (section.open) { liveSet = sets[KEY]; onOpen(); }
+  // Another set of places on the same map, shown while its own section is open.
+  function addSet(name, items, opts) {
+    const list = makeItems(items, name, opts.onSelect || null);
+    allItems.push(...list); addPins(list);
+    if (map) list.forEach(m => { if (m.placed) [m.x, m.y] = project(m.lat, m.lng); });
+    bindSet({name, items: list, section: opts.section, host: opts.host});
+  }
+  return {addSet};
+}
+window.tabiSpotMap = tabiSpotMap;
+(() => {
+  const doc = window.TABI_NIGHT_MARKETS;
+  const ok = doc && doc.schemaVersion === 1 && doc.type === 'night-markets' && Array.isArray(doc.markets) && doc.markets.length;
+  window.tabiPlaceMap = tabiSpotMap({host: document.getElementById('night-markets-tabs'), section: document.getElementById('night-markets-section'),
+    items: ok ? doc.markets : [], key: 'nm', noun: '夜市', mapLabel: '夜市マップ', listLabel: '夜市一覧'});
 })();

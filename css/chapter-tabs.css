@@ -1,0 +1,82 @@
+/* TAIPEI CITY GUIDE — chapter tabs (chapters 03, 04, 05), v30.9.278. Built by js/chapter-tabs.js. */
+
+/* Folded rows: no + sign. */
+#guide details.ct-root:not(.ct-on) > summary::after{content:none!important}
+
+/* Chapter heading in tab mode: lead line hidden, title a little smaller. */
+#guide .chapter-lead.ct-hidden{display:none!important}
+/* v30.9.284: the title resizes on the same clock and curve as the rest (both ways). */
+#guide h2.ct-title{transition:font-size .61s cubic-bezier(.65,0,.35,1)}
+#guide h2.ct-title-small{font-size:var(--ct-title)!important}
+
+/* The tab row */
+#guide .ct-tabs{position:relative;display:flex;gap:4px;margin:14px 0 10px;padding:3px;border:1px solid var(--ct-line,#2E2E2E);border-radius:100px}
+#guide .ct-tabs[hidden]{display:none}
+#guide .ct-tab{flex:1 1 auto;min-width:0;height:34px;margin:0;padding:0 8px;border:1px solid transparent;border-radius:100px;background:transparent;
+  color:var(--ct-sub,#9A9A9A);font:inherit;font-size:13px;font-weight:650;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s ease,border-color .2s ease}
+#guide .ct-tab{position:relative;z-index:1}
+#guide .ct-tab[aria-selected="true"]{color:var(--ct-ink,#EDEDED)}
+/* v30.9.280: the white frame is one element that slides between tabs (js: placeInd). */
+#guide .ct-ind{position:absolute;top:3px;bottom:3px;left:0;width:0;box-sizing:border-box;border:1px solid var(--ct-hi,#E4E4E2);
+  border-radius:100px;pointer-events:none;z-index:0}
+/* While the rows glide into place, the real tabs wait underneath. */
+#guide .ct-tabs.ct-morphing .ct-tab,#guide .ct-tabs.ct-morphing .ct-ind{visibility:hidden}
+#guide .ct-tab:focus-visible{outline:2px solid var(--ct-sub,#9A9A9A);outline-offset:2px}
+html[data-theme="light"] #guide .ct-tabs{--ct-line:#E1E1E0;--ct-sub:#6B6B69;--ct-hi:#333333;--ct-ink:#2B2B2B}
+@media(max-width:350px){#guide .ct-tab{font-size:12px;padding:0 5px}}
+
+/* Tab mode: only the chosen section shows, without its own title, in a box of fixed height. */
+#guide details.ct-on:not(.ct-selected){display:none!important}
+#guide details.ct-on > summary{display:none!important}
+/* The box's height is set on its content (a <details> keeps its children in an internal
+   wrapper, so a height or flex layout on the <details> itself does not reach them). */
+#guide details.ct-on.ct-selected{height:auto!important;max-height:none!important;margin-top:0!important;overflow:hidden}
+#guide details.ct-on.ct-selected > .indented{box-sizing:border-box;height:calc(var(--ct-h,520px) - 2px)!important;min-height:0;
+  display:flex;flex-direction:column;margin-top:0!important;margin-bottom:0!important;padding-top:10px!important;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain}
+
+/* イベントカレンダー: the event list takes the rest of the box. */
+#guide details.ct-on.ct-selected > .indented > .ec{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected .ec > *{flex:none}
+#guide details.ct-on.ct-selected .ec > .ec-list-box{flex:1 1 auto;min-height:0}
+#guide details.ct-on.ct-selected .ec-list-scroll{height:100%!important}
+
+/* 夜市マップ: the map takes the whole box. */
+#guide details.ct-on.ct-selected > .indented > #night-markets-tabs{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected #night-markets-tabs > .nm-stage{flex:1 1 auto;min-height:0;height:auto!important}
+
+/* v30.9.279 — 街歩きエリア map (js/area-map.js): it replaces the area cards; the area's
+   details still open in its place (‹ returns to the map). */
+#guide details.has-area-map .walk-area-grid{display:none!important}
+#guide details.walk-viewing-detail .walk-area-map{display:none!important}
+#guide #walk-area-map > .nm-stage{height:480px}
+#guide details.ct-on.ct-selected > .indented > .walk-area-map,
+#guide details.ct-on.ct-selected #walk-area-map{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected #walk-area-map > .nm-stage{flex:1 1 auto;min-height:0;height:auto!important}
+
+/* v30.9.280 — row ⇄ tab stand-ins (in page coordinates, above everything, never tappable). */
+.ct-morph{position:absolute;left:0;top:0;width:0;height:0;z-index:50;pointer-events:none}
+.ct-ghost{position:absolute;box-sizing:border-box;border:1px solid transparent;overflow:hidden;white-space:nowrap;
+  font-family:inherit;font-weight:650;will-change:left,top,width,height}
+.ct-ghost > span{position:absolute;top:50%;transform:translateY(-50%);line-height:1.2}
+.ct-ghost-row{left:16px;font-weight:700}
+.ct-ghost-tab{left:0;right:0;text-align:center;font-size:13px;letter-spacing:.02em}
+
+/* v30.9.280 — the 街歩き list's top glow takes the chapter colour (04 CITY WALK). */
+#guide .walk-inline-detail{--walk-tone:142,131,162!important}
+/* The map sits exactly where the 夜市 map sits (same box, no margins), so switching tabs
+   leaves it perfectly still; the area details keep their usual margins. */
+#guide details.ct-on.ct-selected.has-area-map:not(.walk-viewing-detail) > .indented{margin-left:0!important;margin-right:0!important;padding:0!important}
+
+/* v30.9.282 — 街歩き details: title block, bubbles, the list filling the box, and a
+   full-width 「さっそく出発！」 at the bottom (the 夜市 details' button). */
+#guide details.ct-on.ct-selected > .indented > .walk-inline-detail:not([hidden]){flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected .walk-inline-inner{height:auto!important;flex:1 1 auto;min-height:0}
+#guide details.ct-on.ct-selected .walk-inline-top{margin-bottom:24px!important;padding-top:6px}
+#guide details.ct-on.ct-selected .walk-inline-heading{font-size:17px!important}
+#guide .walk-inline-detail a.walk-inline-go.walk-go-bottom{position:static!important;flex:none;align-self:stretch;display:flex!important;align-items:center;justify-content:center;
+  min-height:50px;margin:14px 20px 22px!important;padding:0!important;border-radius:7px!important;border:0!important;
+  background:#F3F3F3!important;color:#151515!important;-webkit-text-fill-color:#151515;font-size:16px!important;font-weight:800!important;
+  letter-spacing:.06em;text-decoration:none!important}
+html[data-theme="light"] #guide .walk-inline-detail a.walk-inline-go.walk-go-bottom{background:#2B2B2B!important;color:#FCFCFB!important;-webkit-text-fill-color:#FCFCFB}
