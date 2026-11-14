@@ -1,0 +1,90 @@
+/* TABI TAIPEI v2.0.99 — 緊急連絡先: contacts and call buttons
+   Collected in 2.0.99 (cleanup phase 2) from the per-version files, in their load order, so
+   one file holds the whole screen. Comments name the file each run came from. */
+
+/* from guide.css */
+#guide .emergency-section-title {margin-bottom:6px!important;}
+#guide .emergency-contacts {margin:0 0 16px;}
+#guide .emergency-official-links {padding:0 3px 2px}
+#guide .emergency-official-links a {font-size:11.5px;line-height:1.5;text-decoration:underline;text-underline-offset:3px;color:#AFCDD7;}
+#guide .emergency-contact-list {display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important;}
+#guide .emergency-official-links {grid-column:1 / -1;}
+#guide .emergency-official-links {margin:4px 0 0!important;font-size:12px!important;}
+#guide .emergency-compact {display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important;}
+#guide .emergency-tile,
+#guide .emergency-line {
+  display:flex;text-decoration:none!important;color:inherit!important;
+  border:1px solid #2E2E2E;border-radius:14px;background:#161616;-webkit-tap-highlight-color:transparent;
+}
+#guide .emergency-tile {flex-direction:column;gap:1px;padding:11px 13px 10px;}
+#guide .emergency-tile-name {font-size:13.5px;font-weight:750;color:#F2F2F2;}
+#guide .emergency-tile-note {font-size:10.5px;color:#9A9A9A;}
+#guide .emergency-tile-number {display:flex;align-items:center;justify-content:space-between;margin-top:4px;font-size:27px;font-weight:800;letter-spacing:.01em;color:#F7F7F7;line-height:1.1;}
+#guide .emergency-tile-number svg,
+#guide .emergency-line-number svg {flex:none;color:#BDBDBD;}
+#guide .emergency-line {grid-column:1 / -1;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;}
+#guide .emergency-line-text {display:flex;flex-direction:column;min-width:0;}
+#guide .emergency-line-name {font-size:13px;font-weight:750;color:#F2F2F2;}
+#guide .emergency-line-note {font-size:10.5px;color:#9A9A9A;}
+#guide .emergency-line-number {display:inline-flex;align-items:center;gap:8px;flex:none;font-size:16px;font-weight:800;color:#F7F7F7;letter-spacing:.01em;}
+#guide .emergency-compact .emergency-official-links {grid-column:1 / -1;margin:2px 0 0!important;font-size:11.5px!important;}
+
+/* from figma-emergency-v253.css */
+html.tt2-fidelity[data-tt-view='emergency'] #guide > :not(.tt-chapter-heading[data-tt-chapter='emergency']):not(.chapter-lead):not(.emergency-contacts):not(#food-search),
+html.tt2-fidelity[data-tt-view='emergency'] #guide > .chapter-lead.tt-view-hidden {display:none!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide > .tt-chapter-heading[data-tt-chapter='emergency'] {
+  display:flex!important;align-items:center;box-sizing:border-box;height:34px;min-height:34px;
+  margin:0!important;padding:0 0 1px!important;border-top:1px solid transparent;border-bottom:1px solid rgba(239,239,239,.43);
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide > .tt-chapter-heading[data-tt-chapter='emergency'] .tt-chapter-name {font:400 15px/1.1 var(--tt2-serif)!important;color:#fff!important;letter-spacing:0!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide > .chapter-lead:not(.tt-view-hidden) {
+  display:block!important;max-width:none!important;margin:12px 0 0!important;padding:0!important;text-align:left!important;
+  font:400 12px/17px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;opacity:1!important;
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-contacts {display:block!important;margin:0!important;padding:0!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-contact-list:not(#_a) {display:grid!important;grid-template-columns:1fr 1fr!important;column-gap:8px!important;row-gap:0!important;margin:0!important;padding:0!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .tt2e-label {grid-column:1 / -1;margin:0;padding:19px 4px 6px;font:400 10px/14px var(--tt2-ui);letter-spacing:0;color:#8a8a8a;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .tt2e-label ~ .tt2e-label {padding:28px 4px 4px;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-tile:not(#_a) {
+  position:relative;display:block!important;box-sizing:border-box;height:148px;min-height:0;margin:0!important;padding:15px!important;
+  border:1px solid #2e2e2e!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;
+  text-decoration:none!important;color:#fff!important;-webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-tile-name {display:block;font:500 15px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-tile-note {display:block;margin-top:2px;font:400 11px/16px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-tile-number {display:block!important;margin:30px 0 0!important;font:400 44px/48px var(--tt2d-serif)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide :is(.emergency-tile,.emergency-line):not(#_a)::after {
+  content:''!important;display:block!important;position:absolute;width:32px;height:32px;box-sizing:border-box;
+  border:1px solid #2e2e2e;border-radius:50%;background:none;pointer-events:none;
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-tile:not(#_a)::after {right:15px;bottom:15px;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide :is(.emergency-tile-number,.emergency-line-number) svg {position:absolute;width:14px;height:14px;margin:0;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-tile-number svg {right:24px;bottom:24px;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line:not(#_a) {
+  position:relative;display:block!important;grid-column:1 / -1;box-sizing:border-box;height:110px;min-height:0;margin:0!important;
+  padding:18px 44px 0 11px!important;border:0!important;border-bottom:1px solid rgba(220,220,220,.34)!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;text-decoration:none!important;color:#fff!important;-webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line-text {display:block!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line-name {display:block;font:500 16px/23px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line-note {display:block;margin-top:4px;font:400 11px/17px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .tt2e-dot {margin:0 6px;color:#6f6f6f;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .tt2e-key {font-weight:500;color:#cca46e;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line-number {display:block!important;margin:6px 0 0!important;font:400 20px/26px var(--tt2d-serif)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line:not(#_a)::after {right:4px;top:39px;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-line-number svg {right:13px;top:48px;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-official-links:not(#_a) {grid-column:1 / -1;margin:20px 0 0!important;padding:0 0 0 11px!important;}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-official-links a {
+  display:flex!important;width:max-content;max-width:100%;align-items:center;gap:4px;font:400 12px/15px var(--tt2-ui)!important;letter-spacing:0!important;
+  color:#9e9e9e!important;text-decoration:none!important;
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .emergency-official-links a::after {
+  content:'';flex:none;width:9px;height:9px;background:currentColor;
+  -webkit-mask:url('../assets/figma/icons/link-arrow.svg') center/9px 9px no-repeat;mask:url('../assets/figma/icons/link-arrow.svg') center/9px 9px no-repeat;
+}
+html.tt2-fidelity[data-tt-view='emergency'] #guide .tt2e-foot {
+  /* v2.0.65: from the page's own box (#guide = 100dvh − sitebar): the content above ends at 551px and
+  the note 15 + 24 below, so the gap stays Figma's 83px whenever it fits (home-screen app, Safari
+  included) instead of following the whole 852 frame. */
+  margin:clamp(20px, calc(100dvh - var(--tt2-sitebar-height,104px) - 590px), 83px) 0 24px;font:400 10px/15px var(--tt2-ui);letter-spacing:0;color:#9e9e9e;text-align:center;
+}

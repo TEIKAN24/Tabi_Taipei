@@ -574,27 +574,39 @@ function searchTextOf(food) {
   }
   return food.searchText;
 }
+// v2.0.45: one typed word → its test (was inline in currentMatches), so the
+// 料理辞典 V4 layer can look each word up on its own.
+function termCheck(term) {
+  // One pepper (or 辛い) finds all marked spicy dishes, including "maybe".
+  // Two/three peppers require at least that numerical spice level.
+  const peppers = term.match(/🌶️/gu) || [];
+  if (peppers.length && peppers.join("") === term) {
+    return peppers.length === 1
+      ? food => Boolean(food.spice)
+      : food => peppers.length <= 3 && Number(food.spice) >= peppers.length;
+  }
+  if (term === "辛い") return food => Boolean(food.spice);
+  // Preserve the existing traditional/simplified/Japanese synonym groups.
+  const aliases = variantsFor(term);
+  return food => {
+    const text = searchTextOf(food);
+    return aliases.some(alias => text.includes(alias));
+  };
+}
 function currentMatches() {
-  const checks = searchTerms().map(term => {
-    // One pepper (or 辛い) finds all marked spicy dishes, including "maybe".
-    // Two/three peppers require at least that numerical spice level.
-    const peppers = term.match(/🌶️/gu) || [];
-    if (peppers.length && peppers.join("") === term) {
-      return peppers.length === 1
-        ? food => Boolean(food.spice)
-        : food => peppers.length <= 3 && Number(food.spice) >= peppers.length;
-    }
-    if (term === "辛い") return food => Boolean(food.spice);
-    // Preserve the existing traditional/simplified/Japanese synonym groups.
-    const aliases = variantsFor(term);
-    return food => {
-      const text = searchTextOf(food);
-      return aliases.some(alias => text.includes(alias));
-    };
-  });
+  const checks = searchTerms().map(termCheck);
   if (!checks.length) return foods.slice();
   return foods.filter(food => checks.every(check => check(food)));
 }
+// v2.0.45: read-only access for js/figma-dict-v245.js (料理辞典 V4).
+window.tabiFoodDict = {
+  foods: () => foods,
+  normalized,
+  variants: term => variantsFor(term),
+  matcher: termCheck,
+  highlight: addHighlightedText,
+  graphemes: value => descriptionGraphemes(value)
+};
 
 function addHighlightedText(parent, value, terms) {
   // Uses DOM text nodes, not HTML interpolation, to keep all inputs safe.
@@ -1986,10 +1998,9 @@ loadData();
   function lockPage(){
     if(savedStyle)return;
     // iOS Safari samples the page surface for its top/bottom browser chrome.
-    // The search view is bright when light mode is selected.
     // The floating window leaves the page visible; the browser bars keep the page's colour.
     const theme=drawer.classList.contains('is-floating')?null:document.querySelector('meta[name="theme-color"]');
-    if(theme)theme.setAttribute('content',html.dataset.theme==='light'?'#F7F8F7':'#0D0D0D');
+    if(theme)theme.setAttribute('content','#0D0D0D'); // dark only since 2.0.49
     savedY=window.scrollY;
     savedStyle={position:body.style.position,top:body.style.top,width:body.style.width,overflow:body.style.overflow};
     previousFocus=document.activeElement;
@@ -1998,7 +2009,7 @@ loadData();
   }
   function syncChrome(active){
     const meta=drawer.classList.contains('is-floating')?null:document.querySelector('meta[name="theme-color"]');
-    if(meta)meta.setAttribute('content',active?(html.dataset.theme==='light'?'#F7F8F7':'#0D0D0D'):(html.dataset.theme==='light'?'#F7F8F7':'#111417'));
+    if(meta)meta.setAttribute('content',active?'#0D0D0D':'#111417');
   }
   function unlockPage(){
     if(!savedStyle)return;
@@ -2080,6 +2091,8 @@ loadData();
     // The content below bubble tabs owns horizontal swipes for category changes.
     // The document-level food drawer must never steal those gestures.
     if(target.closest('#guide .tab-panels, #guide .tab-pills'))return true;
+    // The infinite category wheel owns horizontal touch gestures, not the food drawer.
+    if(target.closest('#guide .tt2-wheel'))return true;
     // The reverse-side cuisine directory now owns its own horizontal swipes.
     if(target.closest('#food-directory-panel, #food-directory-tabs'))return true;
     // Interactive links should always receive taps; opening the food drawer must not cancel them.
@@ -2102,6 +2115,11 @@ loadData();
     return false;
   }
   function start(x,y,target,kind){
+    // v2.0.20: the modern seven-chapter UI does not use a page-wide swipe
+    // to reveal the legacy right-hand food index. Keep explicit open/close
+    // actions (tabi:open-food-search, backdrop, Escape) fully functional.
+    // In particular, do not steal iOS Safari's native edge navigation.
+    if(html.classList.contains('tt2-fidelity'))return;
     if(drag || !target || body.classList.contains('recommend-drawer-open') || body.classList.contains('recommend-swipe-active'))return;
     if(blockTarget(target))return;
     drag={x,y,prevX:x,prevT:performance.now(),velocity:0,p0:opened?1:0,
@@ -2209,6 +2227,8 @@ let airportFocusTimer=0,airportFocusFrame=0,airportFocusCorrect=0,airportFocusVe
 window.addEventListener('touchstart',()=>clearTimeout(airportFocusCorrect),{passive:true});
 window.addEventListener('wheel',()=>clearTimeout(airportFocusCorrect),{passive:true});
 function focusAirportResult(preferTabs=false){
+  // v2.0.103: in the 空港アクセス sheet the page itself must not move
+  if(root.closest('#tt2-airport-sheet'))return;
   clearTimeout(airportFocusTimer);
   clearTimeout(airportFocusCorrect);
   cancelAnimationFrame(airportFocusFrame);
@@ -2329,13 +2349,17 @@ const stopTranslations={
  '桃園国際空港・第1ターミナル':{zh:'桃園國際機場 第1航廈',ja:'桃園空港 第1ターミナル'},
  '桃園国際空港・第2ターミナル':{zh:'桃園國際機場 第2航廈',ja:'桃園空港 第2ターミナル'}
 };
-function stationContent(name){
- const item=stopTranslations[name]||{zh:name,ja:''};
+// v2.0.59: stations of the MRT (shown with a station code) take the Japanese names of the official
+// route maps; the same names as bus or taxi stops keep the lines above.
+const mrtStationJa={'機場第一航廈':'空港第1ターミナル駅','機場第二航廈':'空港第2ターミナル駅','松山機場':'松山空港駅','台北車站':'台北駅','忠孝復興':''};
+function stationContent(name,code=''){
+ const base=stopTranslations[name]||{zh:name,ja:''};
+ const item=code&&name in mrtStationJa?{zh:base.zh,ja:mrtStationJa[name]}:base;
  return `<span class="airsel-station-label"><span class="stop-name" lang="zh-Hant">${esc(item.zh)}</span>${item.ja?`<span class="airsel-station-ja" lang="ja">${esc(item.ja)}</span>`:''}</span>`;
 }
 function stop(label,name,code,cls=''){
  const codeColor=code.startsWith('BR')?'brown':code.startsWith('BL')?'blue':code.startsWith('A')?'purple':'';
- return `<div class="timeline-stop ${cls}"><span class="timeline-status ${cls==='transfer'?'timeline-status--transfer':''}">${label}</span><span class="node" aria-hidden="true"></span><div class="stop-body">${stationContent(name)}${code?`<span class="code code--${codeColor}">${code}</span>`:''}</div></div>`;
+ return `<div class="timeline-stop ${cls}"><span class="timeline-status ${cls==='transfer'?'timeline-status--transfer':''}">${label}</span><span class="node" aria-hidden="true"></span><div class="stop-body">${stationContent(name,code)}${code?`<span class="code code--${codeColor}">${code}</span>`:''}</div></div>`;
 }
 function leg(line,number,direction,color,note=''){
  return `<div class="timeline-leg" style="--travel-color:${color}"><div class="leg-content"><div class="leg-meta"><span class="line-name">${line}</span><span class="separator">・</span><span class="station-count">${number}駅</span></div><div class="direction">${direction}</div>${note?`<div class="direction-note">${note}</div>`:''}</div></div>`;
@@ -2358,8 +2382,8 @@ const fallbackAirport='<svg viewBox="0 0 24 24" width="19" height="19" fill="non
 const fallbackTaipei='<svg viewBox="0 0 24 24" width="19" height="19" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.4"/><path d="M12 6 18 12 12 18 6 12z" stroke="currentColor" stroke-width="1.45"/><path d="M12 8.5v7M8.5 12h7" stroke="currentColor" stroke-width="1.25"/></svg>';
 function restoreRailLogo(song){
  const companySrc=song
-   ? 'https://upload.wikimedia.org/wikipedia/en/e/ee/Taipei_Metro_Logo%28Logo_Only%29.svg'
-   : 'https://www.tymetro.com.tw/tymetro-new/tw/_images/about/a-logo1.png';
+   ? 'assets/rail-logos/trtc.svg'   // v2.0.59: local copies (were loaded from wikimedia / tymetro.com.tw)
+   : 'assets/rail-logos/tymc.svg';
  const img=el('company-img');
  const fallback=el('company-fallback');
  // Rebuild the fallback on EVERY rail selection, including when the image URL is unchanged.
@@ -2436,14 +2460,14 @@ function update(){
  el('ground-details').hidden=true;el('ground-details').innerHTML='';
  if(state.transport!=='rail'){groundUpdate(airport,toCity);if(resultsOpen)queueTimelineEntrance(120);return;}
  restoreRailLogo(song);
- el('recommend-badge').hidden=song;
+ el('recommend-badge').hidden=!(song||state.mode==='express'); // v2.0.59: 6 routes (松山 MRT ⇄, 直達車 ⇄)
  for(const tab of tabs.querySelectorAll('button'))tab.setAttribute('aria-selected',String(tab.dataset.mode===state.mode));
  if(song){
-  el('rail-head-name').textContent=toCity?'文湖線 → 板南線':'板南線 → 文湖線';
+  el('rail-head-name').textContent='台北MRT'; // v2.0.59 (was the line pair; the lines are on the diagram)
 
   const firstStop=toCity?stop('出発','松山機場','BR13','start'):stop('出発','台北車站','BL12','start');
   const firstLeg=toCity?leg('文湖線','3','動物園 方面','#AE854E'):leg('板南線','3','南港展覧館 方面','#378BC7');
-  const transfer=`<div class="timeline-stop transfer"><span class="timeline-status timeline-status--transfer">乗換</span><span class="node"></span><div class="stop-body">${stationContent('忠孝復興')}<span class="code code--brown">BR10</span><span class="code code--blue">BL15</span></div></div>`;
+  const transfer=`<div class="timeline-stop transfer"><span class="timeline-status timeline-status--transfer">乗換</span><span class="node"></span><div class="stop-body">${stationContent('忠孝復興','BR10')}<span class="code code--brown">BR10</span><span class="code code--blue">BL15</span></div></div>`;
   const secondLeg=toCity?leg('板南線','3','頂埔・亞東醫院 方面','#378BC7'):leg('文湖線','3','南港展覧館 方面','#AE854E');
   const lastStop=toCity?stop('到着','台北車站','BL12','end'):stop('到着','松山機場','BR13','end');
   el('timeline').innerHTML=firstStop+firstLeg+transfer+secondLeg+lastStop;
@@ -2458,12 +2482,12 @@ function update(){
   const from=toCity?stop('出発',points[airport].station,code,'start'):stop('出発','台北車站','A1','start');
   const bound=toCity?'台北車站 方面':(express?'機場第二航廈・環北 方面':'機場第二航廈・老街溪 方面');
   const line=express?'直達車（急行）':'普通車（各停）';
-  const note=toCity?'': '列車により運行方向が異なります';
+  const note=''; // v2.0.60: 「列車により運行方向が異なります」 removed
   const dest=toCity?stop('到着','台北車站','A1','end'):stop('到着',points[airport].station,code,'end');
   el('timeline').innerHTML=from+leg(line,count,bound,color,note)+dest;
   const t=airport==='T1'?(express?'約35〜39分':'約50分'):(express?'約39〜43分':'約53分');
   facts(t,'NT$160','なし');
-  el('footnote').textContent='乗車駅数は選択した航廈・列車種別に応じて表示。運行便やダイヤは出発前に公式情報をご確認ください。';
+  el('footnote').textContent='運行便やダイヤは出発前に公式情報をご確認ください。';
  }
  if(resultsOpen)queueTimelineEntrance(120);
 }
@@ -3873,10 +3897,15 @@ update();
   // v30.9.174: all bubbles of one block keep the size of its tallest list (within
   // the screen), so switching bubbles never makes the page jump; short lists
   // simply leave room below.
+  // v2.0.48: the 2.0 list layer (js/figma-lists-v243.js) gives 名所・撮影・体験・おみやげ one fixed
+  // frame. Evening them out here measured every hidden category list and wrote heights it
+  // then overwrote (the bottom of the おみやげ list flickered while the two took turns).
+  const LAYERED='.tt2-directory-section,[data-tt2-panel-key="places"],[data-tt2-panel-key="photo"]';
   function evenOut(block){
     const group=[...block.querySelectorAll('.tab-panels > .tab-panel')];
     const shown=group.find(panel=>!panel.hidden);
     if(group.length<2||!block.open||!shown)return;
+    if(document.documentElement.classList.contains('tt2-fidelity')&&block.matches(LAYERED)){fade(shown);return;}
     // Content heights without touching the shown panel's current size (resetting it
     // would move everything below for a moment and make the page jump).
     const natural=panel=>{
@@ -3910,13 +3939,17 @@ update();
     // Measuring must never move the page.
     if(Math.abs(window.scrollY-keepY)>1)window.scrollTo({top:keepY,behavior:'instant'});
   }
+  // v2.0.48: nothing is fitted behind the open dictionary (on iPhone every keyboard and
+  // toolbar resize re-measured all lists and froze the page); it is done once on closing.
   const all=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(document.body.classList.contains('food-drawer-open'))return;
     guide.querySelectorAll('details.root-accordion[open]').forEach(block=>{
       if(block.querySelectorAll('.tab-panels > .tab-panel').length>1)evenOut(block);
       else block.querySelectorAll('.tab-panel').forEach(fit);
     });
   }));
   window.tabiFitLists=all;   // v30.9.278: chapter tabs re-fit the bubble lists
+  document.getElementById('food-search')?.addEventListener('food-search-closed',()=>setTimeout(all,400));
   panels().forEach(panel=>panel.addEventListener('scroll',()=>fade(panel),{passive:true}));
   guide.addEventListener('toggle',all,true);
   const observer=new MutationObserver(all);
@@ -3941,8 +3974,7 @@ update();
       meta=document.querySelector('meta[name="theme-color"]');
       if(meta){anchor=meta.nextSibling;meta.remove();}
     }else if(!open&&meta){
-      // The theme may have been switched meanwhile (the switch sits above the window).
-      meta.content=document.documentElement.dataset.theme==='light'?'#F7F8F7':'#111417';
+      meta.content='#111417';
       document.head.insertBefore(meta,anchor&&anchor.parentNode===document.head?anchor:null);
       meta=null;anchor=null;
     }
@@ -4023,7 +4055,7 @@ update();
   detail.setAttribute('aria-label','街歩きエリア詳細');
   detail.innerHTML=`<div class="walk-inline-inner">
     <div class="walk-inline-top">
-      <button class="walk-inline-back" type="button" aria-label="エリア一覧に戻る"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="walk-inline-back" type="button" aria-label="エリア一覧に戻る"><svg viewBox="0 0 9 16" width="9" height="16" aria-hidden="true" focusable="false"><path d="M8 1L1 8L8 15" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
       <div class="walk-inline-copy"><h4 class="walk-inline-heading"></h4><p class="walk-inline-description"></p></div>
       <a class="walk-inline-go" target="_blank" rel="noopener noreferrer">出発！</a>
     </div><div class="walk-inline-host"></div>
@@ -4130,7 +4162,7 @@ update();
     chips.forEach((chip,i)=>{
       chip.id=`walk-inline-tab-${index}-${i}`;
       chip.setAttribute('aria-controls',`walk-inline-pane-${index}-${i}`);
-      chip.addEventListener('click',()=>{if(i!==current)choose(i,false,i>current?44:-44);});
+      chip.addEventListener('click',()=>{if(i!==current)choose(i);}); // v2.0.112: turned by the wheel, no motion
     });
     // v30.9.188: swipe the list left/right to move between categories.
     // The list follows the finger, then slides out while the next one slides in.
@@ -4202,6 +4234,8 @@ update();
     root.classList.add('walk-viewing-detail');
     buttons.forEach((button,i)=>button.setAttribute('aria-expanded',String(index===i)));
     choose(Math.min(remembered.get(index)||0,chips.length-1),false,0,false);
+    // v2.0.112 (Figma S2A): the site's category wheel in place of the bubbles (they stay, hidden, as its source)
+    window.tt2WheelOn?.(row,{view:'areas',button:'button.area-cat',label:b=>[...b.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join('')});
     // The pressed card disappears; keyboard users continue from the back button.
     if(fromKeyboard)detail.querySelector('.walk-inline-back').focus({preventScroll:true});
     keepInView();

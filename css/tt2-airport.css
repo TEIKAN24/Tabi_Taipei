@@ -1,0 +1,1116 @@
+/* TABI TAIPEI v2.0.99 — 空港アクセス: route finder, timeline and facts
+   Collected in 2.0.99 (cleanup phase 2) from the per-version files, in their load order, so
+   one file holds the whole screen. Comments name the file each run came from. */
+
+/* from guide.css */
+.site-content details.airport-access,
+.tt2-airsheet-body details.airport-access {border-color:#40515a;}
+.site-content .airport-access > .indented,
+.tt2-airsheet-body .airport-access > .indented {margin-left:12px;margin-right:12px;}
+.site-content .airport-access .tab-pills,
+.tt2-airsheet-body .airport-access .tab-pills {gap:7px;}
+.site-content .airport-access .tab-pill,
+.tt2-airsheet-body .airport-access .tab-pill {font-size:12px;min-height:42px;}
+.site-content .airport-access-subheading,
+.tt2-airsheet-body .airport-access-subheading {
+  font-size:15px;line-height:1.45;font-weight:740;
+  color:#DAEAF4;letter-spacing:-.01em;margin:24px 0 9px;
+}
+.site-content .airport-access-subheading + .airport-direction-switcher,
+.tt2-airsheet-body .airport-access-subheading + .airport-direction-switcher {margin-top:0;}
+.site-content .airport-direction-switcher {
+  margin:11px 0 18px;min-width:0;
+  padding:0;border:0;border-radius:0;background:transparent;
+}
+.site-content .airport-direction-button {
+  appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;
+  min-width:0;min-height:146px;width:100%;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:13px;
+  text-align:left;padding:18px 18px 17px;
+  border:1.5px solid #3d4c58;border-radius:13px;
+  color:#eef4f8;font:inherit;
+  transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.site-content .airport-direction-button:hover {border-color:#60859e;}
+.site-content .airport-direction-button:focus-visible {outline:2px solid #a9d8f3;outline-offset:3px;}
+.site-content .airport-direction-switcher .airport-access,
+.tt2-airsheet-body .airport-direction-switcher .airport-access {margin:11px 0 0;min-width:0;}
+.site-content .airport-direction-switcher .airport-access:not([open]),
+.tt2-airsheet-body .airport-direction-switcher .airport-access:not([open]) {display:none;}
+.site-content .airport-direction-switcher .airport-access > summary,
+.tt2-airsheet-body .airport-direction-switcher .airport-access > summary {display:none;}
+.site-content .airport-direction-switcher .airport-access > .indented,
+.tt2-airsheet-body .airport-direction-switcher .airport-access > .indented {margin:0;padding:13px 12px 14px;}
+@media(max-width:600px){
+.site-content .airport-direction-switcher {padding:0;}
+.site-content .airport-direction-button {padding:13px 12px 13px;gap:11px;border-radius:12px;}
+}
+@media(max-width:365px){
+.site-content .airport-direction-switcher {padding:0;}
+.site-content .airport-direction-button {min-height:119px;padding:12px 9px 11px;}
+}
+@media(prefers-reduced-motion: reduce){
+.site-content .airport-direction-button {transition:none;}
+}
+.site-content .airport-direction-switcher {scroll-margin-top:16px;}
+.site-content .airport-direction-button,
+.site-content .airport-direction-button:hover,
+.site-content .airport-direction-button[aria-expanded="true"] {background:transparent!important;background-image:none!important;box-shadow:none!important;}
+
+.site-content :is(.airport-access-subheading,.airport-mode-name,.airport-route-stop,.airport-fare-amount,.destination-title,.venue-name-line,.area-intro-title,.travel-topic-title):not(.travel-caution *),
+.tt2-airsheet-body :is(.airport-access-subheading,.airport-mode-name,.airport-route-stop,.airport-fare-amount,.destination-title,.venue-name-line,.area-intro-title,.travel-topic-title):not(.travel-caution *) {color:var(--mono-main)!important}
+.site-content :is(.airport-fare-label,.airport-fare-time,.airport-root-meta,.airport-direction-text small,.destination-pr,.destination-lead,.destination-guide-label,.destination-info-title,.metro-transfer-note,.metro-route-key-item,.venue-row-index,.venue-extra-note,.area-intro-description,.section-note):not(.travel-caution *):not(.travel-twac *) {color:var(--mono-sub)!important}
+.site-content :is(.airport-direction-text strong,.airport-direction-button,.selected-value,.venue-main-link,.section-jump-button):not(#food-explorer *) {color:var(--mono-main)!important}
+.site-content :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon,.section-jump-arrow) {color:var(--mono-body)!important}
+.site-content .airport-direction-switcher :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon),
+.site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon),
+.tt2-airsheet-body .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon) {filter:none!important;}
+.site-content .airport-direction-switcher .airport-direction-button {color:var(--mono-main)!important}
+.site-content .airport-direction-button {background:transparent!important;background-image:none!important;box-shadow:none!important;}
+.site-content .airport-direction-button {border-color:#424242!important;}
+.site-content .airport-direction-button[aria-expanded="true"] {background:#171717!important;border-color:#D3D3D3!important;box-shadow:none!important;}
+
+@media(max-width:600px){
+.site-content .airport-direction-button {min-height:128px;}
+}
+.site-content .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon),
+.site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon),
+.tt2-airsheet-body .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon),
+.tt2-airsheet-body .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon) {filter:none!important;}
+#guide .airport-route-selector .section-top,
+#tt2-airport-sheet .airport-route-selector .section-top {justify-content:space-between;align-items:center;}
+#guide .airport-route-selector .section-top h2,
+#tt2-airport-sheet .airport-route-selector .section-top h2 {margin:0}
+#guide .airport-route-selector .selector,
+#tt2-airport-sheet .airport-route-selector .selector {border:1px solid var(--line);border-radius:13px;position:relative;isolation:isolate;background:transparent}
+#guide .airport-route-selector .selrow,
+#tt2-airport-sheet .airport-route-selector .selrow {min-height:68px;display:grid;grid-template-columns:49px minmax(0,1fr) 15px;gap:11px;align-items:center;padding:9px 15px;position:relative}
+#guide .airport-route-selector .selrow+.selrow,
+#tt2-airport-sheet .airport-route-selector .selrow+.selrow {border-top:1px solid #303030}
+#guide .airport-route-selector .sel-label,
+#tt2-airport-sheet .airport-route-selector .sel-label {font-size:11px;color:#999;font-weight:650}
+#guide .airport-route-selector .sel-value,
+#tt2-airport-sheet .airport-route-selector .sel-value {width:100%;min-width:0;appearance:none;-webkit-appearance:none;border:0;background:transparent;font-size:13px;font-weight:720;padding:14px 0;line-height:1.4;cursor:pointer;outline:0}
+#guide .airport-route-selector .sel-value option,
+#tt2-airport-sheet .airport-route-selector .sel-value option {color:#F7F7F7;background:#181818}
+#guide .airport-route-selector .chev,
+#tt2-airport-sheet .airport-route-selector .chev {width:7px;height:7px;border-right:1.5px solid #AAA;border-bottom:1.5px solid #AAA;transform:rotate(45deg);pointer-events:none}
+#guide .airport-route-selector .swap,
+#tt2-airport-sheet .airport-route-selector .swap {position:absolute;top:50%;right:28px;transform:translateY(-50%);z-index:3;height:33px;width:33px;border:1px solid #5B5B5B;border-radius:50%;display:grid;place-items:center;color:white;background:#191919;cursor:pointer;transition:background .15s}
+#guide .airport-route-selector .swap:hover,
+#tt2-airport-sheet .airport-route-selector .swap:hover {background:#303030}
+#guide .airport-route-selector .swap svg,
+#tt2-airport-sheet .airport-route-selector .swap svg {width:16px;height:16px}
+#guide .airport-route-selector .rule,
+#tt2-airport-sheet .airport-route-selector .rule {height:1px;background:#303030;margin:20px 0 19px}
+#guide .airport-route-selector .tab,
+#tt2-airport-sheet .airport-route-selector .tab {border:1px solid #555;border-radius:20px;min-height:30px;padding:4px 12px;color:#CBCBCB;font-size:12px;font-weight:700;background:transparent;cursor:pointer;white-space:nowrap;line-height:1.3}
+#guide .airport-route-selector .airsel-tab:focus-visible,
+#guide .airport-route-selector .swap:focus-visible,
+#guide .airport-route-selector .sel-value:focus-visible,
+#tt2-airport-sheet .airport-route-selector .airsel-tab:focus-visible,
+#tt2-airport-sheet .airport-route-selector .swap:focus-visible,
+#tt2-airport-sheet .airport-route-selector .sel-value:focus-visible {outline:2px solid #E4E4E4;outline-offset:3px}
+#guide .airport-route-selector .route-panel,
+#tt2-airport-sheet .airport-route-selector .route-panel {padding:12px 0 0}
+#guide .airport-route-selector .rail-title,
+#tt2-airport-sheet .airport-route-selector .rail-title {font-weight:730;font-size:13px;}
+#guide .airport-route-selector .timeline,
+#tt2-airport-sheet .airport-route-selector .timeline {--dt-label:38px;--dt-axis:16px;--dt-gap:9px;display:flex;flex-direction:column;gap:0;min-width:0;padding:0;margin:7px 0 11px}
+#guide .airport-route-selector .timeline-stop,
+#guide .airport-route-selector .timeline-leg,
+#tt2-airport-sheet .airport-route-selector .timeline-stop,
+#tt2-airport-sheet .airport-route-selector .timeline-leg {display:grid;grid-template-columns:var(--dt-label) var(--dt-axis) minmax(0,1fr);gap:var(--dt-gap);align-items:center;position:relative;min-width:0}
+#guide .airport-route-selector .timeline-stop,
+#tt2-airport-sheet .airport-route-selector .timeline-stop {z-index:2}
+#guide .airport-route-selector .timeline-status,
+#tt2-airport-sheet .airport-route-selector .timeline-status {grid-column:1;text-align:center;font-size:10.5px;color:#A7A7A7;font-weight:700;white-space:nowrap}
+#guide .airport-route-selector .timeline-status--transfer,
+#tt2-airport-sheet .airport-route-selector .timeline-status--transfer {background:#F2F2F2;color:#141414;border-radius:5px;font-size:10px;padding:4px 2px}
+#guide .airport-route-selector .node,
+#tt2-airport-sheet .airport-route-selector .node {grid-column:2;grid-row:1;justify-self:center;width:11px;height:11px;border:2px solid #F3F3F3;border-radius:50%;background:var(--bg);z-index:3}
+#guide .airport-route-selector .timeline-stop.end .node,
+#tt2-airport-sheet .airport-route-selector .timeline-stop.end .node {background:#F5F5F5;border-color:#F5F5F5}
+#guide .airport-route-selector .stop-body,
+#tt2-airport-sheet .airport-route-selector .stop-body {grid-column:3;grid-row:1;display:flex;gap:6px 7px;flex-wrap:wrap;min-width:0}
+#guide .airport-route-selector .stop-name,
+#tt2-airport-sheet .airport-route-selector .stop-name {font-size:13px;font-weight:760;line-height:1.5;color:#F5F5F5;overflow-wrap:anywhere}
+#guide .airport-route-selector .code,
+#tt2-airport-sheet .airport-route-selector .code {display:inline-flex;align-items:center;border:1px solid #666;color:#CCC;border-radius:5px;padding:2px 5px;font-size:10px;line-height:1.2;font-weight:760;white-space:nowrap}
+#guide .airport-route-selector .code--brown,
+#tt2-airport-sheet .airport-route-selector .code--brown {color:#E5C89E;border-color:#856941}
+#guide .airport-route-selector .code--blue,
+#tt2-airport-sheet .airport-route-selector .code--blue {color:#AFD5F0;border-color:#3979AA}
+#guide .airport-route-selector .code--purple,
+#tt2-airport-sheet .airport-route-selector .code--purple {color:#E1C8F1;border-color:#7C599D}
+#guide .airport-route-selector .timeline-leg,
+#tt2-airport-sheet .airport-route-selector .timeline-leg {min-height:92px;--travel-color:var(--purple)}
+#guide .airport-route-selector .timeline-leg::before,
+#tt2-airport-sheet .airport-route-selector .timeline-leg::before {content:"";position:absolute;top:-9px;bottom:-9px;width:3px;border-radius:3px;background:var(--travel-color);left:calc(var(--dt-label) + var(--dt-gap) + var(--dt-axis) / 2);transform:translateX(-50%);z-index:1}
+#guide .airport-route-selector .leg-content,
+#tt2-airport-sheet .airport-route-selector .leg-content {grid-column:3;grid-row:1;padding:12px 0;min-width:0}
+#guide .airport-route-selector .leg-meta,
+#tt2-airport-sheet .airport-route-selector .leg-meta {color:#B6B6B6;font-size:11px;display:flex;align-items:center;flex-wrap:wrap;gap:5px 7px;line-height:1.5}
+#guide .airport-route-selector .line-name,
+#tt2-airport-sheet .airport-route-selector .line-name {font-weight:700;color:#DCDCDC}
+#guide .airport-route-selector .station-count,
+#tt2-airport-sheet .airport-route-selector .station-count {color:#BDBDBD}
+#guide .airport-route-selector .separator,
+#tt2-airport-sheet .airport-route-selector .separator {color:#5F5F5F}
+#guide .airport-route-selector .direction,
+#tt2-airport-sheet .airport-route-selector .direction {font-size:14px;line-height:1.55;font-weight:730;color:#F3F3F3;margin:4px 0 0;word-break:keep-all;overflow-wrap:anywhere}
+#guide .airport-route-selector .direction-note,
+#tt2-airport-sheet .airport-route-selector .direction-note {font-size:11px;line-height:1.5;color:#989898;margin-top:3px}
+#guide .airport-route-selector .facts,
+#tt2-airport-sheet .airport-route-selector .facts {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:15px}
+#guide .airport-route-selector .fact,
+#tt2-airport-sheet .airport-route-selector .fact {border:1px solid #383838;border-radius:10px;padding:12px 7px 11px;text-align:center;min-width:0;display:flex;flex-direction:column;gap:7px;background:transparent}
+#guide .airport-route-selector .fact-label,
+#tt2-airport-sheet .airport-route-selector .fact-label {font-size:10px;color:#A8A8A8;white-space:nowrap}
+#guide .airport-route-selector .fact-value,
+#tt2-airport-sheet .airport-route-selector .fact-value {font-size:14px;color:#F3F3F3;font-weight:760;letter-spacing:-.015em;white-space:nowrap}
+#guide .airport-route-selector .footnote,
+#tt2-airport-sheet .airport-route-selector .footnote {font-size:10.5px;line-height:1.75;color:#999;margin:14px 0 0}
+@media (max-width:354px){
+#guide .airport-route-selector .selrow,
+#tt2-airport-sheet .airport-route-selector .selrow {padding-left:12px;padding-right:11px}
+#guide .airport-route-selector .timeline,
+#tt2-airport-sheet .airport-route-selector .timeline {--dt-label:34px;--dt-gap:7px}
+#guide .airport-route-selector .stop-name,
+#tt2-airport-sheet .airport-route-selector .stop-name {font-size:12px}
+#guide .airport-route-selector .direction,
+#tt2-airport-sheet .airport-route-selector .direction {font-size:13px}
+#guide .airport-route-selector .tab,
+#tt2-airport-sheet .airport-route-selector .tab {padding-inline:9px}
+#guide .airport-route-selector .fact,
+#tt2-airport-sheet .airport-route-selector .fact {padding-inline:5px}
+#guide .airport-route-selector .fact-value,
+#tt2-airport-sheet .airport-route-selector .fact-value {font-size:13px}
+}
+#guide .airport-route-selector,
+#tt2-airport-sheet .airport-route-selector {--bg:#0D0D0D;--line:#363636;--white:#F4F4F4;--muted:#A6A6A6;--purple:#A978D5;--commuter:#478ED1;--brown:#AE854E;--bannan:#378BC7;min-width:0;margin:8px 0 33px;color:#F4F4F4;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;-webkit-font-smoothing:antialiased}
+#guide .airport-route-selector *,
+#tt2-airport-sheet .airport-route-selector * {box-sizing:border-box}
+#guide .airport-route-selector [hidden],
+#tt2-airport-sheet .airport-route-selector [hidden] {display:none!important}
+#guide .airport-route-selector .section-top,
+#tt2-airport-sheet .airport-route-selector .section-top {margin-bottom:12px}
+#guide .airport-route-selector .selector,
+#tt2-airport-sheet .airport-route-selector .selector {margin-bottom:23px}
+#guide .airport-route-selector .airsel-tab,
+#tt2-airport-sheet .airport-route-selector .airsel-tab {border:1px solid #555;border-radius:20px;min-height:30px;padding:4px 12px;color:#CBCBCB;font-size:12px;font-weight:700;background:transparent;cursor:pointer;white-space:nowrap;line-height:1.3}
+#guide .airport-route-selector .airsel-tab[aria-selected="true"],
+#tt2-airport-sheet .airport-route-selector .airsel-tab[aria-selected="true"] {background:#F5F5F5;border-color:#F5F5F5;color:#171717}
+#guide .airport-route-selector .airsel-tab:focus-visible,
+#tt2-airport-sheet .airport-route-selector .airsel-tab:focus-visible {outline:2px solid #E4E4E4;outline-offset:3px}
+#guide .airport-route-selector .rail-title .airsel-company-mark,
+#tt2-airport-sheet .airport-route-selector .rail-title .airsel-company-mark {width:23px;height:23px;flex:0 0 23px;display:inline-flex;justify-content:center;align-items:center;border-radius:5px;overflow:hidden;position:relative}
+#guide .airport-route-selector .airsel-company-mark img,
+#tt2-airport-sheet .airport-route-selector .airsel-company-mark img {display:none;max-width:22px;max-height:22px;object-fit:contain;filter:grayscale(1) brightness(0) invert(1);opacity:.95}
+#guide .airport-route-selector .airsel-company-mark img[data-ready="true"],
+#tt2-airport-sheet .airport-route-selector .airsel-company-mark img[data-ready="true"] {display:block}
+#guide .airport-route-selector .airsel-company-fallback,
+#tt2-airport-sheet .airport-route-selector .airsel-company-fallback {display:inline-flex;align-items:center;justify-content:center;color:#F4F4F4;width:20px;height:20px;flex:0 0 20px}
+#guide .airport-route-selector .airsel-company-mark:has(img[data-ready="true"]) .airsel-company-fallback,
+#tt2-airport-sheet .airport-route-selector .airsel-company-mark:has(img[data-ready="true"]) .airsel-company-fallback {display:none}
+#guide .airport-route-selector .selector select,
+#tt2-airport-sheet .airport-route-selector .selector select {color-scheme:dark}
+#guide .airport-route-selector .sel-value,
+#tt2-airport-sheet .airport-route-selector .sel-value {color:#F2F2F2!important;text-shadow:none!important}
+#guide .airport-route-selector .timeline-stop,
+#tt2-airport-sheet .airport-route-selector .timeline-stop {padding:0;margin:0;border:0}
+#guide .airport-route-selector .timeline-leg,
+#tt2-airport-sheet .airport-route-selector .timeline-leg {padding:0;margin:0;border:0}
+#guide .airport-route-selector .leg-meta,
+#guide .airport-route-selector .timeline-status,
+#guide .airport-route-selector .fact-label,
+#tt2-airport-sheet .airport-route-selector .leg-meta,
+#tt2-airport-sheet .airport-route-selector .timeline-status,
+#tt2-airport-sheet .airport-route-selector .fact-label {letter-spacing:normal}
+#guide .airport-route-selector .fact,
+#tt2-airport-sheet .airport-route-selector .fact {width:auto;box-shadow:none}
+@media(max-width:354px){
+#guide .airport-route-selector .airsel-tab,
+#tt2-airport-sheet .airport-route-selector .airsel-tab {padding-inline:9px}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .airport-route-selector .swap,
+#tt2-airport-sheet .airport-route-selector .swap {transition:none}
+}
+#guide .airport-route-selector .airsel-company-mark:has(img[src*="Taipei_Metro_Logo"]),
+#tt2-airport-sheet .airport-route-selector .airsel-company-mark:has(img[src*="Taipei_Metro_Logo"]) {width:28px;flex-basis:28px;}
+#guide .airport-route-selector .airsel-company-mark img[src*="Taipei_Metro_Logo"],
+#tt2-airport-sheet .airport-route-selector .airsel-company-mark img[src*="Taipei_Metro_Logo"] {max-width:28px;max-height:20px;}
+#guide .airport-route-selector .airsel-transport-tab,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab {line-height:1.45;gap:7px;cursor:pointer;white-space:nowrap;font-family:inherit}
+#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"],
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"] {background:#F5F5F5;border-color:#F5F5F5}
+#guide .airport-route-selector .airsel-transport-tab:focus-visible,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab:focus-visible {outline:2px solid #DDD;outline-offset:2px}
+#guide .airport-route-selector .airsel-transport-tab > span,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab > span {font-size:14px}
+#guide .airport-route-selector .airsel-ground-details,
+#tt2-airport-sheet .airport-route-selector .airsel-ground-details {margin:12px 0 0;display:grid;gap:8px}
+#guide .airport-route-selector .airsel-ground-choice,
+#tt2-airport-sheet .airport-route-selector .airsel-ground-choice {display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding:10px 12px;border:1px solid #363636;border-radius:9px;font-size:11.5px;line-height:1.6;color:#CDCDCD}
+#guide .airport-route-selector .airsel-ground-choice strong,
+#tt2-airport-sheet .airport-route-selector .airsel-ground-choice strong {font-size:12px;font-weight:730;color:#F5F5F5}
+#guide .airport-route-selector .route-panel,
+#tt2-airport-sheet .airport-route-selector .route-panel {min-width:0}
+@media(max-width:354px){
+#guide .airport-route-selector .airsel-transport-tab,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab {gap:5px}
+#guide .airport-route-selector .airsel-ground-choice,
+#tt2-airport-sheet .airport-route-selector .airsel-ground-choice {padding:9px 10px}
+}
+#guide .airport-route-selector,
+#tt2-airport-sheet .airport-route-selector {margin-top:3px;}
+#guide .airport-route-selector .airsel-route-fields::before,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields::before {
+  position:absolute;left:25px;top:47px;bottom:47px;width:1.5px;
+  background:#6A6A6A;opacity:.64;z-index:0;
+}
+#guide .airport-route-selector .airsel-route-fields .sel-value,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {
+  font-family:inherit;
+  outline:none;
+}
+@media(max-width:354px){
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {padding-left:10px}
+#guide .airport-route-selector .airsel-route-fields::before,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields::before {left:22px;}
+}
+#guide .airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields {isolation:isolate;border-radius:0!important}
+
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {
+  align-items:center;
+}
+#guide .airport-route-selector .airsel-route-fields .selrow--origin::after,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--origin::after {position:absolute;bottom:0;left:3px;right:0;height:1px;background:#333;}
+#guide .airport-route-selector .airsel-route-fields .selrow--destination,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {border-bottom:1px solid #333!important;}
+#guide .airport-route-selector .airsel-transport,
+#tt2-airport-sheet .airport-route-selector .airsel-transport {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;margin:0 0 11px;border-bottom:1px solid #353535;
+}
+#guide .airport-route-selector .airsel-transport-tab,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab {
+  position:relative;min-height:39px;border:0!important;
+  border-radius:0!important;background:transparent!important;
+  color:#9B9B9B!important;box-shadow:none!important;
+  padding:8px 2px 10px;font-size:12.5px;font-weight:670;
+  letter-spacing:.005em;display:flex;align-items:center;justify-content:center;
+}
+#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"],
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"] {color:#F5F5F5!important;font-weight:775;}
+#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after {
+  content:"";position:absolute;bottom:-1px;left:19%;width:62%;height:2px;
+  background:#ECECEC;border-radius:2px;
+}
+#guide .airport-route-selector .route-panel,
+#tt2-airport-sheet .airport-route-selector .route-panel {border-top:0!important;padding-top:3px!important;}
+#guide .airport-route-selector .rail-title,
+#tt2-airport-sheet .airport-route-selector .rail-title {
+  display:flex;align-items:center;gap:8px;min-height:35px;margin:0 0 7px;
+  flex-wrap:nowrap;
+}
+#guide .airport-route-selector #airsel-rail-head-name,
+#tt2-airport-sheet .airport-route-selector #airsel-rail-head-name {color:#EDEDED;min-width:0;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#guide .airport-route-selector .airsel-tabs,
+#tt2-airport-sheet .airport-route-selector .airsel-tabs {
+  display:flex;align-items:center;position:relative;gap:0;min-width:0;
+  flex:0 0 auto;margin:0 0 0 auto!important;
+  padding:0!important;
+}
+#guide .airport-route-selector .airsel-train-select,
+#tt2-airport-sheet .airport-route-selector .airsel-train-select {
+  appearance:none;-webkit-appearance:none;
+  padding:6px 16px 6px 6px;font:680 11px/1.45 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  color:#D6D6D6;border:0;border-bottom:1px solid #525252;border-radius:0;
+  background:transparent;max-width:126px;outline-offset:2px;cursor:pointer;
+}
+#guide .airport-route-selector .airsel-train-select option,
+#tt2-airport-sheet .airport-route-selector .airsel-train-select option {background:#161616;color:#F3F3F3;}
+#guide .airport-route-selector .airsel-train-chevron,
+#tt2-airport-sheet .airport-route-selector .airsel-train-chevron {
+  position:absolute;right:3px;top:50%;width:6px;height:6px;
+  transform:translateY(-69%) rotate(45deg);
+  border-right:1px solid #999;border-bottom:1px solid #999;pointer-events:none;
+}
+@media(max-width:354px){
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {padding-right:23px!important;}
+#guide .airport-route-selector .airsel-train-select,
+#tt2-airport-sheet .airport-route-selector .airsel-train-select {font-size:10.5px;padding-right:14px;}
+#guide .airport-route-selector #airsel-rail-head-name,
+#tt2-airport-sheet .airport-route-selector #airsel-rail-head-name {font-size:12px;}
+}
+#guide .airport-route-selector .airsel-recommend-badge,
+#tt2-airport-sheet .airport-route-selector .airsel-recommend-badge {
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+  font:720 9.5px/1.3 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  color:#D4C5A6;background:rgba(170,145,102,.095);
+  border:1px solid rgba(173,149,108,.31);border-radius:5px;
+  padding:3px 6px;white-space:nowrap;letter-spacing:0;
+}
+#guide .airport-route-selector .airsel-recommend-badge[hidden],
+#tt2-airport-sheet .airport-route-selector .airsel-recommend-badge[hidden] {display:none!important;}
+#guide .airport-route-selector .airsel-transport,
+#guide .airport-route-selector .route-panel,
+#tt2-airport-sheet .airport-route-selector .airsel-transport,
+#tt2-airport-sheet .airport-route-selector .route-panel {touch-action:pan-y;}
+#guide .airport-route-selector .airsel-company-fallback.airsel-ground-icon,
+#tt2-airport-sheet .airport-route-selector .airsel-company-fallback.airsel-ground-icon {font-size:17px;line-height:1;}
+@media(max-width:354px){
+#guide .airport-route-selector .rail-title,
+#tt2-airport-sheet .airport-route-selector .rail-title {gap:6px;}
+#guide .airport-route-selector .airsel-recommend-badge,
+#tt2-airport-sheet .airport-route-selector .airsel-recommend-badge {font-size:9px;padding:3px 5px;}
+#guide .airport-route-selector .airsel-train-select,
+#tt2-airport-sheet .airport-route-selector .airsel-train-select {max-width:112px;}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .airport-route-selector .route-panel,
+#tt2-airport-sheet .airport-route-selector .route-panel {transition:none!important;}
+}
+#guide .airport-route-selector .section-top,
+#tt2-airport-sheet .airport-route-selector .section-top {margin:0 0 11px!important}
+#guide .airport-route-selector .section-top h2,
+#tt2-airport-sheet .airport-route-selector .section-top h2 {font-weight:760!important;}
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {
+  gap:10px!important;
+
+}
+
+#guide .airport-route-selector .airsel-route-fields .selrow--destination,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {margin-top:10px!important;}
+#guide .airport-route-selector .airsel-route-fields .swap:disabled,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap:disabled {opacity:.42;cursor:default}
+#guide .airport-route-selector .airsel-route-disclosure,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {box-sizing:border-box;display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;color:#F3F3F3;text-align:left;cursor:pointer;}
+#guide .airport-route-selector .airsel-route-disclosure[hidden],
+#guide .airport-route-selector .airsel-results-clip[hidden],
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure[hidden],
+#tt2-airport-sheet .airport-route-selector .airsel-results-clip[hidden] {display:none!important}
+#guide .airport-route-selector .airsel-route-disclosure:hover,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure:hover {border-color:#626262}
+#guide .airport-route-selector .airsel-route-disclosure:focus-visible,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure:focus-visible {outline:2px solid #CFCFCF;outline-offset:2px}
+#guide .airport-route-selector .airsel-disclosure-copy,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-copy {display:flex;flex-direction:column}
+#guide .airport-route-selector .airsel-disclosure-copy strong,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-copy strong {font-weight:760;line-height:1.4}
+#guide .airport-route-selector .airsel-disclosure-copy small,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-copy small {font-size:10.5px;color:#999;line-height:1.4}
+#guide .airport-route-selector .airsel-disclosure-chevron,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-chevron {width:18px;height:18px;color:#B3B3B3;transition:transform .58s cubic-bezier(.2,.8,.2,1);flex:0 0 18px}
+#guide .airport-route-selector .airsel-route-disclosure[aria-expanded="true"] .airsel-disclosure-chevron,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure[aria-expanded="true"] .airsel-disclosure-chevron {transform:rotate(90deg)}
+#guide .airport-route-selector .airsel-results-clip,
+#tt2-airport-sheet .airport-route-selector .airsel-results-clip {display:grid;grid-template-rows:0fr;transition:grid-template-rows .66s cubic-bezier(.2,.75,.18,1)}
+#guide .airport-route-selector .airsel-results-clip.is-open,
+#tt2-airport-sheet .airport-route-selector .airsel-results-clip.is-open {grid-template-rows:1fr}
+#guide .airport-route-selector .airsel-results-inner,
+#tt2-airport-sheet .airport-route-selector .airsel-results-inner {min-height:0;padding-top:0}
+#guide .airport-route-selector .airsel-transport,
+#tt2-airport-sheet .airport-route-selector .airsel-transport {position:relative;margin-top:13px!important}
+#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after {display:none!important}
+#guide .airport-route-selector .airsel-transport-ink,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-ink {
+  position:absolute;bottom:-1px;left:calc(var(--active-index,0) * (100% / 3) + 15px);
+  width:calc(100% / 3 - 30px);height:2px;border-radius:2px;background:#F1F1F1;
+  pointer-events:none;transition:left .6s cubic-bezier(.19,1,.22,1);z-index:3;
+}
+@media(max-width:354px){
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {padding-inline:13px!important;min-height:76px!important}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .airport-route-selector .airsel-results-clip,
+#guide .airport-route-selector .airsel-disclosure-chevron,
+#guide .airport-route-selector .airsel-transport-ink,
+#tt2-airport-sheet .airport-route-selector .airsel-results-clip,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-chevron,
+#tt2-airport-sheet .airport-route-selector .airsel-transport-ink {transition:none!important}
+}
+#guide .airport-route-selector .airsel-results-inner,
+#tt2-airport-sheet .airport-route-selector .airsel-results-inner {overflow:hidden}
+#guide .airport-route-selector .route-panel,
+#tt2-airport-sheet .airport-route-selector .route-panel {transform:translate3d(0,0,0);will-change:transform;position:relative;transform-origin:center center;backface-visibility:hidden}
+#guide .airport-route-selector .airsel-route-disclosure,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {transition:background .28s ease,border-color .28s ease,transform .28s ease}
+#guide .airport-route-selector .airsel-route-disclosure:active,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure:active {transform:scale(.99)}
+@media(prefers-reduced-motion:reduce){
+#guide .airport-route-selector .airsel-route-disclosure,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {transition:none!important}
+}
+#guide .airport-route-selector .section-top,
+#tt2-airport-sheet .airport-route-selector .section-top {display:none!important}
+#guide .airport-route-selector .section-top h2,
+#tt2-airport-sheet .airport-route-selector .section-top h2 {font-size:12px!important;letter-spacing:.018em!important;color:#C4C4C4!important}
+#guide .airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields {
+  display:grid!important;
+  position:relative!important;
+  border:0!important;background:transparent!important;box-shadow:none!important;
+  padding:0!important;overflow:visible!important;
+}
+#guide .airport-route-selector .airsel-route-fields::before,
+#guide .airport-route-selector .airsel-route-fields .selrow--origin::after,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields::before,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--origin::after {content:none!important;display:none!important}
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#guide .airport-route-selector .airsel-route-fields .selrow--destination,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {
+  grid-template-columns:minmax(0,1fr) 7px!important;
+  column-gap:4px!important;align-content:center!important;
+  transition:border-color .25s ease,background-color .25s ease!important;
+}
+#guide .airport-route-selector .airsel-route-fields .selrow:focus-within,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow:focus-within {border-color:#D4D4D4!important;}
+#guide .airport-route-selector .airsel-route-fields .sel-label,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-label {letter-spacing:.015em!important;}
+#guide .airport-route-selector .airsel-route-fields .sel-value,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {
+  color:#F4F4F4!important;
+  letter-spacing:-.01em!important;
+}
+#guide .airport-route-selector .airsel-route-fields .chev,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .chev {border-color:#9A9A9A!important;}
+#guide .airport-route-selector .airsel-route-fields .swap,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {
+  position:absolute!important;right:auto!important;
+  z-index:5!important;
+  border:1px solid #555!important;
+  border-radius:50%!important;background:#151515!important;color:#EAEAEA!important;
+  display:grid!important;place-items:center!important;
+  transition:border-color .2s ease,background-color .2s ease!important;
+}
+#guide .airport-route-selector .airsel-route-fields .swap svg,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap svg {width:15px!important;height:15px!important}
+#guide .airport-route-selector .airsel-route-fields .swap:hover,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap:hover {background:#252525!important;border-color:#AAA!important}
+#guide .airport-route-selector .airsel-route-disclosure,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {
+  min-height:43px!important;margin:17px 0 1px!important;padding:8px 3px 11px!important;
+  background:transparent!important;border:0!important;border-top:1px solid #323232!important;
+  border-radius:0!important;box-shadow:none!important;
+}
+#guide .airport-route-selector .airsel-route-disclosure:hover,
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure:hover {background:transparent!important;border-top-color:#545454!important}
+#guide .airport-route-selector .airsel-disclosure-copy,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-copy {gap:0!important}
+#guide .airport-route-selector .airsel-disclosure-copy strong,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-copy strong {font-size:13px!important;letter-spacing:0!important}
+#guide .airport-route-selector .airsel-disclosure-copy small,
+#tt2-airport-sheet .airport-route-selector .airsel-disclosure-copy small {display:none!important}
+@media(max-width:355px){
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {padding:12px 9px 12px 12px!important;min-height:75px!important;height:75px!important}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#guide .airport-route-selector .airsel-route-fields .swap,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {transition:none!important}
+}
+#guide .airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields {
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:32px!important;align-items:start!important;margin:0 0 14px!important;
+}
+#guide .airport-route-selector .airsel-route-fields .selrow,
+#guide .airport-route-selector .airsel-route-fields .selrow--destination,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {
+  display:block!important;position:relative!important;min-width:0!important;
+  width:100%!important;min-height:0!important;height:auto!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+}
+#guide .airport-route-selector .airsel-route-fields .selrow:focus-within,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow:focus-within {background:transparent!important;border:0!important;box-shadow:none!important;}
+#guide .airport-route-selector .airsel-route-fields .sel-field,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-field {
+  display:flex!important;flex-direction:column!important;gap:8px!important;
+  min-width:0!important;
+}
+#guide .airport-route-selector .airsel-route-fields .sel-label,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-label {
+  display:block!important;padding:0 3px!important;
+  font-size:10.5px!important;line-height:1.25!important;
+  color:#A4A4A4!important;font-weight:670!important;
+}
+#guide .airport-route-selector .airsel-route-fields .sel-choice-bubble,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble {
+  display:grid;grid-template-columns:minmax(0,1fr) 6px;align-items:center;
+  column-gap:4px;min-width:0;height:45px;
+  width:calc(100% - 16px);max-width:185px;margin-inline:auto;
+  padding:0 11px 0 12px;border:1px solid #505050;border-radius:999px;
+  background:transparent;transition:border-color .2s ease,background-color .2s ease;
+}
+#guide .airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within {border-color:#D4D4D4;background:rgba(255,255,255,.047);}
+#guide .airport-route-selector .airsel-route-fields .sel-value,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {
+  display:block!important;width:100%!important;min-width:0!important;
+  height:100%!important;min-height:0!important;max-width:100%!important;
+  padding:0!important;margin:0!important;border:0!important;background:transparent!important;
+  font-size:12.5px!important;line-height:1.35!important;font-weight:720!important;
+  white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important;
+}
+#guide .airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value {color:#A5A5A5!important;font-weight:580!important;}
+#guide .airport-route-selector .airsel-route-fields .chev,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .chev {
+  display:block!important;width:6px!important;height:6px!important;
+  align-self:center!important;justify-self:center!important;
+  border-right:1.5px solid #A0A0A0!important;
+  border-bottom:1.5px solid #A0A0A0!important;
+  border-top:0!important;border-left:0!important;
+  transform:translateY(-2px) rotate(45deg)!important;
+  pointer-events:none!important;
+}
+#guide .airport-route-selector .airsel-route-fields .swap,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {
+  top:calc(10.5px * 1.25 + 8px + 22.5px)!important;left:50%!important;
+  transform:translate(-50%,-50%)!important;
+  width:30px!important;height:30px!important;
+  box-shadow:none!important;
+}
+@media(max-width:355px){
+#guide .airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields {gap:30px!important;}
+#guide .airport-route-selector .airsel-route-fields .sel-choice-bubble,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble {height:43px;width:calc(100% - 10px);padding-left:10px;padding-right:9px;}
+#guide .airport-route-selector .airsel-route-fields .sel-value,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {font-size:12px!important;}
+#guide .airport-route-selector .airsel-route-fields .sel-label,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-label {font-size:10px!important;}
+#guide .airport-route-selector .airsel-route-fields .swap,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {
+  top:calc(10px * 1.25 + 8px + 21.5px)!important;
+  width:28px!important;height:28px!important;
+}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .airport-route-selector .airsel-route-fields .sel-choice-bubble,
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble {transition:none!important;}
+}
+#guide .airport-route-selector .stop-body,
+#tt2-airport-sheet .airport-route-selector .stop-body {align-items:center;column-gap:7px;row-gap:4px}
+#guide .airport-route-selector .airsel-station-label,
+#tt2-airport-sheet .airport-route-selector .airsel-station-label {display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:1px;line-height:1.25}
+#guide .airport-route-selector .airsel-station-label .stop-name,
+#tt2-airport-sheet .airport-route-selector .airsel-station-label .stop-name {font-size:13px;font-weight:760;line-height:1.42}
+#guide .airport-route-selector .airsel-station-ja,
+#tt2-airport-sheet .airport-route-selector .airsel-station-ja {font-size:10.5px;color:#9E9E9E;font-weight:500;line-height:1.42;overflow-wrap:anywhere}
+#guide .airport-route-selector .timeline-stop,
+#tt2-airport-sheet .airport-route-selector .timeline-stop {min-height:49px}
+#guide .airport-route-selector .timeline-stop.transfer,
+#tt2-airport-sheet .airport-route-selector .timeline-stop.transfer {min-height:47px}
+#guide .airport-route-selector .stop-body .code,
+#tt2-airport-sheet .airport-route-selector .stop-body .code {flex:0 0 auto}
+@media(max-width:354px){
+#guide .airport-route-selector .airsel-station-label .stop-name,
+#tt2-airport-sheet .airport-route-selector .airsel-station-label .stop-name {font-size:12px}
+#guide .airport-route-selector .airsel-station-ja,
+#tt2-airport-sheet .airport-route-selector .airsel-station-ja {font-size:10px}
+}
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-stop,
+#tt2-airport-sheet .airport-route-selector .timeline.airsel-timeline-animating .timeline-stop {
+  animation:airsel-station-appear 750ms cubic-bezier(.19,.8,.22,1) both;
+  animation-delay:var(--airsel-stop-delay,0ms);
+}
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before,
+#tt2-airport-sheet .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before {
+  animation:airsel-route-draw 720ms cubic-bezier(.18,.76,.2,1) both;
+  animation-delay:var(--airsel-leg-delay,0ms);
+  transform-origin:50% 0%;
+}
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content,
+#tt2-airport-sheet .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content {
+  animation:airsel-leg-label-appear 490ms cubic-bezier(.19,.8,.22,1) both;
+  animation-delay:calc(var(--airsel-leg-delay,0ms) + 190ms);
+}
+@keyframes airsel-station-appear{from {opacity:0;transform:translate3d(0,12px,0);}
+  to {opacity:1;transform:translate3d(0,0,0);}}
+@keyframes airsel-route-draw{from {opacity:1;transform:translateX(-50%) scaleY(0);}
+  to {opacity:1;transform:translateX(-50%) scaleY(1);}}
+@keyframes airsel-leg-label-appear{from {opacity:0;transform:translate3d(0,10px,0);}
+  to {opacity:1;transform:translate3d(0,0,0);}}
+@media (prefers-reduced-motion:reduce){
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-stop,
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before,
+#guide .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content,
+#tt2-airport-sheet .airport-route-selector .timeline.airsel-timeline-animating .timeline-stop,
+#tt2-airport-sheet .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before,
+#tt2-airport-sheet .airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content {animation:none!important;}
+}
+#guide .sights-day-trips .daytrip-airport-reuse .timeline-stop a {
+  color:inherit;
+  text-decoration:none;
+  border-bottom:1px dotted #5B5B5B;
+}
+#guide .sights-day-trips .daytrip-transport > .airsel-transport-ink {
+  display:block!important;
+  position:absolute;bottom:-1px;
+  left:calc(var(--active-index,0) * 100% / var(--daytrip-tab-count) + 15px);
+  width:calc(100% / var(--daytrip-tab-count) - 30px);
+  height:2px;border-radius:2px;background:#F1F1F1;
+  pointer-events:none;transition:left .6s cubic-bezier(.19,1,.22,1);z-index:3;
+}
+@media (prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-transport > .airsel-transport-ink {transition:none!important}
+}
+#guide .sights-day-trips .daytrip-bus-airport-style button.airsel-ground-choice {
+  width:100%;text-align:left;cursor:pointer;background:transparent;
+  font-family:inherit;min-width:0;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style button.airsel-ground-choice[aria-pressed="true"] {border-color:#767676;background:rgba(255,255,255,.045);}
+#guide .sights-day-trips .daytrip-bus-airport-style button.airsel-ground-choice:focus-visible {outline:2px solid #F2F2F2;outline-offset:2px;}
+@media(max-width:354px){
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices .airsel-ground-choice {padding-inline:9px}
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark {
+  width:23px!important; height:23px!important; flex:0 0 23px!important;
+  display:inline-flex!important; align-items:center; justify-content:center;
+  overflow:visible!important;
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-official-logo {
+  display:block!important; width:21px!important; height:21px!important;
+  min-width:21px!important; min-height:21px!important;
+  max-width:21px!important; max-height:21px!important;
+  object-fit:contain!important; aspect-ratio:512/511!important;
+  transform:none!important;
+  filter:grayscale(1) brightness(0) invert(1)!important;
+  -webkit-filter:grayscale(1) brightness(0) invert(1)!important;
+  opacity:1!important;
+}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark > .daytrip-tra-fallback {display:none!important; color:#F7F7F7!important; font-size:9px; font-weight:700;}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-official-logo {display:none!important;}
+#guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-fallback {display:block!important;}
+#guide #airport-route-selector .facts .fact-value,
+#guide .airport-route-selector:not(.daytrip-airport-reuse) .facts .fact-value,
+#tt2-airport-sheet #airport-route-selector .facts .fact-value {white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:1.45;min-width:0;}
+#guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before {background:var(--taipei-taxi-route)!important;}
+#guide #airport-route-selector .airsel-results-inner,
+#tt2-airport-sheet #airport-route-selector .airsel-results-inner {isolation:isolate;}
+#guide #airport-route-selector.is-transport-switching .route-panel,
+#tt2-airport-sheet #airport-route-selector.is-transport-switching .route-panel {pointer-events:none;}
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content,
+#tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
+#tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content {opacity:0!important;}
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before,
+#tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before {opacity:0!important;transform:translateX(-50%) scaleY(0)!important;}
+@media(prefers-reduced-motion:reduce){
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content,
+#guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before,
+#tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-stop,
+#tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg .leg-content,
+#tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before {opacity:1!important;}
+}
+#guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg,
+#tt2-airport-sheet #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg {display:block;width:20px;height:20px;color:inherit;stroke:currentColor;fill:none;}
+#guide .airport-route-selector .timeline-stop.transfer .node,
+#tt2-airport-sheet .airport-route-selector .timeline-stop.transfer .node {
+  box-sizing:border-box!important;
+  position:relative!important;
+  width:13px!important;
+  height:13px!important;
+  border:2px solid var(--transfer-ring)!important;
+  background:var(--transfer-surface)!important;
+  border-radius:50%!important;
+  box-shadow:0 0 0 2px var(--transfer-surface)!important;
+}
+#guide .airport-route-selector .timeline-stop.transfer .node::after,
+#tt2-airport-sheet .airport-route-selector .timeline-stop.transfer .node::after {
+  content:"";
+  position:absolute;
+  top:50%;left:50%;
+  width:4px;height:4px;
+  border:0;border-radius:50%;
+  background:var(--transfer-ring);
+  transform:translate(-50%,-50%);
+}
+#guide #airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields {
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:clamp(32px,7vw,42px)!important;
+  padding:0!important;
+  margin-inline:0!important;
+}
+#guide #airport-route-selector .airsel-route-fields .selrow,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields .selrow {min-width:0!important;}
+#guide #airport-route-selector .airsel-route-fields .sel-field,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields .sel-field {min-width:0!important;align-items:stretch!important;}
+#guide #airport-route-selector .airsel-route-fields .sel-choice-bubble,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields .sel-choice-bubble {
+  width:100%!important;max-width:none!important;
+  margin:0!important;box-sizing:border-box!important;
+}
+#guide #airport-route-selector .airsel-route-fields .sel-label,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields .sel-label {
+  align-self:flex-start!important;margin:0!important;
+  padding:0!important;text-align:left!important;
+}
+@media(max-width:355px){
+#guide #airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields {gap:32px!important;}
+}
+#guide #airport-route-selector .airsel-route-fields,
+#tt2-airport-sheet #airport-route-selector .airsel-route-fields {column-gap:clamp(48px,12vw,56px)!important;}
+#guide .airport-access-subheading,
+#tt2-airport-sheet .airport-access-subheading {margin:30px 0 10px!important;font-size:16px!important;line-height:1.35!important;font-weight:780!important;letter-spacing:-.01em!important;}
+
+/* from figma-stage1.css */
+html.tt2-fidelity[data-tt-view='travel'] #airport-route-selector,
+html.tt2-fidelity:not([data-tt-airsheet-off]) #airport-route-selector {margin-top:100px!important;}
+
+/* from figma-viewport-v205.css */
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide > .page-body > .airport-route-selector:not(#_a),
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet .airport-route-selector:not(#_a) {
+  display:block!important;position:absolute!important;inset:80px 0 0!important;
+  height:calc(100% - 80px)!important;max-height:calc(100% - 80px)!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  background:#000!important;z-index:10;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+}
+
+/* from figma-airport-v255.css */
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide > .page-body > #airport-route-selector:not(#_a),
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector:not(#_a) {
+  inset:0!important;height:100%!important;max-height:100%!important;padding:0!important;margin:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;scrollbar-width:none;background:#000!important;
+  container-type:size;   /* v2.0.57: sized from this box (cqh), not from 100dvh */
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector::-webkit-scrollbar,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector::-webkit-scrollbar {display:none;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top {
+  display:flex!important;align-items:center;box-sizing:border-box;height:34px;margin:0!important;padding:0 0 1px!important;
+  border:0!important;border-top:1px solid transparent!important;border-bottom:1px solid rgba(239,239,239,.43)!important;background:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top h2,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2 {margin:0!important;padding:0!important;font:400 15px/1.1 var(--tt2-serif)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top h2::before,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top h2::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2::after {content:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selector,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selector {
+  position:relative!important;display:block!important;box-sizing:border-box;height:45px;margin:0!important;padding:0!important;
+  border:0!important;border-bottom:.67px solid #666464!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow {position:absolute!important;top:4px!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow--origin,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow--origin {left:7px!important;right:auto!important;width:114px!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow--destination,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow--destination {left:222px!important;right:13px!important;width:auto!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector :is(.sel-field,.sel-choice-bubble),
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector :is(.sel-field,.sel-choice-bubble) {
+  position:relative;display:block!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .sel-label,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-label {display:block!important;margin:0 0 1px!important;padding:0!important;font:400 8.67px/13px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector select.sel-value,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector select.sel-value {
+  -webkit-appearance:none;appearance:none;display:block!important;box-sizing:border-box;width:100%!important;height:23px!important;
+  margin:0!important;padding:0 18px 0 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  font:500 16px/23px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;text-overflow:ellipsis;cursor:pointer;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow.is-empty select.sel-value,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow.is-empty select.sel-value {color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .sel-choice-bubble .chev,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-choice-bubble .chev {
+  position:absolute!important;right:0;top:9px;width:8px!important;height:5px!important;margin:0!important;border:0!important;transform:none!important;
+  background:#fff!important;clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .sel-choice-bubble .chev::before,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .sel-choice-bubble .chev::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-choice-bubble .chev::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-choice-bubble .chev::after {content:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-swap,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap {
+  position:absolute!important;left:152px!important;top:0!important;right:auto!important;bottom:auto!important;display:flex!important;align-items:center;justify-content:center;
+  width:56px!important;height:45px!important;min-width:0!important;margin:0!important;padding:0!important;box-sizing:border-box;
+  border:0!important;border-left:.67px solid #666464!important;border-right:.67px solid #666464!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;color:#fff!important;transform:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-swap svg,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap svg {width:15px!important;height:17px!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-swap:disabled svg,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap:disabled svg {opacity:.35!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-route-disclosure,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-route-disclosure {display:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector :is(.airsel-results-clip,.airsel-results-inner),
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector :is(.airsel-results-clip,.airsel-results-inner) {margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport {
+  position:relative!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important;box-sizing:border-box;height:45px;
+  margin:0!important;padding:0!important;border:0!important;border-bottom:.67px solid #666464!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-ink,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-ink {display:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-tab,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab {
+  position:relative;display:flex!important;align-items:flex-start;justify-content:center;height:45px!important;min-height:0!important;margin:0!important;
+  padding:14px 0 0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  font:400 12px/17px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-tab[aria-selected='true'],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab[aria-selected='true'] {font-weight:700!important;color:#fff!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-tab[aria-selected='true']::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab[aria-selected='true']::after {content:''!important;display:block!important;position:absolute;left:50%;bottom:0;width:54px;height:2px;margin-left:-27px;background:#fff;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .route-panel,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .route-panel {display:flex!important;flex-direction:column!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .rail-title,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .rail-title {
+  position:relative!important;display:flex!important;align-items:flex-start;gap:7px;
+  box-sizing:border-box;height:78px;margin:0!important;padding:24px 0 0 12px!important;border:0!important;background:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-company-mark,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-company-mark {
+  display:inline-flex!important;align-items:center;justify-content:flex-start;flex:none!important;
+  width:auto!important;height:22px!important;margin:0!important;border-radius:0!important;overflow:visible!important;background:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-company-mark img,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-company-mark img {width:auto!important;height:15px!important;max-width:none!important;max-height:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-company-mark img[src*='trtc'],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-company-mark img[src*='trtc'] {height:13px!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector :is(.airsel-company-fallback,.airsel-company-fallback svg),
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector :is(.airsel-company-fallback,.airsel-company-fallback svg) {width:18px!important;height:18px!important;flex:0 0 18px!important;font-size:15px!important;color:#fff!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-rail-head-name,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-rail-head-name {display:block!important;margin:0!important;font:500 12px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;white-space:nowrap;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-recommend-badge,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-recommend-badge {
+  position:absolute!important;right:5px;top:28px;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;
+  font:500 11px/15px var(--tt2-ui)!important;letter-spacing:0!important;color:#cca46e!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .rail-title:has(> .airsel-tabs:not([hidden])) #airsel-recommend-badge,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .rail-title:has(> .airsel-tabs:not([hidden])) #airsel-recommend-badge {top:56px;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-recommend-badge[hidden],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-recommend-badge[hidden] {display:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-tabs,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs {
+  position:absolute!important;right:6px;top:24px;display:block!important;box-sizing:border-box;width:115px!important;height:24px;margin:0!important;padding:0!important;
+  border:0!important;border-bottom:1px solid #9e9e9e!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-tabs[hidden],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs[hidden] {display:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-tabs::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs::before {content:'';position:absolute;left:2px;top:8px;width:3px;height:9px;background:#8246af;pointer-events:none;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-tabs:has(option[value='local']:checked)::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs:has(option[value='local']:checked)::before {background:#478ed1;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-train-select,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-train-select {
+  -webkit-appearance:none;appearance:none;display:block!important;box-sizing:border-box;width:100%!important;height:23px!important;margin:0!important;
+  padding:0 16px 0 9px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  font:500 13px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;cursor:pointer;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-train-chevron,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-train-chevron {
+  position:absolute!important;right:4px!important;left:auto!important;top:11px;width:8px!important;height:5px!important;margin:0!important;border:0!important;transform:none!important;
+  background:#fff!important;clip-path:polygon(0 0,100% 0,50% 100%);pointer-events:none;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-train-chevron::before,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-train-chevron::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-train-chevron::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-train-chevron::after {content:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline {
+  display:flex!important;flex-direction:column!important;box-sizing:border-box;
+     /* v2.0.62: the Figma size; only short screens compress it (end of file) */
+  min-height:0!important;margin:0!important;padding:0!important;border:0!important;background:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline::before,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline::after {content:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop {
+  position:relative!important;display:block!important;flex:none;box-sizing:border-box;min-height:39px;margin:0!important;padding:0 0 0 84px!important;
+  border:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-status,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-status {
+  position:absolute!important;left:12px;top:4px;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;
+  font:400 10px/14px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop .node,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop .node {
+  position:absolute!important;left:39.5px;top:4.5px;box-sizing:border-box;width:13px!important;height:13px!important;margin:0!important;
+  border:2px solid #fff!important;border-radius:50%!important;background:#000!important;box-shadow:none!important;transform:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.end .node,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.end .node {background:#fff!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop .node::before,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop .node::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop .node::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop .node::after {content:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body {display:flex!important;flex-wrap:wrap;align-items:center;gap:0 6px;margin:0!important;padding:0!important;border:0!important;background:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-station-label,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-station-label {display:contents!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-name,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-name {order:0;margin:0!important;font:500 15px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;white-space:nowrap;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-station-ja,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-station-ja {order:2;flex:0 0 100%;display:block!important;margin:1px 0 0!important;font:400 11px/16px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code {
+  order:1;display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;height:16px!important;min-width:24px;margin:0!important;
+  padding:0 4px!important;border:1.5px solid var(--tt2a-code, #8246af)!important;border-radius:3px!important;background:#fff!important;box-shadow:none!important;
+  font:700 9px/14px 'Inter',var(--tt2-ui)!important;letter-spacing:0!important;color:#0d0d0d!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code--purple,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code--purple {margin-left:5px!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code--brown,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code--brown {--tt2a-code:#c48c31;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code--blue,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code--blue {--tt2a-code:#0070bd;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code.tt2a-code-sq,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code.tt2a-code-sq {flex-direction:column;width:20px!important;height:20px!important;min-width:0;padding:0!important;border-width:2px!important;border-radius:3px!important;gap:0;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-code-l,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-code-l {display:block;font:700 8px/7px 'Inter',var(--tt2-ui);}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-code-n,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-code-n {display:block;margin-top:1px;font:700 10px/8px 'Inter',var(--tt2-ui);}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg {
+  position:relative!important;display:grid!important;grid-template-columns:1fr!important;grid-template-rows:1fr auto 1.2fr!important;flex:1 1 0;min-height:0;
+  box-sizing:border-box;margin:0!important;padding:6px 0 6px 84px!important;border:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg::before {
+  content:''!important;display:block!important;position:absolute!important;left:44.5px;top:-15.5px;bottom:1.5px;width:3px!important;height:auto!important;
+  margin:0!important;border:0!important;border-radius:0!important;background:var(--travel-color,#8246af)!important;transform:none;transform-origin:50% 0;z-index:0;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.transfer + .timeline-leg::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.transfer + .timeline-leg::before {top:2px;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg:has(+ .timeline-stop.transfer)::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg:has(+ .timeline-stop.transfer)::before {bottom:3px;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg[style*='A978D5'],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg[style*='A978D5'] {--travel-color:#8246af!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg[style*='AE854E'],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg[style*='AE854E'] {--travel-color:#c48c31!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg[style*='378BC7'],
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg[style*='378BC7'] {--travel-color:#0070bd!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-leg::after,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-leg::after {content:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .leg-content,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .leg-content {
+  position:relative;z-index:1;grid-row:2!important;grid-column:1!important;justify-self:start!important;display:flex!important;flex-direction:column;
+  margin:0!important;padding:0!important;border:0!important;background:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .direction,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .direction {order:0;display:block!important;margin:0!important;font:400 11px/16px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .leg-meta,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .leg-meta {order:1;display:block!important;margin:0!important;font:400 11px/16px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .leg-meta :is(.line-name,.separator,.station-count),
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .leg-meta :is(.line-name,.separator,.station-count) {font:inherit!important;color:inherit!important;margin:0!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .leg-meta .separator,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .leg-meta .separator {margin:0 1px!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .direction-note,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .direction-note {order:2;display:block!important;margin:1px 0 0!important;font:400 10px/14px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-mark,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-mark {
+  position:absolute;z-index:2;left:-48px;top:50%;display:flex;align-items:center;justify-content:center;width:20px;height:20px;margin-top:-10px;box-sizing:border-box;
+  border-radius:3px;font:700 10px/1 'Inter',var(--tt2-ui);letter-spacing:0;color:#fff;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-mark--br,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-mark--br {background:#c48c31;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-mark--bl,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-mark--bl {background:#0070bd;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-mark--ty,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-mark--ty {background:#fff url('../assets/rail-logos/tymc.svg') center/15.4px auto no-repeat;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-mark--ground,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-mark--ground {background:#5a5a5a;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-mark--ground svg,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-mark--ground svg {width:14px;height:14px;color:#fff;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.transfer,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.transfer {min-height:22px;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.transfer .node,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.transfer .node {display:none!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.transfer .timeline-status,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.transfer .timeline-status {
+  left:31px;top:3px;display:flex!important;align-items:center;justify-content:center;width:30px;height:16px;border-radius:3px!important;background:#fff!important;
+  font:600 11px/16px var(--tt2-ui)!important;color:#000!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.transfer::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.transfer::before {content:'';position:absolute;left:-16px;top:11px;width:38px;height:1px;background:#666464;pointer-events:none;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.transfer .stop-body,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.transfer .stop-body {flex-wrap:nowrap;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-xfer-rule,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-xfer-rule {order:3;flex:1 1 auto;min-width:12px;height:1px;margin-left:0;background:#666464;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-xfer-text,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-xfer-text {order:4;flex:none;margin:0 -2.5px 0 -1.5px;font:500 10px/16px var(--tt2-ui);letter-spacing:0;color:#9e9e9e;white-space:nowrap;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-xfer-end,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-xfer-end {order:5;flex:0 0 25.5px;height:1px;margin-right:-16px;background:#666464;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .facts,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .facts {
+  display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important;box-sizing:border-box;
+  margin:23px 10px 0 9px!important;padding:10px 0 0!important;
+  border:0!important;border-top:1px solid #9e9e9e!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .fact,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .fact {
+  position:relative;display:flex!important;flex-direction:column;align-items:center;gap:0!important;min-height:0!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .fact + .fact::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .fact + .fact::before {content:'';position:absolute;left:0;top:0;width:.67px;height:38px;background:#666464;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .fact-label,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .fact-label {display:block!important;margin:0 0 2px!important;font:400 9px/13px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .fact-value,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .fact-value {display:block!important;margin:0!important;font:500 15px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;text-align:center;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .footnote,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .footnote {
+  margin:36px 0 24px!important;padding:0 8px!important;
+  font:400 10px/15px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;text-align:center!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .footnote a,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .footnote a {color:#bdbdbd!important;text-decoration:underline;text-underline-offset:2px;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline.airsel-timeline-animating .timeline-stop,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-animating .timeline-stop {animation:tt2a-stop-in 360ms ease-out both!important;animation-delay:0ms!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-animating .timeline-leg::before {
+  animation:tt2a-line-grow 560ms cubic-bezier(.45,0,.25,1) both!important;
+  animation-delay:calc(320ms + var(--tt2a-leg-i, 0) * 560ms)!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-animating .timeline-leg .leg-content {
+  animation:tt2a-leg-in 360ms ease-out both!important;
+  animation-delay:calc(320ms + var(--tt2a-leg-i, 0) * 560ms + 240ms)!important;
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before {transform:scaleY(0)!important;}
+@keyframes tt2a-stop-in{from {opacity:0;} to {opacity:1;}}
+@keyframes tt2a-line-grow{from {transform:scaleY(0);} to {transform:scaleY(1);}}
+@keyframes tt2a-leg-in{from {opacity:0;} to {opacity:1;}}
+@media (prefers-reduced-motion: reduce){
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline .timeline-stop,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline .timeline-leg::before,
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline .leg-content,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline .timeline-stop,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline .timeline-leg::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline .leg-content {animation:none!important;}
+}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline {height:clamp(262px, calc(100cqh - 317px), 325px);}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .facts,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .facts {margin-top:clamp(12px, calc(100cqh - 630px), 23px)!important;}
+html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .footnote,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .footnote {margin-top:clamp(16px, calc(100cqh - 637px), 36px)!important;}

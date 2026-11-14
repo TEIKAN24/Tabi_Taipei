@@ -1,0 +1,940 @@
+/* TABI TAIPEI v2.0.100 — day trips (遠出): destinations, routes, stops
+   Collected in 2.0.100 (cleanup phase 2) from the per-version files, in their load order, so
+   one file holds the whole screen. Comments name the file each run came from. */
+
+/* from guide.css */
+.site-content .sights-day-trips {margin-top:22px;padding-top:17px;border-top:1px solid #3B4B54;min-width:0;}
+.site-content .sights-day-trips > h3 {font-size:16px;line-height:1.5;letter-spacing:-.012em;margin:0 0 6px;color:var(--text-heading);}
+#guide .sights-day-trips .daytrip-option {padding:13px 0 14px;border-top:1px solid #303030;margin:0!important;}
+#guide .sights-day-trips .daytrip-option:first-of-type {border-top:0;}
+#guide .sights-day-trips .daytrip-note {color:#BEBEBE;margin:8px 0 0;padding:0;}
+#guide .sights-day-trips .daytrip-note--important {border-left:2px solid #B4B4B4;padding-left:10px;margin:13px 0 0;}
+#guide .sights-day-trips .daytrip-place-group {margin:15px 0 0;padding:13px 0 0;border-top:1px solid #333;}
+#guide .sights-day-trips .daytrip-place-group h4 {color:#C6C6C6;margin:0 0 7px;letter-spacing:.02em;font-weight:720;}
+#guide .sights-day-trips .daytrip-place-list {list-style:none!important;padding:0!important;margin:0!important;}
+#guide .sights-day-trips .daytrip-place-list li {list-style:none!important;padding:9px 2px!important;margin:0!important;border-bottom:1px solid #292929;color:#EEE;font-size:13px;line-height:1.55;}
+#guide .sights-day-trips .daytrip-place-list li:last-child {border-bottom:0;}
+#guide .sights-day-trips .daytrip-place-list a {color:#E8E8E8!important;font-size:13px;font-weight:630;line-height:1.55;text-decoration:none!important;border-bottom:1px solid #616161;}
+#guide .sights-day-trips .daytrip-place-list a:hover {color:#FFF!important;border-color:#EEE;}
+#guide .sights-day-trips .daytrip-note {font-size:12.5px;line-height:1.8;}
+#guide .sights-day-trips .daytrip-place-group h4 {font-size:12.5px;}
+#guide .sights-day-trips .daytrip-option--alternative {
+  --choice-accent:#888;
+  padding:13px 12px 14px!important;
+  margin:10px 0 15px!important;
+}
+#guide .sights-day-trips .daytrip-option--alternative:first-of-type {border-top:1px solid #4A4A4A!important;}
+@media(max-width:355px){
+#guide .sights-day-trips .daytrip-option--alternative {padding:11px 9px 12px!important;}
+}
+#guide .sights-day-trips > h2 {
+  font-size:19px;
+  line-height:1.5;
+  letter-spacing:-.025em;
+  font-weight:790;
+  color:var(--text-heading,#F7F7F7);
+  scroll-margin-top:20px;
+}
+#guide .sights-day-trips > h2 strong {font-size:inherit;font-weight:inherit;color:inherit;}
+#guide .sights-day-trips .daytrip-option--alternative {background-color:transparent !important;}
+#guide .sights-day-trips .daytrip-option--bus-choice {
+  --choice-accent:#939393;background-image:linear-gradient(180deg,
+  rgba(154,164,174,.24) 0px,
+  rgba(154,164,174,.11) 68px,
+  rgba(154,164,174,.025) 140px,
+  transparent 205px)!important
+}
+#guide .sights-day-trips {
+  margin:19px 0 25px;
+  padding:20px 0 0;
+  min-width:0;
+  scroll-margin-top:16px;
+}
+#guide .sights-day-trips > h2 {margin:0 0 5px;}
+#guide .daytrip-destination-buttons {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;min-width:0;margin:0;padding:0;
+}
+#guide .daytrip-destination-button {
+  appearance:none;-webkit-appearance:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;min-width:0;min-height:75px;width:100%;
+  padding:11px 3px 9px;cursor:pointer;
+  border:1px solid #4B4B4B;border-radius:14px;
+  background:transparent;color:#D7D7D7;font:inherit;
+  font-size:12px;line-height:1.35;font-weight:690;
+  touch-action:manipulation;transition:background .16s,color .16s,border-color .16s;
+}
+#guide .daytrip-destination-button:hover {border-color:#939393;color:#F5F5F5;}
+#guide .daytrip-destination-button[aria-expanded="true"] {background:#F5F5F5!important;color:#111111!important;border-color:#F5F5F5!important;}
+#guide .daytrip-destination-button[aria-expanded="true"] .daytrip-destination-button-name {color:#111111!important;}
+#guide .daytrip-destination-button:focus-visible {outline:2px solid #F5F5F5;outline-offset:3px;}
+#guide .daytrip-destination-button-icon {
+  display:flex;align-items:center;justify-content:center;
+  width:27px;height:27px;flex:0 0 27px;font-size:23px;line-height:1;
+}
+#guide .daytrip-destination-button-icon img {
+  display:block;width:26px;height:26px;object-fit:contain;
+  margin:0!important;filter:none!important;
+}
+#guide .daytrip-destination-button-icon {position:relative;}
+#guide .daytrip-sky-lantern-fallback {display:none;font-size:23px;line-height:1;}
+#guide .daytrip-destination-button-icon.has-missing-icon img {display:none!important;}
+#guide .daytrip-destination-button-icon.has-missing-icon .daytrip-sky-lantern-fallback {display:block;}
+#guide .daytrip-destination-button-name {
+  display:block;min-width:0;color:inherit!important;
+  font-size:12px;font-weight:720;line-height:1.3;white-space:nowrap;
+}
+#guide .daytrip-destination-panels {min-width:0;}
+#guide .daytrip-destination-panel[hidden] {display:none!important;}
+#guide .sights-day-trips .daytrip-destination-panel {
+  margin:12px 0 0!important;padding:0 13px 12px!important;
+  border:1px solid #393939!important;border-radius:13px!important;
+  background:transparent!important;box-shadow:none!important;
+  min-width:0;
+}
+#guide .daytrip-destination-panel-heading {
+  padding:13px 1px 10px;border-bottom:1px solid #303030;
+  display:flex;flex-direction:column;gap:3px;
+}
+#guide .sights-day-trips .daytrip-destination-panel-title {margin:0;color:#F5F5F5;font-size:14px;font-weight:750;line-height:1.5;}
+#guide .sights-day-trips .daytrip-destination-panel-desc {margin:0;color:#A6A6A6;font-size:12px;line-height:1.65;}
+@media(max-width:365px){
+#guide .daytrip-destination-buttons {gap:6px;}
+#guide .daytrip-destination-button {min-height:70px;padding:9px 2px 8px;border-radius:12px;gap:5px;}
+#guide .daytrip-destination-button-name {font-size:11.5px;}
+#guide .sights-day-trips .daytrip-destination-panel {padding:0 10px 11px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .daytrip-destination-button {transition:none;}
+}
+#guide .sights-day-trips .daytrip-option--alternative {
+  --choice-rgb: 154,164,174;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.09)!important;
+  border-left:1px solid rgba(255,255,255,.09)!important;
+  border-radius:14px;
+  background:
+  linear-gradient(180deg, rgba(255,255,255,.030) 0%, rgba(255,255,255,.018) 56%, rgba(255,255,255,.010) 100%),
+  linear-gradient(145deg, rgba(var(--choice-rgb),.016) 0%, rgba(var(--choice-rgb),.008) 45%, rgba(var(--choice-rgb),.003) 100%)!important;
+  box-shadow:
+  0 8px 18px rgba(0,0,0,.11),
+  inset 0 1px 0 rgba(255,255,255,.08),
+  inset 0 -1px 0 rgba(255,255,255,.015)!important;
+}
+#guide .sights-day-trips .daytrip-option--alternative::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  z-index:0;
+  padding:.9px;
+  background:conic-gradient(from 196deg at 50% 50%,
+  rgba(255,255,255,.016) 0%,
+  rgba(255,255,255,.032) 16%,
+  rgba(255,255,255,.14) 28%,
+  rgba(255,255,255,.045) 46%,
+  rgba(255,255,255,.012) 65%,
+  rgba(var(--choice-rgb),.13) 83%,
+  rgba(255,255,255,.016) 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+#guide .sights-day-trips .daytrip-option--alternative::after {
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:13px;
+  pointer-events:none;
+  z-index:0;
+  background:
+  radial-gradient(110% 68% at 8% 0%, rgba(255,255,255,.09) 0%, rgba(255,255,255,.028) 20%, transparent 48%),
+  radial-gradient(90% 72% at 50% -6%, rgba(var(--choice-rgb),.11) 0%, rgba(var(--choice-rgb),.040) 28%, rgba(var(--choice-rgb),.012) 52%, transparent 74%),
+  radial-gradient(72% 58% at 102% 106%, rgba(var(--choice-rgb),.075) 0%, rgba(var(--choice-rgb),.022) 28%, transparent 58%),
+  linear-gradient(180deg, rgba(255,255,255,.016) 0%, transparent 32%);
+}
+#guide .sights-day-trips .daytrip-option--alternative > * {
+  position:relative;
+  z-index:1;
+}
+#guide .sights-day-trips .daytrip-option--bus-choice {--choice-rgb: 154,164,174;}
+@media(max-width:355px){
+#guide .sights-day-trips .daytrip-option--alternative {border-radius:13px;}
+#guide .sights-day-trips .daytrip-option--alternative::after {border-radius:12px;}
+}
+#guide .sights-day-trips > h3 {
+  color:var(--text-heading,#F7F7F7);
+
+  scroll-margin-top:20px;
+}
+#guide .sights-day-trips > h3 strong {
+  font-size:inherit;
+  font-weight:inherit;
+  color:inherit;
+}
+#guide .sights-day-trips {
+  border-top:0!important;
+  margin-top:17px!important;
+  padding-top:0!important;
+}
+#guide .sights-day-trips > h3 {margin-top:0!important;}
+@keyframes daytrip-station-appear-v26{from{opacity:0;transform:translate3d(0,12px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes daytrip-route-draw-v26{from{opacity:1;transform:translateX(-50%) scaleY(0)}
+  to{opacity:1;transform:translateX(-50%) scaleY(1)}}
+@keyframes daytrip-leg-label-v26{from{opacity:0;transform:translate3d(0,10px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}}
+#guide .sights-day-trips.daytrip-airport-display {
+  --daytrip-panel-bg:#0D0D0D;
+  --daytrip-route-blue:#478ED1;
+  --daytrip-route-bus:#9DA7B2;
+  --daytrip-route-taxi:#D9B65F;
+}
+#guide .daytrip-airport-display .daytrip-option,
+#guide .daytrip-airport-display .daytrip-option--alternative {
+  --choice-rgb:154,164,174;
+  position:relative;
+  border:0!important;
+  border-top:1px solid #343434!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  isolation:auto;
+  overflow:visible;
+  margin:14px 0 0!important;
+  padding:15px 0 5px!important;
+}
+#guide .daytrip-airport-display .daytrip-option::before,
+#guide .daytrip-airport-display .daytrip-option::after {content:none!important;display:none!important;}
+#guide .daytrip-airport-display .daytrip-option > * {position:relative;z-index:auto;}
+#guide .daytrip-airport-display .daytrip-option--tour-combined {margin-top:18px!important;padding-top:15px!important;}
+#guide .daytrip-airport-display .tab-panel > .daytrip-note--important {margin:12px 0 6px;}
+#guide .sights-day-trips .daytrip-option:has(> .daytrip-airport-reuse) {
+  margin-top:10px!important;
+  padding-top:0!important;
+  border-top:0!important;
+}
+#guide .sights-day-trips .daytrip-airport-reuse {
+  margin:0!important;
+  color:#F4F4F4;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-head-name {
+  min-width:0;
+  overflow-wrap:anywhere;
+  flex:0 1 auto;
+}
+#guide .sights-day-trips .daytrip-airport-reuse .daytrip-company-mark svg {
+  display:block;
+  width:20px;
+  height:20px;
+}
+#guide .sights-day-trips .daytrip-option:has(> .daytrip-airport-reuse)::before,
+#guide .sights-day-trips .daytrip-option:has(> .daytrip-airport-reuse)::after {display:none!important}
+@media(max-width:354px){
+#guide .sights-day-trips .daytrip-airport-reuse .daytrip-canonical-head-name {font-size:12px}
+}
+#guide .sights-day-trips .tab-pills.daytrip-transport {
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:repeat(var(--daytrip-tab-count),minmax(0,1fr))!important;
+  align-items:stretch!important;
+  gap:0!important;
+  margin:13px 0 11px!important;
+  padding:0!important;
+  min-height:39px!important;
+  border:0!important;
+  border-bottom:1px solid #353535!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  scroll-snap-type:none!important;
+  white-space:normal!important;
+}
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab {
+  position:relative!important;
+  min-height:39px!important;
+  min-width:0!important;
+  width:100%!important;
+  flex:none!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#9B9B9B!important;
+  font-size:12.5px!important;font-weight:670!important;line-height:1.45!important;font-family:inherit!important;
+  letter-spacing:.005em!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  padding:8px 2px 10px!important;
+  text-align:center!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  opacity:1!important;
+  transform:none!important;
+}
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab[aria-selected="true"] {color:#F5F5F5!important;font-weight:775!important;}
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab::before,
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab::after {content:none!important;display:none!important;}
+#guide .sights-day-trips .daytrip-transport[data-scroll-fade]::before,
+#guide .sights-day-trips .daytrip-transport[data-scroll-fade]::after {display:none!important}
+@media (max-width:354px){
+#guide .sights-day-trips .daytrip-transport > .tab-pill.daytrip-transport-tab {font-size:11.5px!important;letter-spacing:-.01em!important}
+}
+#guide .sights-day-trips .daytrip-bus-airport-style {
+  margin:0!important;
+  color:#F4F4F4;
+}
+#guide .sights-day-trips .daytrip-bus-combined {border-top:0!important;padding-top:0!important}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-head-name {
+  min-width:0;font-size:12.5px;color:#EDEDED;font-weight:730;
+  white-space:normal;overflow-wrap:anywhere;
+}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route[hidden],
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-facts[hidden] {display:none!important}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices {display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0 9px;}
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices span {text-align:right;font-size:11px;color:#D7D7D7;overflow-wrap:anywhere;}
+@media(max-width:354px){
+#guide .sights-day-trips .daytrip-bus-airport-style .daytrip-bus-route-choices span {font-size:10.5px}
+}
+#guide .sights-day-trips .daytrip-transport {touch-action:pan-y;}
+@keyframes daytrip-slide-enter{from{opacity:.14;transform:translate3d(var(--daytrip-enter-from,68px),0,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-enter {
+  animation:daytrip-slide-enter 520ms cubic-bezier(.17,.92,.25,1) both!important;
+  will-change:transform,opacity;
+}
+#guide .sights-day-trips .daytrip-tra-mark {display:inline-flex;align-items:center;justify-content:center;flex:none;}
+#guide .sights-day-trips .daytrip-tra-logo {width:21px;height:21px;object-fit:contain;display:block}
+#guide .sights-day-trips .daytrip-tra-fallback {display:none;font-size:9px;font-weight:800;letter-spacing:-.025em;color:#93B3FF}
+#guide .sights-day-trips .daytrip-tra-logo:not([src]),
+#guide .sights-day-trips .daytrip-tra-logo[src=""] {display:none}
+#guide .sights-day-trips .daytrip-tra-mark:has(.daytrip-tra-logo:not([src])) .daytrip-tra-fallback {display:block}
+@media(prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-enter {animation:none!important;will-change:auto}
+}
+#guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-logo {display:none}
+#guide .sights-day-trips .daytrip-tra-mark.logo-unavailable .daytrip-tra-fallback {display:block}
+#guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-logo {
+  filter:grayscale(1) brightness(0) invert(1);
+  -webkit-filter:grayscale(1) brightness(0) invert(1);
+}
+#guide .sights-day-trips .daytrip-destination-panel .tab-pills.daytrip-transport {overscroll-behavior-x:contain;}
+#guide .sights-day-trips .daytrip-company-mark:not(.daytrip-tra-mark) svg {
+  color:#F7F7F7;stroke:#F7F7F7;fill:none;opacity:1;
+  display:block;width:20px;height:20px;
+}
+#guide .sights-day-trips .daytrip-tra-mark {overflow:visible;width:22px;height:22px;}
+@keyframes daytrip-slide-exit{from{opacity:.9;transform:translate3d(0,0,0)}
+ to{opacity:0;transform:translate3d(var(--daytrip-exit-to,-56px),0,0)}}
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-ghost {
+  position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;
+  animation:daytrip-slide-exit 360ms cubic-bezier(.25,.74,.22,1) both!important;
+  will-change:transform,opacity;
+}
+@media(prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-destination-panel .tab-panels > .tab-panel.daytrip-switch-ghost {animation:none!important;will-change:auto;}
+}
+#guide .sights-day-trips .daytrip-destination-panel-heading {
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;column-gap:9px;row-gap:3px;
+}
+#guide .sights-day-trips .daytrip-destination-panel-heading .daytrip-destination-panel-title {grid-column:1;grid-row:1;min-width:0;}
+#guide .sights-day-trips .daytrip-destination-panel-heading .daytrip-destination-panel-desc {grid-column:1 / -1;grid-row:2;min-width:0;}
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now {
+  grid-column:2;grid-row:1;justify-self:end;align-self:center;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:30px;padding:5px 10px;border-radius:100px;
+  border:1px solid rgba(82,153,245,.60);background:rgba(47,116,207,.14);
+  color:#88C4FF!important;font:700 11px/1.3 -apple-system,BlinkMacSystemFont,
+  "Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  white-space:nowrap;text-decoration:none!important;letter-spacing:.01em;
+  transition:background .16s ease,border-color .16s ease;
+}
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now::before,
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now::after {content:none!important;}
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now:hover {background:rgba(47,116,207,.26);border-color:#88C4FF;}
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now:focus-visible {outline:2px solid #88C4FF;outline-offset:3px;}
+@media(max-width:350px){
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now {min-height:29px;padding:5px 8px;font-size:10.5px;}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-destination-panel-heading a.daytrip-depart-now {transition:none;}
+}
+#guide .sights-day-trips .daytrip-destination-panel {margin-top:8px!important; /* originally 12px */}
+#guide .sights-day-trips .daytrip-destination-panel-heading {padding-top:10px!important;padding-bottom:8px!important;}
+#guide .sights-day-trips .tab-pills.daytrip-transport {margin-top:9px!important;margin-bottom:9px!important;}
+#guide .sights-day-trips .daytrip-destination-button {
+  position:relative!important;
+  height:75px;min-height:75px;
+  overflow:hidden;
+  transition:height .38s cubic-bezier(.22,.8,.23,1),
+  min-height .38s cubic-bezier(.22,.8,.23,1),
+  padding .38s cubic-bezier(.22,.8,.23,1),
+  border-radius .38s cubic-bezier(.22,.8,.23,1),
+  background .16s ease,color .16s ease,border-color .16s ease!important;
+}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon {
+  position:absolute!important;top:36%;left:50%;
+  transform:translate(-50%,-50%);
+  width:27px;height:27px;flex:none;
+  transition:top .38s cubic-bezier(.22,.8,.23,1),
+  left .38s cubic-bezier(.22,.8,.23,1),
+  width .38s cubic-bezier(.22,.8,.23,1),
+  height .38s cubic-bezier(.22,.8,.23,1),
+  font-size .38s cubic-bezier(.22,.8,.23,1)!important;
+}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon img {
+  width:26px;height:26px;
+  transition:width .38s cubic-bezier(.22,.8,.23,1),
+  height .38s cubic-bezier(.22,.8,.23,1)!important;
+}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-name {
+  position:absolute!important;top:74%;left:50%;
+  transform:translate(-50%,-50%);white-space:nowrap;
+  transition:top .38s cubic-bezier(.22,.8,.23,1),
+  left .38s cubic-bezier(.22,.8,.23,1),
+  font-size .38s cubic-bezier(.22,.8,.23,1)!important;
+}
+@media(max-width:600px){
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button {padding:0 1px!important}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon {top:50%;left:23%;width:19px;height:19px;font-size:18px;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon img {width:19px!important;height:19px!important;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-name {top:50%;left:67%;font-size:11px!important;}
+}
+@media(max-width:365px){
+#guide .sights-day-trips .daytrip-destination-button {height:70px;min-height:70px;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button {height:38px!important;min-height:38px!important;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon {left:22%;width:17px;height:17px;font-size:16px;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-icon img {width:17px!important;height:17px!important;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button > .daytrip-destination-button-name {left:66%;font-size:10.5px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-destination-button,
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon,
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon img,
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-name {transition:none!important;}
+}
+@media (max-width:600px){
+#guide .sights-day-trips .daytrip-destination-panel {margin-top:4px!important;}
+#guide .sights-day-trips .daytrip-destination-panel-heading {padding-top:7px!important;padding-bottom:6px!important;}
+#guide .sights-day-trips .tab-pills.daytrip-transport {margin-top:5px!important;margin-bottom:6px!important;}
+}
+@media(max-width:600px){
+#guide .sights-day-trips .daytrip-destination-panel .tab-pills.daytrip-transport {margin-bottom:4px!important;}
+#guide .sights-day-trips .daytrip-destination-panel .daytrip-option:has(> .daytrip-airport-reuse) {margin-top:3px!important;}
+}
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta {
+  margin-left:auto;align-self:flex-start;flex:0 0 auto;min-width:0;
+  display:flex;flex-direction:column;align-items:flex-end;
+  font-weight:670;text-align:right;
+  color:#D4D4D4;
+}
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta[hidden] {display:none!important;}
+#guide .sights-day-trips .route-panel .rail-title :is(.daytrip-bus-head-name,.daytrip-canonical-head-name) {min-width:0;flex:1 1 auto;}
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta {font-size:14.175px;line-height:1.23;letter-spacing:-.025em;gap:3px;max-width:min(48%,165px);white-space:normal;overflow-wrap:break-word}
+@media(max-width:355px){
+#guide .sights-day-trips .route-panel .rail-title .daytrip-route-head-meta {font-size:12.96px;letter-spacing:-.035em;}
+}
+#guide .sights-day-trips .daytrip-fold-section {padding:0!important;margin:0!important;border-top:1px solid #333!important;}
+#guide .sights-day-trips .daytrip-place-group.daytrip-fold-section {padding:0!important;margin:0!important;border-top:1px solid #333!important;}
+#guide .sights-day-trips .daytrip-option--tour-combined.daytrip-fold-section {padding:0!important;margin:0!important;border-top:1px solid #333!important;}
+#guide .sights-day-trips .daytrip-inline-accordion {
+  margin:0!important;padding:0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion > summary {
+  display:block;list-style:none;position:relative;cursor:pointer;
+  margin:0!important;padding:14px 30px 14px 1px!important;
+  background:transparent!important;border:0!important;
+  color:#E8E8E8!important;font-size:13px!important;font-weight:700!important;line-height:1.5!important;
+  min-height:46px;
+}
+#guide .sights-day-trips .daytrip-inline-accordion > summary::-webkit-details-marker {display:none!important;}
+#guide .sights-day-trips .daytrip-inline-accordion > summary::after {
+  content:""!important;position:absolute!important;right:9px!important;top:50%!important;
+  display:block;width:8px;height:8px;border-right:1.6px solid currentColor;
+  border-bottom:1.6px solid currentColor;color:#B7C1C5;
+  transform:translateY(-65%) rotate(45deg)!important;
+  transition:transform .25s ease!important;font-size:0!important;
+}
+#guide .sights-day-trips .daytrip-inline-accordion[open] > summary::after {transform:translateY(-25%) rotate(225deg)!important;}
+#guide .sights-day-trips .daytrip-inline-accordion > summary:focus-visible {outline:2px solid #83B5D0;outline-offset:-2px;border-radius:3px;}
+#guide .sights-day-trips .daytrip-inline-accordion > .daytrip-inline-accordion-body {margin:0!important;padding:0 2px 14px!important;}
+#guide .sights-day-trips .daytrip-inline-accordion .daytrip-note {margin:0!important;padding:0!important;}
+#guide .sights-day-trips .daytrip-inline-accordion .daytrip-place-list {margin:0!important;padding:0!important;}
+@media (prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-inline-accordion > summary::after {transition:none!important;}
+}
+#guide .sights-day-trips > h3 {margin:30px 0 10px!important;font-size:16px!important;line-height:1.35!important;font-weight:780!important;letter-spacing:-.01em!important;}
+#guide :is(#travel,#food,#sights,#city-walk,#experience-souvenirs,#day-trips).jump-anchor {scroll-margin-top:30px}
+#guide .sights-day-trips {--dt-page:#0D0D0D;--dt-tab:#F5F5F5;}
+@media(max-width:600px){
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-buttons {gap:6px;align-items:start;position:relative;z-index:2;margin-bottom:0!important;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button {height:39px!important;min-height:39px!important;border-radius:10px!important;margin-bottom:6px;overflow:visible!important;}
+#guide .sights-day-trips .daytrip-destination-button > .daytrip-destination-button-icon {transition-property:top,left,width,height,font-size,opacity!important;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] {
+  height:46px!important;min-height:46px!important;margin-bottom:-1px;z-index:3;
+  border-radius:11px 11px 0 0!important;border-color:transparent!important;
+  background:linear-gradient(to bottom,var(--dt-tab) 0,var(--dt-tab) calc(100% - 15px),var(--dt-page) 100%) border-box no-repeat!important;
+}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-icon {opacity:0;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-button[aria-expanded="true"] > .daytrip-destination-button-name {top:42%!important;left:50%;font-size:13px!important;font-weight:800!important;letter-spacing:.02em;}
+#guide .sights-day-trips.daytrip-mode-compact .daytrip-destination-panel {margin-top:0!important;border-top-left-radius:13px!important;border-top-right-radius:13px!important;}
+#guide .sights-day-trips.daytrip-mode-compact:has(.daytrip-destination-button:first-child[aria-expanded="true"]) .daytrip-destination-panel {border-top-left-radius:0!important;}
+#guide .sights-day-trips.daytrip-mode-compact:has(.daytrip-destination-button:last-child[aria-expanded="true"]) .daytrip-destination-panel {border-top-right-radius:0!important;}
+}
+#guide .sights-day-trips .daytrip-destination-panel-heading.daytrip-banner {
+  position:relative!important;display:block!important;aspect-ratio:2019/366;
+  padding:0!important;margin:10px 0 0!important;gap:0!important;
+}
+#guide .sights-day-trips .daytrip-banner::before,
+#guide .sights-day-trips .daytrip-banner .daytrip-scene {
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 22%,#000 72%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 22%,#000 72%,transparent 100%);
+  mask-composite:intersect;
+}
+#guide .sights-day-trips .daytrip-banner::before {content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:center/cover no-repeat;transition:opacity .2s ease;}
+#guide .sights-day-trips .daytrip-banner.has-scene::before {opacity:0;}
+#guide .sights-day-trips .daytrip-banner--jiufen::before {background-image:url("../assets/daytrips/jiufen.webp");}
+#guide .sights-day-trips .daytrip-banner--shifen::before {background-image:url("../assets/daytrips/shifen.webp");}
+#guide .sights-day-trips .daytrip-banner--keelung::before {background-image:url("../assets/daytrips/keelung.webp");}
+#guide .sights-day-trips .daytrip-banner--yehliu::before {background-image:url("../assets/daytrips/yehliu.webp");}
+#guide .sights-day-trips .daytrip-banner .daytrip-destination-panel-title {position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+#guide .sights-day-trips .daytrip-banner .daytrip-destination-panel-desc {
+  position:absolute;z-index:1;left:4px;right:8px;top:8px;margin:0!important;
+  display:flex;align-items:center;gap:6px;min-width:0;
+  color:#FFFFFF!important;font-size:12px!important;font-weight:700;line-height:1.3!important;letter-spacing:.02em;
+  text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 8px rgba(0,0,0,.25);
+}
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-text {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon {flex:none;display:inline-flex;align-items:center;font-size:14px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));}
+#guide .sights-day-trips .daytrip-banner .daytrip-banner-icon img {display:block;width:15px;height:15px;object-fit:contain;}
+#guide .sights-day-trips .daytrip-scene {position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+#guide .sights-day-trips .daytrip-scene > .daytrip-layer {position:absolute;display:block;max-width:none;margin:0;pointer-events:none;will-change:auto;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer {
+  animation-duration:calc(var(--base,6s) * var(--rate,1));animation-delay:var(--delay,0s);
+  animation-iteration-count:infinite;animation-timing-function:ease-in-out;animation-fill-mode:both;
+}
+#guide .sights-day-trips .daytrip-scene.is-paused > .daytrip-layer {animation-play-state:paused!important;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--swing {animation-name:dt-gust;--base:5.6s;transform-origin:50% 0;animation-timing-function:linear;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--sway-far {animation-name:dt-gust-far;--base:5.6s;animation-timing-function:linear;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--glow {animation-name:dt-glow;--base:6.5s;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--float {animation-name:dt-drift,dt-flicker;animation-duration:calc(7s * var(--rate,1)),calc(3.4s * var(--rate,1));transform-origin:50% 50%;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--float-far {animation-name:dt-drift-far,dt-flicker-far;animation-duration:calc(9s * var(--rate,1)),calc(4.2s * var(--rate,1));}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--shimmer {animation-name:dt-shimmer;--base:4.8s;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--bob {animation-name:dt-boat;--base:5.2s;transform-origin:50% 85%;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--breeze {animation-name:dt-breeze;--base:8.5s;animation-timing-function:linear;transform-origin:50% 50%;filter:brightness(1.3);}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wind {animation-name:dt-wind;--base:6.5s;animation-timing-function:linear;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--ripple {animation-name:dt-ripple;--base:7s;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wave {animation-name:dt-surf;--base:6s;}
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer--wave-far {animation-name:dt-surf-far;--base:8s;}
+@media(prefers-reduced-motion:reduce){
+#guide .sights-day-trips .daytrip-scene.is-playing > .daytrip-layer {animation:none!important;}
+}
+
+/* from figma-daytrip-v250.css */
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > .tt-view-hidden,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > hr.chapter-glow,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > .chapter-eyebrow,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > h2,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > p.chapter-lead,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > .food-theme-dock {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide > .tt-chapter-heading[data-tt-chapter='day-trips'] {
+  display:flex!important;height:34px!important;min-height:34px!important;
+  box-sizing:border-box!important;align-items:center!important;gap:16px!important;
+  margin:0!important;padding:0!important;border-bottom:1px solid rgba(218,218,218,.45)!important;
+  color:#fff!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] .tt-chapter-heading[data-tt-chapter='day-trips'] .tt-chapter-number {min-width:28px!important;font:400 18px/1.2 var(--tt2-num)!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] .tt-chapter-heading[data-tt-chapter='day-trips'] .tt-chapter-name {font:400 15px/1.2 var(--tt2-serif)!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips {
+  display:block!important;margin:0!important;padding:0!important;width:100%!important;max-width:none!important;
+  box-sizing:border-box!important;min-height:0!important;background:#000!important;
+  border:none!important;border-radius:0!important;box-shadow:none!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips > .destination-lead {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons {
+  display:grid!important;
+  position:relative!important;inset:auto!important;transform:none!important;
+  padding:0!important;gap:0!important;border:0!important;
+  border-bottom:1px solid rgba(220,220,220,.46)!important;
+  border-radius:0!important;background:#000!important;
+  height:46px!important;min-height:46px!important;max-height:46px!important;
+  box-shadow:none!important;overflow:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button {
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  transform:none!important;position:static!important;
+  background:transparent!important;
+  border:0!important;border-right:1px solid rgba(200,200,200,.32)!important;
+  border-radius:0!important;box-shadow:none!important;
+  font:400 12px/1.2 var(--tt2-ui)!important;
+  min-width:0!important;width:100%!important;max-width:none!important;
+  height:45px!important;min-height:45px!important;max-height:45px!important;
+  margin:0!important;padding:0!important;opacity:1!important;letter-spacing:0!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button:last-child {border-right:0!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button[aria-expanded='true'] {color:#fff!important;font-weight:600!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons .daytrip-destination-button-icon {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons .daytrip-destination-button-name {font-size:0!important;display:block!important;line-height:1!important;margin:0!important;padding:0!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button-name::after {font-size:12px!important;line-height:1.2!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button:nth-child(1) .daytrip-destination-button-name::after {content:'九份';}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button:nth-child(2) .daytrip-destination-button-name::after {content:'十分';}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button:nth-child(3) .daytrip-destination-button-name::after {content:'基隆';}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button:nth-child(4) .daytrip-destination-button-name::after {content:'野柳';}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button:focus-visible {outline:1px solid #fff!important;outline-offset:-3px!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > .daytrip-destination-button .daytrip-destination-button-name {
+  position:static!important;inset:auto!important;transform:none!important;
+  width:auto!important;max-width:none!important;height:auto!important;
+  display:block!important;visibility:visible!important;opacity:1!important;
+  font:inherit!important;font-size:12px!important;line-height:1.2!important;
+  color:inherit!important;text-align:center!important;white-space:nowrap!important;
+  padding:0!important;margin:0!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > .daytrip-destination-button .daytrip-destination-button-name::after {content:none!important;display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide #daytrip-destination-panel-2[data-tt2-submode='true'] .daytrip-transport {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips {
+  height:calc(100dvh - var(--tt2-trip-content-top, 138px))!important;
+  max-height:calc(100dvh - var(--tt2-trip-content-top, 138px))!important;
+  overflow:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips {scroll-behavior:auto!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons {
+  width:100%!important;
+  margin:0!important;
+  left:auto!important;right:auto!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips {
+  --tt2-ui:'A P-OTF UD Shin Go Pr6N','Hiragino Kaku Gothic ProN','Hiragino Sans',
+  'Noto Sans JP',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button {
+  letter-spacing:0!important;
+  -webkit-font-smoothing:antialiased;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-button {
+  -webkit-appearance:none!important;
+  appearance:none!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips.tt221-ready {
+  display:flex!important;flex-direction:column!important;
+  height:calc(100dvh - var(--tt2-sitebar-height,104px) - 34px)!important;
+  max-height:calc(100dvh - var(--tt2-sitebar-height,104px) - 34px)!important;
+  min-height:0!important;overflow:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips.tt221-ready > .daytrip-destination-panels {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips.tt221-ready .daytrip-destination-buttons {flex:0 0 46px!important;height:46px!important;min-height:46px!important;max-height:46px!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-mode-nav {
+  --tt221-columns:3;box-sizing:border-box;flex:0 0 46px;height:46px;min-height:46px;
+  display:grid;grid-template-columns:repeat(var(--tt221-columns,3),minmax(0,1fr));
+  border-bottom:1px solid rgba(214,214,214,.38);background:#000;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-mode {
+  appearance:none;-webkit-appearance:none;position:relative;display:flex;align-items:center;justify-content:center;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  padding:0 3px!important;margin:0!important;min-width:0;cursor:pointer;
+  white-space:nowrap;overflow:hidden;
+  font:400 12px/1 var(--tt2-ui)!important;letter-spacing:0!important;
+}
+
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-mode[aria-selected='true']::after {content:'';position:absolute;bottom:0;height:2px;width:54px;max-width:75%;background:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stage {
+  position:relative;flex:1 1 0;min-height:0;height:auto;width:calc(100% + 32px);
+  margin-left:-16px!important;margin-right:-16px!important;
+  box-sizing:border-box;background:#000;color:#fff;overflow:hidden;
+  --tt221-rail:#4287C8;--tt221-taxi:#CCA46E;--tt221-bus:#9E9E9E;
+  font-family:var(--tt2-ui);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-row {
+  position:relative;z-index:8;display:flex;align-items:center;justify-content:space-between;
+  box-sizing:border-box;height:61px;padding:0 28px;gap:12px;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-wrap {position:relative;display:flex;align-items:center;min-width:0;flex:0 1 170px;gap:6px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-tag {
+  display:inline-flex;align-items:center;flex:none;height:15px;padding:0 3px;border-radius:3px;
+  box-sizing:border-box;background:#fff;color:#000;font:600 9px/15px var(--tt2-ui);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-tag[hidden] {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-button {
+  appearance:none;-webkit-appearance:none;position:relative;display:flex;align-items:center;
+  justify-content:space-between;flex:1 1 auto;min-width:0;height:26px;
+  padding:0 0 0 2px!important;margin:0!important;background:transparent!important;
+  border:0!important;border-bottom:1px solid rgba(190,190,190,.5)!important;
+  border-radius:0!important;box-shadow:none!important;color:#fff!important;
+  font:600 12px/1.2 var(--tt2-ui)!important;text-align:left;cursor:pointer;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-label {overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-chevron {
+  flex:none;width:0;height:0;border-left:4.5px solid transparent;
+  border-right:4.5px solid transparent;border-top:5px solid #fff;margin-right:1px;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-wrap.tt221-single .tt221-pick-button {border-bottom:0!important;cursor:default;opacity:1!important;-webkit-text-fill-color:#fff!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-wrap.tt221-single .tt221-pick-chevron {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-menu {
+  position:absolute;z-index:20;left:0;top:31px;min-width:176px;max-width:calc(100vw - 54px);
+  padding:5px;background:#121212;border:1px solid #636363;border-radius:5px;
+  box-shadow:0 12px 28px #000b;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-menu[hidden] {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-menu-item {
+  display:block;width:100%;min-height:36px;text-align:left;
+  margin:0!important;padding:8px 10px!important;border:0!important;background:transparent!important;
+  color:#c5c5c5!important;font:400 12px/1.3 var(--tt2-ui)!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-menu-item[aria-selected='true'] {color:#fff!important;background:#292929!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-map-link,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-map-link:visited {
+  /* v2.0.38: Figma「Route Button」89×28, white capsule, 13px Noto Sans JP Medium in black.
+  Right edge unchanged (x365); its bottom sits on the bottom of the route picker's
+  underline on the left (2px bottom margin in this centred row). */
+  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  flex:0 0 89px;width:89px;height:28px;margin:0 0 2px;padding:0 12px;border:0;border-radius:100px;
+  background:#fff;
+  text-decoration:none!important;color:#000!important;-webkit-text-fill-color:#000!important;
+  font:600 13px/1 'Noto Sans JP',var(--tt2-ui)!important; /* v2.0.39: SemiBold */letter-spacing:0;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-map-link:focus-visible {outline:2px solid #ddd;outline-offset:2px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-glow {
+  position:absolute;top:61px;
+  /* Match the home/section divider glow rather than a separate olive tint. */
+
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-route-meta {
+  position:absolute;right:28px;top:95px;z-index:2;max-width:49%;display:flex;
+  align-items:flex-end;flex-direction:column;gap:4px;text-align:right;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-fare {color:#a4a4a4;font:400 10px/1.2 var(--tt2-ui);white-space:nowrap;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-duration {color:#fff;font:600 13px/1.3 var(--tt2-ui);white-space:nowrap;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-meta-note {color:#9f9f9f;font:400 9px/1.4 var(--tt2-ui);white-space:normal;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-track {
+  position:absolute;top:101px;left:0;right:0;
+  height:min(322px, max(150px, calc(100% - 245px)));
+  overflow:visible;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-line {
+  display:block;position:absolute;left:73px;width:3px;min-height:0;
+  border-radius:1px;background:var(--tt221-bus);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-line--rail {background:var(--tt221-rail);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-line--taxi {background:var(--tt221-taxi);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-line--bus {background:var(--tt221-bus);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-line--walk {background:repeating-linear-gradient(to bottom,var(--tt221-bus) 0 5px,transparent 5px 10px);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop {display:block;position:absolute;left:0;right:0;height:20px;transform:translateY(-2px);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-status {position:absolute;left:30px;top:-1px;color:#a4a4a4;font:400 11px/17px var(--tt2-ui);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-dot {
+  position:absolute;left:70px;top:3px;width:10px;height:10px;border:2px solid #fff;
+  border-radius:50%;box-sizing:border-box;background:#000;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop--transfer .tt221-dot {
+  left:66px;top:-1px;width:18px;height:18px;
+  border:3px solid #fff;background:#000;box-shadow:none;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop--transfer .tt221-dot::after {
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:6px;height:6px;border-radius:50%;background:#fff;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop--transfer .tt221-status {
+  left:28px;top:0;width:30px;height:16px;display:inline-block;
+  box-sizing:border-box;padding:0;text-align:center;
+  background:#fff;color:#000;border-radius:3px;
+  font:600 11px/16px var(--tt2-ui);white-space:nowrap;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop--end .tt221-dot {background:#d4d4d4;border-color:#d4d4d4;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-station {
+  position:absolute;left:92px;top:0;display:flex;flex-direction:column;gap:4px;
+  color:#fff;font-family:var(--tt2-ui);white-space:normal;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-station strong {font:600 12px/1.3 var(--tt2-ui);white-space:nowrap;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop--start .tt221-station strong,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stop--end .tt221-station strong {font-size:calc(12px + 1.5pt);line-height:1.3;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-station-sub {color:#a2a2a2;font:400 10px/1.25 var(--tt2-ui);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-leg {position:absolute;left:102px;right:24px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-leg-small {color:#a8a8a8;font:400 10px/1.25 var(--tt2-ui);white-space:normal;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-rail-row {display:inline-flex;align-items:center;gap:5px;height:16px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-rail-logo {
+  display:block;width:16px;height:16px;object-fit:contain;
+  filter:brightness(0) invert(1);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-rail-label {
+  padding:0px 3px;min-height:15px;border-radius:2px;background:#f7f7f7;
+  color:#000;font:600 10px/15px var(--tt2-ui);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-leg-direction {color:#fff;font:600 12px/1.3 var(--tt2-ui);white-space:normal;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-leg-note {color:#9d9d9d;font:400 10px/1.3 var(--tt2-ui);white-space:normal;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-warning {
+  position:absolute;left:30px;right:30px;
+  margin:0!important;padding:0!important;text-align:center;white-space:pre-line;
+  color:#969696!important;font:400 calc(9px + 1pt)/1.5 var(--tt2-ui)!important;
+}
+html.tt2-fidelity.tt-ios-safari-tab[data-tt-view='day-trips'] #guide .sights-day-trips.tt221-ready {
+  height:calc(100dvh - var(--tt2-sitebar-height,104px) - 34px)!important;
+  max-height:calc(100dvh - var(--tt2-sitebar-height,104px) - 34px)!important;
+  overflow:hidden!important;
+}
+@media(max-width:359px){
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-pick-row {padding-left:22px;padding-right:22px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-leg {right:12px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-route-meta {right:20px;}
+}
+@media (max-height:680px){
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stage[data-tt221-stops='3'] .tt221-leg {top:calc(var(--tt221-leg-base) + 27px)!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stage[data-tt221-stops='3'] .tt221-leg-note,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-stage[data-tt221-stops='3'] .tt221-station-sub {display:none!important;}
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-warning,
+html.tt2-fidelity.tt-ios-safari-tab[data-tt-view='day-trips'] #guide .tt221-warning {
+  top:calc(101px + min(322px, max(150px, calc(100% - 245px))) + 67px)!important;
+  bottom:auto!important;
+}
+@media(max-height:700px){
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-warning {top:calc(101px + min(322px, max(150px, calc(100% - 245px))) + 40px)!important;bottom:auto!important;}
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-station a.tt221-place,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-station a.tt221-place:visited {
+  color:inherit!important;-webkit-text-fill-color:currentColor!important;font:inherit!important;
+  text-decoration:underline!important;text-decoration-thickness:1px!important;text-underline-offset:4px!important;
+  text-decoration-color:rgba(255,255,255,.35)!important;-webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-station a.tt221-place:focus-visible {outline:2px solid #ddd;outline-offset:2px;border-radius:2px;}
+
+/* from figma-identity-v225.css */
+html.tt2-fidelity[data-tt-view="day-trips"] #guide .tt221-rail-logo {
+  filter:none!important;-webkit-filter:none!important;
+  object-fit:contain;aspect-ratio:1/1;
+}
+html.tt2-fidelity #guide .sights-day-trips .daytrip-tra-mark .daytrip-tra-logo {
+  filter:none!important;-webkit-filter:none!important;
+  object-fit:contain;aspect-ratio:1/1;
+}
+
+/* from figma-top-standard-v235.css */
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons {border-bottom-color:var(--tt2-std-rule)!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button {
+  border-right-color:var(--tt2-std-rule)!important;
+  font-family:var(--tt2-std-ui)!important;font-size:12px!important;font-weight:400!important;
+  color:var(--tt2-std-off)!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button .daytrip-destination-button-name,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button .daytrip-destination-button-name::after {font-family:var(--tt2-std-ui)!important;font-weight:inherit!important;color:inherit!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .daytrip-destination-buttons > button.daytrip-destination-button:is([aria-expanded='true'],[aria-selected='true'],.is-active) {font-weight:700!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-mode-nav {margin-top:-1px!important;border-bottom-color:var(--tt2-std-rule)!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-mode {font-family:var(--tt2-std-ui)!important;font-size:12px!important;font-weight:400!important;color:var(--tt2-std-off)!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-mode[aria-selected='true'] {font-weight:700!important;color:#fff!important;}
+
+/* from figma-glow-v236.css */
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-glow {
+  content:''!important;
+  width:auto!important;height:56px!important;
+  background:var(--tt2-glow)!important;
+  -webkit-mask-image:var(--tt2-glow-mask)!important;mask-image:var(--tt2-glow-mask)!important;
+  filter:blur(2px)!important;opacity:1!important;
+  transform:none;transform-origin:50% 0;
+  animation:tt2-glow-in .7s cubic-bezier(.2,.7,.3,1) both!important;
+  pointer-events:none!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-glow {left:16px!important;right:16px!important;}
+@media(prefers-reduced-motion:reduce){
+html.tt2-fidelity .tt221-glow {animation:none!important;}
+}
+
+/* from figma-daytrip-v269.css */
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips.tt269-ready > :is(.tt221-mode-nav,.tt221-stage) {display:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .sights-day-trips.tt269-ready > .tt269-page {
+  flex:1 1 auto;min-height:0;margin:0 -16px;padding:0 16px;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  color:#fff;font-family:var(--tt2-ui);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-page::-webkit-scrollbar {display:none;}
+:where(html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-page) :where(h3,h4,p,ul,ol,li) {margin:0;padding:0;list-style:none;letter-spacing:0;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-hero {position:relative;height:307px;margin:0;overflow:hidden;background:#1a1a1a;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-hero img {display:block;width:100%;height:100%;object-fit:cover;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-hero::after {
+  content:'';position:absolute;left:0;right:0;top:142px;height:165px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,.7) 55%,#000 100%);
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-hero-text {position:absolute;z-index:1;left:11px;right:11px;top:212px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-ro {display:block;font:500 10px/14px var(--tt2-ui);letter-spacing:.24em;color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-place {margin:2px 0 0 -2px;font:400 40px/52px var(--tt2-serif);color:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-tagline {margin:6px 0 0;font:400 14px/21px var(--tt2-serif);color:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-sec,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-access {border-top:.67px solid #666464;padding:16px 0 16px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-hero + .tt269-sec {margin-top:23px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-label {margin:0;padding-left:11px;font:500 10px/14px var(--tt2-ui);letter-spacing:.08em;color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-label.tt269-label--sub {margin-top:23px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-bubbles {display:flex;flex-wrap:wrap;gap:10px 15px;margin:9px 0 0;padding:0 0 0 11px;list-style:none;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-bubbles > li {
+  display:flex;align-items:center;box-sizing:border-box;height:30px;margin:0;padding:0 12px;
+  border:1px solid #666464;border-radius:999px;font:500 13px/19px var(--tt2-ui);color:#fff;white-space:nowrap;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-bubbles > li:has(> a) {padding:0;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-bubbles > li > a {
+  display:flex;align-items:center;height:100%;padding:0 12px;border-radius:inherit;font:500 13px/19px var(--tt2-ui)!important;
+  color:#fff!important;text-decoration:none!important;-webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-bubbles > li > a:active {background:rgba(255,255,255,.08);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-event {display:flex;flex-direction:column;margin:6px 0 0;padding-left:22px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-event strong {font:500 12px/19px var(--tt2-ui);color:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-event span {margin-top:1px;font:400 10px/15px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-access {padding:18px 0 0;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-access-title {margin:0;padding-left:11px;font:500 14px/20px var(--tt2-ui);color:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-group {margin:18px 0 0;padding-left:11px;font:400 10px/14px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way + .tt269-group {margin-top:14px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way {position:relative;border-bottom:1px solid #3e3e3e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-group + .tt269-way {margin-top:2px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way-head {
+  display:flex;align-items:center;gap:10px;box-sizing:border-box;width:100%;height:43px;margin:0;padding:0 24px 0 11px;
+  border:0;background:none;color:#fff;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way-name {flex:none;font:500 13px/19px var(--tt2-ui);color:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way-facts {min-width:0;margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 11px/16px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-chev {position:absolute;right:8px;top:20px;width:8px;height:5px;background:#9e9e9e;clip-path:polygon(0 0,100% 0,50% 100%);transition:transform .2s ease;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-map {
+  position:absolute;right:4px;top:8px;display:none;align-items:center;gap:5px;box-sizing:border-box;height:28px;padding:0 12px 0 13px;
+  border:1px solid #fff;border-radius:14px;font:500 11px/16px var(--tt2-ui);color:#fff!important;text-decoration:none!important;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-map::after {
+  content:'';width:9px;height:9px;background:currentColor;
+  -webkit-mask:url('../assets/figma/icons/link-arrow.svg') center/9px 9px no-repeat;mask:url('../assets/figma/icons/link-arrow.svg') center/9px 9px no-repeat;
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way.is-open .tt269-map {display:inline-flex;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way.is-open :is(.tt269-way-facts,.tt269-chev) {visibility:hidden;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way-body {padding:0 11px 14px;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-way-sum {margin:-6px 0 0;font:400 11px/16px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-sketch {position:relative;height:74px;margin:14px 13px 0;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-seg {position:absolute;top:24px;height:3px;background:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-seg--rail {background:#4287C8;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-seg--taxi {background:#CCA46E;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-seg-label {position:absolute;left:0;right:0;bottom:10px;text-align:center;white-space:nowrap;font:400 10px/14px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-sketch ol {position:absolute;inset:0;margin:0;padding:0;list-style:none;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop {position:absolute;top:0;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;width:0;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-dot {position:absolute;top:20px;left:-5.5px;box-sizing:border-box;width:11px;height:11px;border:2px solid #fff;border-radius:50%;background:#000;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop--end .tt269-dot {background:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop--xfer .tt269-dot::after {content:'';position:absolute;left:1.5px;top:1.5px;width:4px;height:4px;border-radius:50%;background:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide :is(.tt269-stop-name,.tt269-stop-sub) {position:absolute;white-space:nowrap;transform:translateX(-50%);}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop-name {top:38px;font:500 12px/17px var(--tt2-ui);color:#fff;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop-name a {color:inherit!important;text-decoration:none!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop-sub {top:56px;font:400 10px/14px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop--start :is(.tt269-stop-name,.tt269-stop-sub) {left:-6px;transform:none;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-stop--end :is(.tt269-stop-name,.tt269-stop-sub) {right:-6px;transform:none;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-notes {margin:10px 0 0;padding:0;list-style:none;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-notes li {margin:0;padding:0;font:400 10px/15px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-hint {margin:14px 0 0;padding-left:11px;font:400 10px/15px var(--tt2-ui);color:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-caution {margin:14px 0 0;padding:0 11px;font:400 10px/15px var(--tt2-ui);color:#cca46e;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-foot {margin:16px 0 0;padding-bottom:32px;font:400 10px/15px var(--tt2-ui);color:#9e9e9e;text-align:center;}
+@media (prefers-reduced-motion: reduce){
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-chev {transition:none;}
+}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-page :is(.tt269-place,.tt269-tagline,.tt269-access-title) {color:#fff!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-page :is(.tt269-label,.tt269-group,.tt269-hint,.tt269-foot,.tt269-way-sum) {color:#9e9e9e!important;}
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt269-page .tt269-caution {color:#cca46e!important;}

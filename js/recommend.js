@@ -93,11 +93,11 @@
   // 料理種類 (single choice) filters the shops.
   // Each entry: [key, label, data tags in nearby.json "industries"].
   const CATEGORIES=[
-    ['taiwan','🥢 台湾グルメ',['小吃','麺類','ごはん系','餃子','小籠包・点心','台湾料理','熱炒','鍋','モーニング']],
-    ['world','🌏 各国・創作料理',['各国・創作料理']],
-    ['sweets','🍧 スイーツ・カフェ',['スイーツ','アイス','カフェ']],
-    ['drink','🧋 ドリンク',['ドリンク']],
-    ['bar','🍸 バー',['バー']]
+    ['taiwan','台湾グルメ',['小吃','麺類','ごはん系','餃子','小籠包・点心','台湾料理','熱炒','鍋','モーニング']],
+    ['world','各国・創作料理',['各国・創作料理']],
+    ['sweets','スイーツ・カフェ',['スイーツ','アイス','カフェ']],
+    ['drink','ドリンク',['ドリンク']],
+    ['bar','バー',['バー']]
   ];
   const AREAS=[
     ['nakayama','中山駅・赤峰街',25.0529,121.5204],
@@ -154,7 +154,7 @@
   function taipeiHour(){return Number(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',hour:'2-digit',hourCycle:'h23'}).formatToParts(taipeiNow()).find(p=>p.type==='hour')?.value??12);}
   // Taipei time bands: 朝 05–10:59, 昼 11–13:59, 午後 14–16:59, 夜 17–22:59, 深夜 23–04:59.
   function defaultBand(){const h=taipeiHour();return h>=5&&h<11?'morning':h>=11&&h<14?'lunch':h>=14&&h<17?'afternoon':h>=17&&h<23?'night':'late';}
-  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',categories:[],sortMode:'recommend',page:0,locationStatus:'idle',geoRequested:false,position:null};
+  const state={timeMode:'current',time:defaultBand(),areaMode:'current',area:'',line:'',stationCode:'',categories:[],sortMode:'recommend',sortAuto:true,page:0,locationStatus:'idle',geoRequested:false,position:null};
   // Static station coordinates are used on-device: no geolocation permission,
   // API key, third-party request or location upload in station mode.
   let metroLines=[],metroStations=[],stationsReady=false,stationsFailed=false;
@@ -466,7 +466,8 @@
     if(!intervals)return {code:'unknown'};
     const now=clock.minute;
     const current=intervals.find(x=>x.start<=now&&now<x.end);
-    if(current)return {code:current.end-now-walk<=closeSoonMinutes(item)?'soon':'open'};
+    // v2.0.32: `until` (closing minute) is display-only (「00:00まで」); codes are unchanged.
+    if(current)return {code:current.end-now-walk<=closeSoonMinutes(item)?'soon':'open',until:current.end-current.start>=1440?null:current.end};
     const next=intervals.find(x=>x.start>now);
     if(next&&next.start-now<=OPEN_SOON_MINUTES)return {code:'opening',at:next.start};
     return {code:'closed'};
@@ -520,6 +521,9 @@
     const t=cardTiming(item);
     node.className='recommend-opening-status recommend-opening-'+t.code;
     node.textContent=timingLabel(t);
+    // v2.0.32 (Figma 2-1): closing time beside 営業中, shown by CSS from this attribute.
+    if(Number.isFinite(t.until)){const v=((t.until%1440)+1440)%1440;node.dataset.until=`${String(Math.floor(v/60)).padStart(2,'0')}:${String(v%60).padStart(2,'0')}まで`;}
+    else delete node.dataset.until;
     node.title=t.code==='unknown'?'店舗別の営業時間を確認できません':t.code==='irregular'?'不定期営業のため、訪問前に最新情報をご確認ください':
       t.code==='opening'?'30分以内に営業開始予定です（通常営業時間による目安）':t.code==='soon'?`${closeSoonMinutes(item)===60?'1時間':'35分'}以内に閉店予定です（${Number.isFinite(item.distanceMeters)?'徒歩での到着を含む、':''}通常営業時間による目安）`:
       t.code==='next'?'次の営業開始（通常営業時間による目安）':'登録された通常営業時間による目安です';
@@ -1245,6 +1249,7 @@
     const cityJa=region?.city==='N'?'新北市':region?.city==='T'?'台北市':'';
     const cityEn=region?.city==='N'?'New Taipei City':'Taipei City';
     const districtEnglish=district?(region.city==='N'?NEW_TAIPEI_DISTRICT_EN[district]:DISTRICTS[district]?.[1]):inferred?.[1];
+    drawer.dataset.locationStatus=state.locationStatus;
     districtName.textContent=state.locationStatus==='outside'?'台北・新北エリア外':cityJa?`${cityJa}${jpDistrict?' '+jpDistrict:''}`:state.locationStatus==='loading'?'測位中':'現在地';
     const districtEnLabel=districtEnglish?`${districtEnglish.replace(/\s+Dist\.?$/i,'')} Dist.`:'';
     districtEn.textContent=state.locationStatus==='outside'?'Outside Taipei Area':cityJa?`${districtEnLabel?districtEnLabel+', ':''}${cityEn}`:state.locationStatus==='loading'?'Locating…':state.locationStatus==='success'?'地区名は未確認':state.locationStatus==='idle'?'タップして現在地を取得':'Location';
@@ -1467,6 +1472,10 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     const origin=state.areaMode==='station'?stationOrigin():
       state.areaMode==='current'&&state.locationStatus==='success'?state.position:null;
     const distanceAvailable=!!origin&&nearbyReady;
+    // v2.0.79: until the visitor picks an order, it follows the place: by distance when a
+    // position or station is known, otherwise recommended.
+    if(state.sortAuto)state.sortMode=distanceAvailable?'distance':'recommend';
+    drawer.dataset.sortAuto=String(state.sortAuto);
     sortDistance.disabled=!distanceAvailable;
     sortDistance.title=distanceAvailable?'直線距離が近い順に表示します':'現在地を取得するか、駅を選択すると使えます';
     sortRecommend.setAttribute('aria-pressed',String(state.sortMode==='recommend'));
@@ -1474,11 +1483,14 @@ ${GEO_MAX_METERS}m 內：${near} 筆
   }
   function setSortMode(mode){
     if(mode==='distance'&&sortDistance.disabled)return;
-    if(state.sortMode===mode)return;
+    state.sortAuto=false;
+    if(state.sortMode===mode){updateSortControls();closeOptions();closeStationMenus();advanced.open=false;return;}
     state.sortMode=mode;state.page=0;
     closeOptions();closeStationMenus();advanced.open=false;
     renderResults();
   }
+  // v2.0.79: the order chip's ✕ hands the order back to the automatic choice.
+  window.tabiFoodSortAuto=()=>{state.sortAuto=true;state.page=0;renderResults();};
   sortRecommend.addEventListener('click',()=>setSortMode('recommend'));
   sortDistance.addEventListener('click',()=>setSortMode('distance'));
   function updateTagFade(node){
@@ -1549,7 +1561,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     updateSortControls();
     if(state.areaMode==='station'&&(!currentStation()||!nearbyReady)){
       results.replaceChildren(el('p','recommend-no-data',stationsFailed?'駅データを読み込めませんでした。':currentStation()?'位置データを読み込み中です。':`路線と駅を選ぶと、駅から${GEO_MAX_METERS}m以内のおすすめを表示します。`));
-      count.textContent='駅を選択';more.hidden=true;relaxed.hidden=true;
+      count.textContent='駅を選択';more.hidden=true;more.dataset.total='0';relaxed.hidden=true;
       disclaimer.textContent='※ 距離は直線です。';
       return;
     }
@@ -1557,7 +1569,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
     if(state.areaMode==='current'&&state.locationStatus==='outside'){
       visibleRecommendations=[];
       results.replaceChildren(el('p','recommend-no-data','エリア対象外です。'));
-      count.textContent='エリア外';more.hidden=true;relaxed.hidden=true;
+      count.textContent='エリア外';more.hidden=true;more.dataset.total='0';relaxed.hidden=true;
       reportDebug(0);return;
     }
     const {ordered,timeCount,lifted,nearbyFallback,useDistance,nearbyCount}=recommendedPool();
@@ -1569,7 +1581,7 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         (useDistance?`いま営業中の掲載店は、直線${GEO_MAX_METERS}m以内にありません。時間帯を指定するとご覧いただけます。`:'いま営業中の掲載店はありません。時間帯を指定してご覧ください。'):
         (useDistance?`選択地点から直線${GEO_MAX_METERS}m以内に該当する掲載店はありません。`:'この時間帯に合う掲載店は、まだありません。時間帯を変更してご覧ください。')):'該当店が見つかりません。';
       results.append(el('p','recommend-no-data','おすすめ情報を準備中です。'));
-      count.textContent='0軒';reportDebug(0);return;
+      count.textContent='0軒';more.dataset.total='0';more.dataset.page='0';reportDebug(0);return;
     }
     const pages=Math.ceil(ordered.length/3);
     state.page=((state.page%pages)+pages)%pages;
@@ -1608,6 +1620,10 @@ ${GEO_MAX_METERS}m 內：${near} 筆
         pin.setAttribute('aria-hidden','true');
         pin.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>';
         badge.append(pin,el('span','recommend-distance-pill-label',distanceText));
+        // v2.0.32 (Figma 2-1): walking time, same 80 m/min estimate the closing check uses.
+        const walk=el('span','recommend-walk',`${walkMinutes(item.distanceMeters)}分`);
+        walk.setAttribute('aria-label',`徒歩約${walkMinutes(item.distanceMeters)}分`);
+        badge.append(walk);
         side.append(badge);
       }else side.append(el('span','recommend-distance-pill recommend-distance-pill-empty',''));
       const opening=el('span','recommend-opening-status');
@@ -1653,6 +1669,8 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       alignCards();
     });
     more.hidden=ordered.length<=3;
+    // v2.0.43 (display only): the 2.0 pager shows 「N軒中 a–b軒目」 from these.
+    more.dataset.total=String(ordered.length);more.dataset.page=String(state.page);
     disclaimer.textContent=`※ ${state.timeMode==='current'?'台北時刻 '+taipeiTimeLabel()+'。':''}距離は直線です。営業時間は目安です。`;
   }
   more.addEventListener('click',()=>{state.page++;renderResults();});
@@ -1838,6 +1856,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       const li=directoryNode('li','food-directory-row');
       li.append(directoryNode('span','food-directory-number',String(index+1).padStart(2,'0')));
       const body=directoryNode('div','food-directory-row-main');
+      // v2.0.32 (Figma 2-3): the kind above the name, the same label the cards use.
+      const kind=cardCuisine(v);
+      if(kind)body.append(directoryNode('span','food-directory-kind',kind));
       const top=directoryNode('div','food-directory-name-line');
       const anchor=directoryNode('a','food-directory-link',v.name);
       anchor.href=directoryMapUrl(v);anchor.target='_blank';anchor.rel='noopener noreferrer';
@@ -1953,6 +1974,9 @@ ${GEO_MAX_METERS}m 內：${near} 筆
       away.oncancel=()=>{if(turning)settleTurn(name,focus);};
     }
     flip.querySelectorAll('.food-flip-toggle').forEach(button=>button.addEventListener('click',()=>turnTo(button.dataset.to)));
+    // v2.0.32: the 2.0 tab bar (js/figma-food-v232.js) switches faces without the 3D turn.
+    window.tabiFoodTurnTo=(name,opts)=>turnTo(name,{animate:false,focus:false,...opts});
+    window.tabiFoodFace=()=>face;
     // Links to an item of the list (#…) open the list side directly.
     const revealTarget=()=>{
       const id=decodeURIComponent(location.hash.slice(1));

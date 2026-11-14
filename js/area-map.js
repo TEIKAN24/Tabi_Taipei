@@ -17,11 +17,11 @@
     const name = String(g?.map?.label || g?.title || '').split('・')[0].trim();
     return {id: 'area-' + (index + 1), name, location: {lat, lng}, index};
   }).filter(it => it.name && Number.isFinite(it.location.lat) && Number.isFinite(it.location.lng) && cards[it.index]);
-  // v30.9.282: the area details end with a full-width 「さっそく出発！」 (as the 夜市 details),
+  // v30.9.282: the area details end with a full-width button (「マップで見る」 since v2.0.112) (as the 夜市 details),
   // instead of the small 出発！ beside the title. Same link (js/guide.js sets its address).
   const detail = root.querySelector('.walk-inline-detail');
   const go = detail?.querySelector('.walk-inline-go'), inner = detail?.querySelector('.walk-inline-inner');
-  if (go && inner) { go.classList.add('walk-go-bottom'); go.textContent = 'さっそく出発！'; inner.append(go); }
+  if (go && inner) { go.classList.add('walk-go-bottom'); go.textContent = 'マップで見る'; /* v2.0.112: Figma S2A */ inner.append(go); }
   if (!items.length) return;
   const wrap = document.createElement('div');
   wrap.className = 'walk-area-map'; wrap.id = 'walk-area-host';

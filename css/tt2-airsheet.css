@@ -1,0 +1,98 @@
+/* TABI TAIPEI v2.0.103 — 空港アクセス as a sheet over the page (js/tt2-airsheet.js).
+   Figma 「空港アクセス シート案 S1A」 (277:1955) → 「S1A-2」 (277:2771). The skin is glass, not black:
+   the page behind darkens 30 % and blurs through the sheet (as the 料理辞典 sheet).
+   The route finder keeps its own look (css/tt2-airport.css, twin selectors for #tt2-airport-sheet);
+   only the route field, the 行き方 chips and the page-layout rules are set here. */
+
+/* the old 「空港アクセス」 heading in 旅支度: the route finder has left */
+html.tt2-fidelity.tt2-airsheet #guide .airport-access-subheading {display:none!important;}
+
+html.tt2-fidelity .tt2-airsheet-backdrop {
+  position:fixed;inset:0;z-index:196;background:rgba(0,0,0,.3);
+  opacity:0;visibility:hidden;transition:opacity .42s ease,visibility 0s linear .43s;
+}
+html.tt2-fidelity.tt2-airsheet-open .tt2-airsheet-backdrop {opacity:1;visibility:visible;transition:opacity .62s cubic-bezier(.22,1,.36,1),visibility 0s;}
+
+html.tt2-fidelity #tt2-airport-sheet {
+  position:fixed;left:0;right:0;bottom:0;z-index:197;box-sizing:border-box;
+  height:min(536px, calc(100dvh - min(150px,17.6dvh)));
+  display:flex;flex-direction:column;
+  background:transparent;
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border:1px solid #636363;border-bottom:0;border-radius:16px 16px 0 0;
+  color:#F4F4F4;font-family:var(--tt2-ui,"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif);
+  transform:translateY(105%);visibility:hidden;
+  transition:transform .42s cubic-bezier(.4,0,.2,1),height .5s cubic-bezier(.22,1,.36,1),visibility 0s linear .43s;
+}
+html.tt2-fidelity.tt2-airsheet-open #tt2-airport-sheet {transform:none;visibility:visible;transition:transform .62s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),visibility 0s;}
+html.tt2-fidelity #tt2-airport-sheet.is-expanded {height:calc(100dvh - min(150px,17.6dvh));}
+@media (prefers-reduced-motion:reduce){
+  html.tt2-fidelity #tt2-airport-sheet, html.tt2-fidelity .tt2-airsheet-backdrop {transition:none!important;}
+}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-grab {flex:none;width:36px;height:4px;margin:11px auto 12px;border-radius:2px;background:#4A4A4A;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-head {flex:none;display:flex;justify-content:space-between;align-items:flex-start;padding:0 17px 14px;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-title {margin:0;font-size:14px;font-weight:500;line-height:17px;color:#fff;letter-spacing:0;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-sub {margin:4px 0 0;font-size:10px;line-height:12px;color:#8A8A8A;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-close {flex:none;margin:0;padding:0 0 8px 12px;border:0;background:none;color:#9E9E9E;font:inherit;font-size:12px;line-height:17px;cursor:pointer;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-body {flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 17px calc(24px + env(safe-area-inset-bottom,0px));scrollbar-width:none;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-body::-webkit-scrollbar {display:none;}
+
+/* the route finder as a plain block inside the sheet (it was a bounded pane of its own) */
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector {
+  position:static!important;inset:auto!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;overflow:visible!important;transform:none!important;background:transparent!important;
+}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .section-top {display:none!important;}
+
+/* route field: one pill, 出発地 ⇄ 目的地 */
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields {
+  display:flex!important;align-items:center!important;gap:8px!important;box-sizing:border-box!important;
+  height:38px!important;margin:0!important;padding:0 18px!important;border:1px solid #8A8A8A!important;border-radius:100px!important;
+  background:none!important;box-shadow:none!important;grid-template-columns:none!important;
+}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields .selrow {position:relative!important;inset:auto!important;width:auto!important;transform:none!important;flex:1 1 0!important;min-width:0!important;margin:0!important;padding:0!important;border:0!important;background:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields .sel-field,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields .sel-choice-bubble {display:block!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;min-height:0!important;height:auto!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields .sel-label,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields .chev {display:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-route-fields select.sel-value {
+  -webkit-appearance:none!important;appearance:none!important;display:block!important;width:100%!important;height:36px!important;
+  margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;
+  color:#fff!important;font-family:inherit!important;font-size:16px!important;font-weight:400!important;line-height:36px!important;letter-spacing:0!important;
+  text-overflow:ellipsis!important;cursor:pointer;
+}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .selrow--destination select.sel-value {text-align:right!important;text-align-last:right!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .selrow.is-empty select.sel-value {color:#8A8A8A!important;font-size:14px!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector #airsel-swap {
+  flex:none!important;position:static!important;width:24px!important;height:24px!important;margin:0!important;padding:3px!important;
+  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:#8A8A8A!important;transform:none!important;
+}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector #airsel-swap svg {width:18px!important;height:18px!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector #airsel-route-disclosure {display:none!important;}
+
+/* 行き方: chips, the train type on the right */
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) .tt2-airsheet-label {margin:14px 0 8px;font-size:10px;line-height:12px;color:#8A8A8A;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) .tt2-airsheet-moderow {display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector #airsel-transport-tabs {
+  display:flex!important;flex-wrap:wrap!important;gap:8px!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;
+  border:0!important;background:none!important;box-shadow:none!important;position:static!important;grid-template-columns:none!important;
+}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector #airsel-transport-ink {display:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-transport-tab {
+  flex:none!important;width:auto!important;min-width:0!important;height:28px!important;margin:0!important;padding:0 12px!important;
+  border:1px solid #363636!important;border-radius:100px!important;background:none!important;box-shadow:none!important;
+  color:#CFCFCF!important;font-family:inherit!important;font-size:12px!important;font-weight:400!important;line-height:26px!important;letter-spacing:0!important;
+}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-transport-tab[aria-selected="true"] {background:#F2F2F2!important;border-color:#F2F2F2!important;color:#111!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) .tt2-airsheet-trainside {display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:0;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .tt2-airsheet-trainside #airsel-train-tabs {position:relative!important;inset:auto!important;margin:0!important;transform:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .tt2-airsheet-trainside #airsel-recommend-badge {position:static!important;margin:0!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .rail-title #airsel-company-mark,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .rail-title #airsel-rail-head-name {display:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .rail-title {display:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .route-panel {margin-top:18px!important;padding-top:0!important;}
+/* v2.0.106: the old page's tab underline (::after, 2px white) under the chosen chip, and no focus
+   ring on the sheet itself (it takes the focus when it opens) */
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-transport-tab::before,
+html.tt2-fidelity.tt2-airsheet:not([data-tt-x1]):not([data-tt-x2]) #tt2-airport-sheet:not(#_x1):not(#_x2) #airport-route-selector .airsel-transport-tab::after {content:none!important;display:none!important;}
+html.tt2-fidelity #tt2-airport-sheet:focus {outline:none;}

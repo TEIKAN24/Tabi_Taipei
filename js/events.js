@@ -244,7 +244,8 @@
     if (selDay === null) lead.append(el('span', 'ec-sum-month', mo.y + '／' + mo.m + '月'), big);
     else {
       const sd = ymd(selDay);
-      lead.append(el('span', 'ec-sum-month', sd.m + '/' + sd.d + '（' + WEEK[sd.w] + '）'), big);
+      // v2.0.29 (Figma 4-3-3): 「11月／11日（水）」
+      lead.append(el('span', 'ec-sum-month', sd.m + '月／' + sd.d + '日（' + WEEK[sd.w] + '）'), big);
     }
     renderChips(mo);
     const stat = (label, v, cls) => { const s = el('div', 'ec-stat ' + cls); s.append(el('span', '', label), el('strong', '', String(v))); return s; };
@@ -389,7 +390,12 @@
       const body = el('div', 'ec-body');
       const meta = el('div', 'ec-meta');
       meta.append(el('span', 'ec-meta-text', [r.city, r.category].filter(Boolean).join('・')));
-      if (BADGE[r.status]) meta.append(el('span', 'ec-badge', BADGE[r.status]));
+      // v2.0.29: one badge per row — 開催終了 > 開催予定 > 初日 / 最終日. 初日・最終日 use the
+      // same rule as the gold dates: the picked day if there is one, otherwise today.
+      const ref = selDay !== null ? selDay : today;
+      const badge = BADGE[r.status] ? [BADGE[r.status], 'is-' + r.status]
+        : r.tbd ? null : r.start === ref ? ['初日', 'is-first'] : r.end === ref ? ['最終日', 'is-last'] : null;
+      if (badge) meta.append(el('span', 'ec-badge ' + badge[1], badge[0]));
       body.append(meta);
       if (r.url) {
         const a = el('a', 'ec-name', r.name); a.href = r.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -410,9 +416,13 @@
 
   /* ---------- geometry ---------- */
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const GAP = 10, PICK_SCALE = 1.06, PICK_TALL = 1.05, SIDE_DROP = 7;
+  // v2.0.39: picking scales the card 1.2× from its top edge (10% wider on each side), so it
+  // grows downward and, once a day is chosen, shrinks back upward. The scale already
+  // enlarges the cells, so the extra row gaps are no longer opened (PICK_TALL = 1).
+  // v2.0.40: 12px between the month cards in every state (also while picking).
+  const GAP = 12, PICK_SCALE = 1.2, PICK_TALL = 1, SIDE_DROP = 7;
   const PADV = 16;                           // room above/below the cards so the grown card is never clipped
-  let C = 0, Wf = 0, Wm = 0, S = 1, fullH = [], miniH = 0, stageH = 0, current = -1, frame = 0;
+  let C = 0, Wf = 0, Wm = 0, S = 1, fullH = [], miniH = 0, stageH = 0, pickRoom = 0, current = -1, frame = 0;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
   const isHeat = () => root.classList.contains('is-heat');
@@ -432,9 +442,23 @@
     snaps.forEach((s, i) => { s.style.left = (i * S) + 'px'; });
     // Each wide card fits its own month; the stage keeps the tallest so nothing jumps while swiping.
     fullH = cards.map(c => c.firstChild.offsetHeight);
+    // v2.0.39: every heatmap holds six weeks, so a five-week month keeps one empty row at
+    // the bottom. All cards then share one height: the card keeps its top when it turns
+    // bars ⇄ heatmap (it only grows or shrinks at the bottom) and nothing jumps between months.
+    if (isHeat()) fullH = cards.map((c, i) => {
+      const grid = c.querySelector('.ec-grid'), cell = grid?.querySelector(':scope > i');
+      if (!cell) return fullH[i];
+      const rows = Math.ceil(grid.querySelectorAll(':scope > i').length / 7);
+      const pitch = cell.offsetHeight + (parseFloat(getComputedStyle(grid).rowGap) || 0);
+      return fullH[i] + Math.max(0, 6 - rows) * pitch;
+    });
     miniH = Math.max(...cards.map(c => c.lastChild.offsetHeight));
     stageH = Math.max(...fullH) + 4;
-    stage.style.height = (stageH + PADV * 2) + 'px';
+    // v2.0.39: the heatmap grows downward while a day is picked; the month strip clips what
+    // leaves its box, so it needs that much room below the card. v2.0.40: only while
+    // picking: the summary and list move down with the card and back up after the pick.
+    pickRoom = Math.max(0, Math.ceil(Math.max(...fullH) * (PICK_SCALE * PICK_TALL - 1)) - PADV + 2);
+    sizeStage();
     // While picking, the card grows 5% taller by opening the gaps between its weeks,
     // so the date and the bottom row move outward instead of being stretched.
     cards.forEach((c, i) => c.querySelector('.ec-grid')?.style.setProperty('--ec-gap-extra',
@@ -442,6 +466,8 @@
     if (selDay !== null) placeBox(selDay);
     return true;
   }
+
+  function sizeStage() { stage.style.height = (stageH + PADV * 2 + (picking ? pickRoom : 0)) + 'px'; }
 
   function place() {
     frame = 0;
@@ -455,14 +481,16 @@
     for (let i = k + 1; i < n; i++) centre[i] = centre[i - 1] + w[i - 1] / 2 + GAP + w[i] / 2;
     for (let i = k - 1; i >= 0; i--) centre[i] = centre[i + 1] - w[i + 1] / 2 - GAP - w[i] / 2;
     // While a day is being picked the wide card grows a little and its neighbours step aside.
-    const push = picking ? Wf * (PICK_SCALE - 1) / 2 + 8 : 0;   // neighbours also drop SIDE_DROP and dim
+    const push = picking ? Wf * (PICK_SCALE - 1) / 2 : 0;   // keeps GAP to the grown card; neighbours also drop SIDE_DROP and dim
     cards.forEach((card, i) => {
       const d = Math.min(1, Math.abs(i - p));
       const shift = picking && i !== current ? Math.sign(i - current) * push : 0;
       const left = centre[i] - w[i] / 2 + shift;
       if (left > C + 20 || left + w[i] < -20) { card.style.visibility = 'hidden'; return; }
       const h = lerp(fullH[i], miniH, d) * (picking && i === current ? PICK_TALL : 1);
-      const top = PADV + (stageH - h) / 2 + (picking && i !== current ? SIDE_DROP : 0);
+      // v2.0.29 (Figma 4-3-1): cards share one bottom line, so the side months sit low
+      // beside the wide card and the summary below never meets a card.
+      const top = PADV + stageH - 2 - h + (picking && i !== current ? SIDE_DROP : 0);
       card.style.visibility = '';
       card.style.width = w[i] + 'px';
       card.style.height = h + 'px';
@@ -473,9 +501,10 @@
       card.lastChild.style.opacity = clamp((d - .45) / .4, 0, 1).toFixed(3);
       if (i === current) {
         // Small month reminder outside the card's top-left corner, clear of the finger.
-        const sw = w[i] * (picking ? PICK_SCALE : 1), sh = h * (picking ? PICK_SCALE : 1);
+        // (the card scales from its top edge: wider on both sides, taller only downward)
+        const sw = w[i] * (picking ? PICK_SCALE : 1);
         const s = picking ? PICK_SCALE : 1;
-        pickMonth.style.transform = `translate3d(${(left - (sw - w[i]) / 2 - 8).toFixed(2)}px,${(top - (sh - h) / 2 + 8.5 * s + 1).toFixed(2)}px,0) translateX(-100%)`;
+        pickMonth.style.transform = `translate3d(${(left - (sw - w[i]) / 2 - 8).toFixed(2)}px,${(top + 8.5 * s + 1).toFixed(2)}px,0) translateX(-100%)`;
       }
     });
     const idx = Math.round(p);
@@ -599,6 +628,7 @@
     animate('is-switching', 280);
     root.classList.add('is-picking');
     setPickDay(day);
+    sizeStage();
     place();
   }
   function endPick(commit) {
@@ -608,6 +638,7 @@
     card.classList.remove('is-pick');
     animate('is-switching', 280);
     root.classList.remove('is-picking');
+    sizeStage();
     place();
     if (commit) {
       selDay = selDay === day ? null : day;          // long-pressing the picked day again clears it

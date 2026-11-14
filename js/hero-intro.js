@@ -1,16 +1,12 @@
-/* v30.9.213 / v30.9.254 — Top page intro.
-   The wordmark settles (TAIPEI CITY GUIDE fades out, TABI / TAIPEI shrinks and
-   the guide label slides out to its right), the golden horizon sinks, and a
-   greeting for the current time of day fades in line by line.
+/* The greeting (1.0 v30.9.213 / v30.9.254, the top page intro). In 2.0 there is no intro: the
+   greeting sits at the foot of the home and is typed in by js/home-greeting-v290.js (v2.0.90
+   site Mincho, v2.0.91 hello of the time of day + message, v2.0.92 1.0 intro code removed).
 
    Greetings (v30.9.224): a new one every 40–60 minutes (SLOTS), kept when the
    page is reopened within that stretch; none repeats within three days, and
    each pool is dealt like a shuffled deck (see choose()). The very first
    visit says はじめまして; special days, minutes and habits have their own
-   greetings (SPECIAL, pickGreeting()), and the greeting answers a double tap. Characters used here must exist in
-   assets/fonts/tabi-greeting-serif.woff2 (kana and punctuation are all in it;
-   a NEW kanji needs the font subset regenerated, otherwise that one character
-   falls back to the system Mincho). */
+   greetings (SPECIAL, pickGreeting()), and the greeting answers a double tap. */
 (function(){
   'use strict';
   const hero=document.getElementById('top');
@@ -188,7 +184,6 @@
     // Small replies on the page (they show for a moment, then the greeting returns).
     replies:[['なに？👀'],['呼んだ？'],['はーい'],['ん？'],['ここにいるよ🙋']],  // double tap
     tickle:['くすぐったいよ'],                                         // three taps
-    bright:['まぶしくない？🌙'],      // light mode chosen at night, the first time only
     top:['おかえり、トップへ。']      // back at the top after a long scroll, once only
   };
   // Taipei 101's daily lighting follows the rainbow by weekday (Sunday first).
@@ -221,13 +216,21 @@
      one line: おはよう！ (05:00–10:59), こんにちは！ (11:00–16:59), こんばんは！ (after);
      no greetings from the pools, special minutes or anything else until that day. */
   const plainGreeting=pool=>[pool==='dawn'||pool==='morning'?'おはよう！':pool==='noon'||pool==='afternoon'?'こんにちは！':'こんばんは！'];
+  /* v2.0.91: a time greeting is shown as the hello of the time of day on line 1 (おはよ /
+     こんにちは / こんばんは) and the message on line 2. A first line that is itself a hello
+     (おはよう。 / こんにちは。 / こんばんは。 / おやすみ。) gives way to it; any other lines become
+     line 2, joined. The first-visit, special and tap greetings keep their own lines. */
+  const helloOf=pool=>pool==='dawn'||pool==='morning'?'おはよ':pool==='noon'||pool==='afternoon'?'こんにちは':'こんばんは';
+  const HELLO_LINE=/^(おはよう|おはよ|こんにちは|こんばんは|おやすみ)[。！!、]?$/;
+  function asTimeGreeting(lines,pool){
+    const rest=lines.slice();
+    if(rest.length&&HELLO_LINE.test(rest[0]))rest.shift();
+    const message=rest.join('');
+    return message?[helloOf(pool),message]:[helloOf(pool)];
+  }
   const NO_REPEAT_DAYS=3;     // a greeting is not shown again on the next two days
   const DAY_TURN_HOUR=5;      // 00:00–04:59 still belongs to the previous day
   const SWITCH_JITTER=5;      // minutes a switch may move, either way
-  const GREET_AT=1250;        // ms after the intro starts
-  const LINE_GAP=600;         // ms between the starts of consecutive lines
-  const FONT_WAIT=1800;       // never hold the greeting longer than this for the font
-  const FONT_FAMILY='Tabi Greeting Serif';
 
   const entryOf=e=>Array.isArray(e)?{lines:e}:e;
   const minutesOf=text=>{const [h,m]=String(text).split(':').map(Number);return h*60+m;};
@@ -368,12 +371,12 @@
   // How long some greetings stay before the time greeting takes over (ms).
   const SHOW_FIRST=30*1000,SHOW_MILESTONE=10*60*1000,SHOW_HALF_HOUR=30*60*1000,SHOW_BACK=10*1000;
   function pickGreeting(){
-    if(!started)return {lines:plainGreeting(slot.pool)};
+    if(!started)return {lines:asTimeGreeting(plainGreeting(slot.pool),slot.pool)};
     const at=now.getTime();
     const minute=SPECIAL.minute[now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')];
-    if(!store)return {lines:minute||entries[choose(slot,part,entries,now,null)].lines};
+    if(!store)return {lines:minute||asTimeGreeting(entries[choose(slot,part,entries,now,null)].lines,slot.pool)};
     // Before the journey starts: the time greetings only, nothing counted.
-    if(!started)return {lines:minute||entries[choose(slot,part,entries,now,store)].lines};
+    if(!started)return {lines:minute||asTimeGreeting(entries[choose(slot,part,entries,now,store)].lines,slot.pool)};
     const info=bookkeeping();
     const first=store.first&&typeof store.first==='object'?store.first:null;
     if(!first){
@@ -402,7 +405,7 @@
        sinceTurn>=360&&once.back!==today)return keep('back',pickOne(SPECIAL.back),SHOW_BACK);
     const near=list=>list.some(m=>Math.abs(m-sinceTurn)<=60);
     if(near(info.before[1])&&near(info.before[2])&&once.habit!==today)return keep('habit',SPECIAL.habit);
-    return {lines:entries[choose(slot,part,entries,now,store)].lines};
+    return {lines:asTimeGreeting(entries[choose(slot,part,entries,now,store)].lines,slot.pool)};
   }
   const fill=(list,when)=>list.map(text=>text.replace('{101}',COLOURS_101[when.getDay()]));
   const picked=pickGreeting();
@@ -416,8 +419,6 @@
       const el=document.createElement('span');
       el.className='hero-greeting-line';
       el.textContent=text;
-      const chars=Array.from(text).length;
-      el.style.setProperty('--line-dur',Math.round(Math.min(1500,Math.max(850,520+chars*55)))+'ms');
       el.dataset.line=String(i);
       greet.appendChild(el);
       return el;
@@ -469,14 +470,11 @@
       },230);
     });
     if(!store||!started)return;   // once-only messages wait for the journey
-    // Back at the top after a long scroll (once a day), and light mode at night
-    // (the first time ever; shown when the greeting is next in view).
-    let inView=true,wentFar=false,pendingBright=false;
+    // Back at the top after a long scroll (shown when the greeting is next in view).
+    let inView=true,wentFar=false;
     window.addEventListener('scroll',()=>{if(window.scrollY>window.innerHeight*2)wentFar=true;},{passive:true});
-    const night=()=>{const h=new Date().getHours();return h>=18||h<5;};
     const showPending=()=>{
       if(!inView||!hero.classList.contains('hero--done'))return;
-      if(pendingBright){pendingBright=false;swapTo(SPECIAL.bright,3500);wentFar=false;return;}
       const day=dayNumber(new Date());
       const once=store.once&&typeof store.once==='object'?store.once:(store.once={});
       // v30.9.237: shown once only (ever, in this browser).
@@ -489,15 +487,6 @@
         showPending();
       },{threshold:[0,.9,1]}).observe(greet);
     }
-    // Only a switch the visitor makes from dark to light counts: the theme the
-    // page sets up while loading (before the intro ends) is ignored.
-    let theme=document.documentElement.getAttribute('data-theme');
-    new MutationObserver(()=>{
-      const next=document.documentElement.getAttribute('data-theme'),prev=theme;theme=next;
-      if(next===prev||!hero.classList.contains('hero--done'))return;
-      if(next!=='light'||prev!=='dark'||!night()||store.bright)return;
-      store.bright=true;writeStore(store);pendingBright=true;showPending();
-    }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   }
   setupMoments();
 
@@ -526,7 +515,8 @@
   }
   // When a stretch greeting with an end time (the 101 line) must give way.
   function untilOf(pool,list,at){
-    const entry=GREETINGS[pool].map(entryOf).find(e=>sameLines(fill(e.lines,at),list));
+    // v2.0.91: the list may be the entry as written or as shown (asTimeGreeting)
+    const entry=GREETINGS[pool].map(entryOf).find(e=>{const f=fill(e.lines,at);return sameLines(f,list)||sameLines(asTimeGreeting(f,pool),list);});
     if(!entry||!entry.until)return Infinity;
     const [h,m]=entry.until.split(':').map(Number);
     return new Date(at.getFullYear(),at.getMonth(),at.getDate(),h,m,0,0).getTime();
@@ -579,11 +569,12 @@
       if(at.getTime()>=stretchUntil)stretchLines=null;
       if(pos.key!==stretchKey||!stretchLines){
         stretchKey=pos.key;
-        if(!started){stretchLines=plainGreeting(pos.slot.pool);stretchUntil=Infinity;}
+        if(!started){stretchLines=asTimeGreeting(plainGreeting(pos.slot.pool),pos.slot.pool);stretchUntil=Infinity;}
         else{
           const list=GREETINGS[pos.slot.pool].map(entryOf);
-          stretchLines=fill(list[choose(pos.slot,pos.part,list,at,store)].lines,at);
-          stretchUntil=untilOf(pos.slot.pool,stretchLines,at);
+          const raw=fill(list[choose(pos.slot,pos.part,list,at,store)].lines,at);
+          stretchUntil=untilOf(pos.slot.pool,raw,at);
+          stretchLines=asTimeGreeting(raw,pos.slot.pool);
           if(store)writeStore(store);
         }
       }
@@ -601,53 +592,9 @@
     window.addEventListener('pagehide',noteHere);
   });
 
-  function fontReady(limit){
-    if(!document.fonts||!document.fonts.load)return Promise.resolve();
-    const text=lines.join('');
-    const load=document.fonts.load('400 20px "'+FONT_FAMILY+'"',text).catch(()=>{});
-    return Promise.race([load,new Promise(r=>setTimeout(r,limit))]);
-  }
-
-  function finishStatic(){
-    hero.classList.add('hero--static','hero--settled','hero--greeting','hero--done');
-    fit();
-    fontReady(3000).then(fit);
-  }
-
-  const START_DELAY=300;      // v30.9.237: the intro starts 0.3 s after the page appears
-  function play(){
-    setTimeout(start,START_DELAY);
-  }
-  function start(){
-    const t0=performance.now();
-    hero.classList.add('hero--intro');
-    // Two frames: the starting layout is painted before anything moves.
-    requestAnimationFrame(()=>requestAnimationFrame(()=>hero.classList.add('hero--settled')));
-    fontReady(FONT_WAIT).then(()=>{
-      fit();
-      const base=Math.max(0,GREET_AT-(performance.now()-t0));
-      let end=0;
-      lineEls.forEach((el,i)=>{
-        const delay=base+i*LINE_GAP;
-        el.style.setProperty('--line-delay',Math.round(delay)+'ms');
-        end=Math.max(end,delay+parseInt(el.style.getPropertyValue('--line-dur'),10));
-      });
-      hero.classList.add('hero--greeting');
-      setTimeout(()=>hero.classList.add('hero--done'),end+120);
-    });
-  }
-
-  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce||document.documentElement.classList.contains('hero-intro-skip')){finishStatic();return;}
-  if(document.visibilityState==='hidden'){
-    // Opened in a background tab: keep the opening frame until it is actually seen.
-    const onVisible=()=>{
-      if(document.visibilityState!=='visible')return;
-      document.removeEventListener('visibilitychange',onVisible);
-      play();
-    };
-    document.addEventListener('visibilitychange',onVisible);
-  }else{
-    play();
-  }
+  /* 2.0 has no intro (html.hero-intro-skip is always set). The 1.0 opening (wordmark,
+     horizon, the greeting fading in line by line) and the wait for the 1.0 greeting font were
+     removed in 2.0.92: the greeting is shown as it is, and js/home-greeting-v290.js types it in. */
+  hero.classList.add('hero--static','hero--settled','hero--greeting','hero--done');
+  fit();
 })();

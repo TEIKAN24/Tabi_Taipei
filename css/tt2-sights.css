@@ -1,0 +1,982 @@
+/* TABI TAIPEI v2.0.96 — 見所: 名所・博物館, 撮影スポット, イベント calendar
+   Collected in 2.0.96 (cleanup phase 2) from the per-version files, in their load order, so
+   one file holds the whole screen. Comments name the file each run came from. */
+
+/* from guide.css */
+#guide .photo-spot-section {margin-top:12px;}
+#guide details.venue-tone-sights {--venue-tone:138,158,122;}
+
+/* from events.css */
+#guide .ec {
+  --ec-ink:#EDEDED;--ec-sub:#8A8A8A;--ec-line:#2A2A2A;--ec-card:#121212;--ec-lo:#363636;--ec-hi:#E4E4E2;
+  --ec-bar:#E4E4E2;--ec-mini:#9A9A9A;--ec-mini-strong:#C4C4C4;--ec-mini-bar:#5A5A5A;
+  --ec-l0:#1F1F1F;--ec-l1:#3A3A3A;--ec-l2:#676767;--ec-l3:#A5A5A5;--ec-l4:#E4E4E2;--ec-red:#E2665E;--ec-gold:#E0A93B;
+  margin:0 0 0 -10px;padding:6px 0 12px;color:var(--ec-ink);font-variant-numeric:tabular-nums;
+}
+#guide .ec[hidden] {display:none}
+#guide .ec-stage {
+  position:relative;box-sizing:border-box;margin:-12px -11px -16px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 6%,#000 94%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 6%,#000 94%,transparent 100%)
+}
+#guide .ec-cards {position:absolute;inset:0;pointer-events:none}
+#guide .ec-card {
+  position:absolute;left:0;top:0;box-sizing:border-box;overflow:hidden;border-radius:14px;
+  background:var(--ec-card);border:1.5px solid var(--ec-lo);
+  border-color:color-mix(in srgb,var(--ec-hi) calc(var(--ec-near,0) * 100%),var(--ec-lo));will-change:transform
+}
+#guide .ec-card {transition:opacity .28s ease}
+#guide .ec.is-switching .ec-card {transition:height .3s cubic-bezier(.22,1,.36,1),transform .3s cubic-bezier(.22,1,.36,1),opacity .28s ease}
+#guide .ec.is-switching .ec-stage {transition:height .3s cubic-bezier(.22,1,.36,1)}
+#guide .ec-scroller {
+  position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;touch-action:manipulation;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;outline:0;border-radius:14px
+}
+#guide .ec-scroller::-webkit-scrollbar {display:none}
+#guide .ec-scroller:focus-visible {box-shadow:inset 0 0 0 2px var(--ec-sub)}
+#guide .ec-track {position:relative;height:100%}
+#guide .ec-snap {position:absolute;top:0;width:1px;height:1px;scroll-snap-align:start;scroll-snap-stop:always}
+#guide .ec-full {position:absolute;top:0;left:50%;width:var(--ec-wf);transform:translateX(-50%);box-sizing:border-box;padding:10px 13px 12px}
+#guide .ec-face-bars {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline}
+#guide .ec-face-bars .ec-head {display:contents}
+#guide .ec-face-bars .ec-year {grid-column:1;grid-row:1}
+#guide .ec-face-bars .ec-caption {grid-column:2;grid-row:1}
+#guide .ec-face-bars .ec-title {grid-column:1/-1;grid-row:2}
+#guide .ec .ec-face-heat {display:none}
+#guide .ec.is-heat .ec-face-heat {display:block}
+#guide .ec.is-heat .ec-face-bars {display:none}
+#guide .ec-year {display:block;font-size:10.5px;line-height:1.3;color:var(--ec-sub);letter-spacing:.03em}
+#guide .ec-title {display:flex;align-items:baseline;gap:12px;margin-top:2px;line-height:1.15}
+#guide .ec-month,
+#guide .ec-count {font-size:22px;font-weight:450;letter-spacing:.01em}
+#guide .ec-month small {font-size:17px;font-weight:450}
+#guide .ec-count small {font-size:10px;margin-left:1px;color:var(--ec-sub)}
+#guide .ec-caption {font-size:9.5px;color:var(--ec-sub);letter-spacing:.06em;white-space:nowrap}
+#guide .ec-bars {grid-column:1/-1;display:flex;align-items:flex-end;gap:4px;height:30px;margin-top:9px}
+#guide .ec-bars i {
+  flex:1;height:calc(var(--h) * 100%);min-height:2px;border-radius:4px;background:var(--ec-bar);
+  transform:scaleY(.04);transform-origin:50% 100%
+}
+#guide .ec-card.is-grown .ec-bars i {transform:none;transition:transform .55s cubic-bezier(.22,1,.36,1) calc(var(--i,0) * 55ms)}
+#guide .ec-bars i.is-zero {opacity:.3}
+#guide .ec-heat-head {display:flex;gap:12px;font-size:10.5px;line-height:1.3;color:var(--ec-sub);letter-spacing:.03em}
+#guide .ec-heat-head span:nth-child(2) {color:var(--ec-ink)}
+#guide .ec-grid {position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-top:8px;transition:row-gap .28s cubic-bezier(.22,1,.36,1)}
+#guide .ec-card.is-pick .ec-grid {row-gap:calc(3px + var(--ec-gap-extra,0px))}
+#guide .ec-grid i {aspect-ratio:1.45;border-radius:4px;background:var(--ec-l0)}
+#guide .ec-grid i.is-out {background:transparent}
+#guide .ec-grid i.lv1 {background:var(--ec-l1)}
+#guide .ec-grid i.lv2 {background:var(--ec-l2)}
+#guide .ec-grid i.lv3 {background:var(--ec-l3)}
+#guide .ec-grid i.lv4 {background:var(--ec-l4)}
+#guide .ec-grid i.is-today {outline:1.5px solid color-mix(in srgb,var(--ec-hi) 70%,var(--ec-card));outline-offset:1px;position:relative;z-index:1}
+#guide .ec-mini {
+  position:absolute;left:50%;top:50%;width:var(--ec-wm);transform:translate(-50%,-50%);box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;padding:11px 9px;color:var(--ec-mini);text-align:center;line-height:1.25
+}
+#guide .ec-mini-year {font-size:10px;letter-spacing:.03em}
+#guide .ec-mini-month {font-size:17px;color:var(--ec-mini-strong);margin-top:4px}
+#guide .ec-mini-month small {font-size:13px}
+#guide .ec-mini-count {font-size:11px;margin-top:3px}
+#guide .ec-mini-count small {font-size:8.5px}
+#guide .ec-mini-bars {display:flex;align-items:flex-end;gap:3px;width:100%;height:8px;margin-top:9px}
+#guide .ec-mini-bars i {flex:1;height:calc(var(--h) * 100%);min-height:2px;border-radius:2px;background:var(--ec-mini-bar)}
+#guide .ec-dots {
+  position:relative;top:3px;display:flex;justify-content:center;align-items:center;gap:5px;height:6px;margin:0 0 -6px;
+  opacity:0;transition:opacity .5s ease;pointer-events:none
+}
+#guide .ec-dots.is-visible {opacity:1;transition-duration:.15s}
+#guide .ec-dots i {width:5px;height:5px;border-radius:3px;background:var(--ec-sub);opacity:.6;transition:width .25s ease,background-color .25s ease}
+#guide .ec-dots i.is-active {width:22px;background:var(--ec-hi);opacity:1}
+#guide .ec-summary {display:grid;grid-template-columns:minmax(0,1fr) repeat(3,58px);align-items:end;gap:4px;padding:2px 2px 12px 6px}
+#guide .ec-sum-month {display:block;font-size:11px;line-height:18px;color:var(--ec-sub);letter-spacing:.03em}
+#guide .ec .ec-sum-total {
+  display:inline-flex;align-items:baseline;margin:0;padding:0;border:0;background:none;color:var(--ec-ink);
+  font:inherit;font-size:22px;font-weight:450;line-height:1.25;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent
+}
+#guide .ec .ec-sum-total:focus-visible {outline:2px solid var(--ec-sub);outline-offset:3px;border-radius:6px}
+#guide .ec .ec-sum-total small {display:inline-flex;align-items:center}
+#guide .ec-tri {
+  flex:none;position:relative;top:1.4px;width:0;height:0;margin-left:6px;border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid currentColor;transition:transform .2s ease
+}
+#guide .ec.is-filter-open .ec-tri {transform:rotate(180deg)}
+#guide .ec-sum-total small {font-size:16px;font-weight:450}
+#guide .ec-stat {text-align:center}
+#guide .ec-stat span {display:block;font-size:10.5px;color:var(--ec-sub);white-space:nowrap}
+#guide .ec-stat strong {display:block;font-size:22px;font-weight:450;line-height:1.25}
+#guide .ec-list-box {position:relative;--ec-row-h:86px;--ec-list-h:calc(var(--ec-row-h) * 3.5)}
+#guide .ec-list-scroll {
+  position:relative;z-index:1;height:var(--ec-list-h);overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior-y:contain;overflow-anchor:none;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:#646464 transparent;outline:0
+}
+#guide .ec-list-scroll.can-scroll:not([data-end="true"]) {
+  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)
+}
+#guide .ec-list-scroll:focus-visible {box-shadow:inset 0 0 0 2px var(--ec-sub);border-radius:8px}
+#guide ul.ec-list {position:relative;list-style:none;margin:0;padding:0 6px}
+#guide .ec-list-box::before {
+  content:"";position:absolute;left:0;right:0;top:0;height:56px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,rgba(var(--venue-tone,138,158,122),calc(.92 * var(--venue-glow,1))) 0,
+  rgba(var(--venue-tone,138,158,122),calc(.5 * var(--venue-glow,1))) 22%,
+  rgba(var(--venue-tone,138,158,122),calc(.18 * var(--venue-glow,1))) 52%,rgba(var(--venue-tone,138,158,122),0) 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  filter:blur(2px);opacity:0;transform-origin:50% 0
+}
+#guide details.venue-glow-in .ec-list-box::before {animation:venue-glow-in .7s cubic-bezier(.2,.7,.3,1) both}
+#guide ul.ec-list > li.ec-row {
+  position:relative;z-index:1;display:grid;grid-template-columns:66px minmax(0,1fr);
+  column-gap:17px;align-items:start;box-sizing:border-box;margin:0;padding:12px 0;
+  border-bottom:1px solid var(--ec-line);list-style:none
+}
+#guide ul.ec-list > li.ec-row::before,
+#guide ul.ec-list > li.ec-row::marker {content:none}
+#guide .ec-date {display:grid;grid-template-columns:auto auto;justify-content:start;padding-top:2px;line-height:1.15}
+#guide ul.ec-list > li.ec-row.is-2line {align-items:center}
+#guide ul.ec-list > li.ec-row.is-2line .ec-date {padding-top:0}
+#guide .ec-date-m {font-size:10px;color:var(--ec-sub);padding-bottom:3px;white-space:nowrap}
+#guide .ec-date-d {font-size:19px;font-weight:400;letter-spacing:.02em;white-space:nowrap}
+#guide .ec-date:not(.is-single):not(.is-tbd) .ec-date-d:not(.ec-date-end)::after {content:"–";margin:0 .1em;color:var(--ec-ink)}
+#guide .ec-date:not(.is-single) .ec-date-m:nth-child(2) {padding-left:.15em}
+#guide .ec-date.is-tbd {display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+#guide .ec-tbd {
+  font-size:10px;font-weight:650;line-height:16px;padding:0 6px;border-radius:100px;color:var(--ec-sub);
+  border:1px solid var(--ec-lo);white-space:nowrap
+}
+#guide .ec-body {min-width:0;display:flex;flex-direction:column;gap:3px;padding-right:16px}
+#guide .ec-meta {display:flex;align-items:center;gap:8px;min-width:0;height:16px}
+#guide .ec-meta-text {font-size:10.5px;line-height:16px;color:var(--ec-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#guide .ec-badge {
+  flex:none;font-size:9.5px;font-weight:700;line-height:14px;padding:0 6px;border-radius:100px;
+  border:1px solid currentColor;color:var(--ec-ink);letter-spacing:.03em;white-space:nowrap
+}
+#guide .is-ended .ec-badge {color:var(--ec-red)}
+#guide .ec .ec-name,
+#guide .ec a.ec-name:visited {
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;
+  font-size:15px;font-weight:400;line-height:21px;max-height:42px;letter-spacing:.02em;color:var(--ec-ink);text-decoration:none;overflow-wrap:anywhere
+}
+#guide .ec a.ec-name:hover {text-decoration:underline;text-underline-offset:3px}
+#guide .is-ended .ec-date,
+#guide .is-ended .ec-meta-text,
+#guide .is-ended .ec-name {opacity:.42}
+#guide .is-ended .ec-badge {opacity:.8}
+#guide .is-tbd .ec-name {opacity:.8}
+#guide .ec a.ec-name:focus-visible {outline:2px solid var(--ec-sub);outline-offset:2px;border-radius:4px}
+#guide ul.ec-list > li.ec-empty {position:relative;z-index:1;list-style:none;margin:0;padding:22px 2px;font-size:13px;color:var(--ec-sub)}
+#guide ul.ec-list > li.ec-empty::before {content:none}
+@media(max-width:350px){
+#guide ul.ec-list > li.ec-row {grid-template-columns:56px minmax(0,1fr);column-gap:15px}
+#guide .ec-date-d {font-size:16px}
+#guide .ec-sum-total,
+#guide .ec-stat strong {font-size:19px}
+#guide .ec-sum-total small {font-size:13px}
+#guide .ec-stat span {font-size:9.5px}
+}
+@media(prefers-reduced-motion:reduce){
+#guide details.venue-glow-in .ec-list-box::before {animation:none;opacity:1}
+#guide .ec.is-switching .ec-card,
+#guide .ec.is-switching .ec-stage,
+#guide .ec-dots,
+#guide .ec-dots i {transition:none}
+#guide .ec-bars i,
+#guide .ec-card.is-grown .ec-bars i {transform:none;transition:none}
+#guide .ec-pick-box,
+#guide .ec-pick-date,
+#guide .ec-pick-month,
+#guide .ec-heat-head,
+#guide .ec-grid,
+#guide .ec-grid i {transition:none!important}
+}
+html body #guide .ec a.ec-name:not(#_):not(#__),
+html body #guide .ec a.ec-name:not(#_):not(#__):visited,
+html body #guide .ec a.ec-name:not(#_):not(#__):hover {color:var(--ec-ink)!important;text-decoration-color:currentColor!important}
+#guide .ec.is-switching .ec-pick-month {transition:transform .28s cubic-bezier(.22,1,.36,1),opacity .2s ease}
+#guide .ec-card {transform-origin:50% 50%}
+#guide .ec-face-heat {position:relative}
+#guide .ec-heat-head {transition:opacity .18s ease}
+#guide .ec-grid i {transition:background-color .18s ease}
+#guide .ec.is-picking .ec-card.is-pick .ec-heat-head {opacity:0}
+#guide .ec.is-picking .ec-card.is-pick .ec-grid i.lv0 {background:color-mix(in srgb,var(--ec-l0) 15%,var(--ec-card))}
+#guide .ec.is-picking .ec-card.is-pick .ec-grid i.lv1 {background:color-mix(in srgb,var(--ec-l1) 15%,var(--ec-card))}
+#guide .ec.is-picking .ec-card.is-pick .ec-grid i.lv2 {background:color-mix(in srgb,var(--ec-l2) 15%,var(--ec-card))}
+#guide .ec.is-picking .ec-card.is-pick .ec-grid i.lv3 {background:color-mix(in srgb,var(--ec-l3) 15%,var(--ec-card))}
+#guide .ec.is-picking .ec-card.is-pick .ec-grid i.lv4 {background:color-mix(in srgb,var(--ec-l4) 15%,var(--ec-card))}
+#guide .ec-card.is-pick .ec-grid i.is-today,
+#guide .ec-card.has-sel .ec-grid i.is-today {outline:none}
+#guide .ec-pick-box {
+  position:absolute;inset:-3px;grid-area:1 / 1 / 2 / 2;z-index:2;box-sizing:border-box;border:2.5px solid var(--ec-hi);border-radius:7px;
+  pointer-events:none;opacity:0;transition:opacity .18s ease
+}
+#guide .ec-card.is-pick .ec-pick-box,
+#guide .ec-card.has-sel .ec-pick-box {opacity:1}
+#guide .ec-pick-date {
+  position:absolute;left:0;top:-5px;z-index:3;font-size:19.5px;font-weight:550;line-height:1.1;letter-spacing:.02em;
+  color:var(--ec-ink);pointer-events:none;opacity:0;transition:opacity .18s ease;font-variant-numeric:tabular-nums
+}
+#guide .ec-card.is-pick .ec-pick-date {opacity:1}
+#guide .ec-pick-month {
+  position:absolute;left:0;top:0;z-index:1;font-size:13px;line-height:1.1;color:var(--ec-sub);white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .2s ease
+}
+#guide .ec.is-picking .ec-pick-month {opacity:1}
+#guide .ec.is-picking .ec-card:not(.is-pick) {opacity:.6}
+#guide .ec-sr {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#guide .ec-date .is-gold {color:var(--ec-gold)}
+#guide .ec-date .ec-date-d.is-gold:not(.ec-date-end)::after {color:var(--ec-ink)}
+#guide .ec-chips {
+  display:flex;align-items:center;gap:6px;box-sizing:border-box;height:0;margin:12px 0 6px;padding:0 6px;overflow:hidden;
+  transition:height .22s cubic-bezier(.22,1,.36,1),margin-bottom .22s cubic-bezier(.22,1,.36,1)
+}
+#guide .ec-chips.is-open {height:24px;margin-bottom:8px}
+#guide .ec .ec-chip {
+  flex:none;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;height:24px;max-width:100%;margin:0;
+  padding:0 4px 0 10px;border:1px solid color-mix(in srgb,var(--ec-ink) 38%,var(--ec-card));border-radius:100px;background:transparent;
+  color:var(--ec-ink);font:inherit;font-size:12px;line-height:22px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent
+}
+#guide .ec .ec-chip-genre {flex:0 1 auto;min-width:0}
+#guide .ec-chip-label {overflow:hidden;text-overflow:ellipsis;min-width:0}
+#guide .ec-chip-x {flex:none;display:grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--ec-lo);font-size:10px;line-height:1}
+#guide .ec .ec-chip:focus-visible {outline:2px solid var(--ec-sub);outline-offset:2px}
+#guide .ec-filter-panel {
+  position:absolute;top:0;left:2px;right:2px;z-index:6;box-sizing:border-box;padding:12px 12px 14px;
+  border:1px solid var(--ec-lo);border-radius:14px;background:var(--ec-card);box-shadow:0 14px 30px rgba(0,0,0,.5);
+  animation:ec-panel-in .18s ease-out both
+}
+#guide .ec-filter-panel[hidden] {display:none}
+@keyframes ec-panel-in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+#guide .ec-filter-group + .ec-filter-group {margin-top:12px}
+#guide .ec-filter-title {display:block;font-size:10.5px;color:var(--ec-sub);letter-spacing:.05em}
+#guide .ec-filter-options {display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+#guide .ec .ec-option {
+  height:30px;margin:0;padding:0 12px;border:1px solid var(--ec-lo);border-radius:100px;background:transparent;color:var(--ec-ink);
+  font:inherit;font-size:12.5px;cursor:pointer;-webkit-tap-highlight-color:transparent
+}
+#guide .ec .ec-option[aria-pressed="true"] {background:var(--ec-hi);border-color:var(--ec-hi);color:var(--ec-card)}
+#guide .ec .ec-option:focus-visible {outline:2px solid var(--ec-sub);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){
+#guide .ec-filter-panel {animation:none}
+#guide .ec-tri,
+#guide .ec-chips {transition:none}
+}
+#guide .ec .ec-sum-total small {margin-left:.28em}
+@media(max-width:350px){
+#guide .ec-chips {gap:4px}
+#guide .ec .ec-chip {font-size:11px;padding:0 2px 0 7px;gap:3px}
+#guide .ec-summary {grid-template-columns:minmax(0,1fr) repeat(3,44px)}
+}
+
+/* from chapter-tabs.css */
+#guide details.ct-on.ct-selected > .indented > .ec {flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected .ec > * {flex:none}
+#guide details.ct-on.ct-selected .ec > .ec-list-box {flex:1 1 auto;min-height:0}
+#guide details.ct-on.ct-selected .ec-list-scroll {height:100%!important}
+
+/* from figma-viewport-v205.css */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='sights'] #guide > :not(.tt-chapter-heading):not(.tt2-chapter-tabs):not(details) {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > .tt-chapter-heading[data-tt-chapter='sights'] {
+  display:flex!important;position:absolute;top:0;left:0;right:0;
+  width:100%;height:34px;min-height:34px;box-sizing:border-box;
+  margin:0!important;padding:0 0 1px;
+  gap:17px;align-items:center;
+  /* v2.0.31: transparent — the sitebar line above (y103) is the only rule here; a second
+  visible line at y104 made it look doubled. The 1px box keeps the layout unchanged. */
+  border-top:1px solid transparent;
+  border-bottom:1px solid rgba(239,239,239,.43);
+  z-index:3;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > .tt-chapter-heading .tt-chapter-number {font:400 18px/1.1 var(--tt2-num);min-width:20px;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > .tt-chapter-heading .tt-chapter-name {font:400 15px/1.1 var(--tt2-serif);}
+html.tt2-fidelity[data-tt-view='sights'] #guide > .tt2-chapter-tabs[data-tt2-chapter='sights'] {
+  display:grid;position:absolute;top:34px;left:0;right:0;
+  grid-auto-flow:column;grid-auto-columns:1fr;
+  height:46px;min-height:46px;z-index:3;
+  border-bottom:1px solid rgba(239,239,239,.43);
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'].tt2-panel-current {
+  display:block!important;position:absolute!important;
+  top:85px;left:0;right:0;width:100%;
+  height:calc(100% - 141px)!important;
+  min-height:0!important;max-height:calc(100% - 141px)!important;
+  box-sizing:border-box;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  overflow:hidden!important;box-shadow:none!important;
+  background:transparent!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-panels,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-panel,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .event-calendar-list {
+  max-height:100%!important;min-height:0;
+  overflow-y:auto!important;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .venue-primary-links {
+  overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-pills {
+  display:flex!important;flex-wrap:nowrap!important;align-items:stretch!important;
+  gap:0!important;margin:0!important;padding:0!important;
+  min-height:40px!important;height:40px!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  scrollbar-width:none;border:0!important;
+  border-bottom:1px solid rgba(210,210,210,.43)!important;
+  background:transparent!important;box-shadow:none!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-pills::-webkit-scrollbar {display:none;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-pills > .tab-pill {
+  flex:1 0 auto!important;min-width:max-content!important;
+  height:39px!important;min-height:39px!important;
+  margin:0!important;padding:0 17px!important;
+  color:#9e9e9e!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;background:transparent!important;
+  font:400 12px/39px var(--tt2-ui)!important;
+  white-space:nowrap!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-pills > .tab-pill[aria-selected='true'] {color:#fff!important;box-shadow:inset 0 -1px 0 #fff!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-pills .inline-category-icon {display:none!important;}
+
+/* from figma-sights-v206.css */
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] > .indented {height:100%!important; min-height:0!important; overflow:hidden!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab {
+  display:flex!important; flex-direction:column!important;
+  height:100%!important; min-height:0!important;
+  overflow:hidden!important; margin:0!important; padding:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills {
+  display:flex!important; align-items:center!important;
+  flex:0 0 40px!important; height:40px!important; min-height:40px!important;
+  width:100%!important; box-sizing:border-box!important;
+  margin:0!important; padding:0 14px 0 90px!important; gap:45px!important;
+  background:transparent!important; border:0!important;
+  border-bottom:1px solid rgba(215,215,215,.43)!important;
+  border-radius:0!important; overflow-x:auto!important; overflow-y:hidden!important;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:none!important;
+  -webkit-mask-image:none!important; mask-image:none!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills::-webkit-scrollbar {display:none;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills::after {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills .tab-pill {
+  display:flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+  height:40px!important;min-height:40px!important; min-width:auto!important;
+  width:auto!important;margin:0!important; padding:0!important;box-shadow:none!important;
+  color:#9e9e9e!important; background:transparent!important; border:0!important;
+  font-family:var(--tt2-ui)!important;font-size:12px!important;font-weight:400!important;
+  line-height:1!important;position:relative;white-space:nowrap;letter-spacing:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills .tab-pill[aria-selected='true'] {color:#fff!important;font-size:12.667px!important;font-weight:700!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills .tab-pill[aria-selected='true']::after {
+  content:'';position:absolute;width:40px;height:1px;left:50%;bottom:0;
+  transform:translateX(-50%);background:#c6c6c6;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills .inline-category-icon,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills .icon {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-count {
+  position:absolute!important;top:0;left:0;right:0;height:48px!important;box-sizing:border-box;display:flex;align-items:center;
+  padding:11px 12px 0; color:#9e9e9e;font:400 10px/14px var(--tt2-ui);
+  white-space:nowrap;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panels {
+  flex:1 1 auto!important;min-height:0!important;height:auto!important;
+  max-height:none!important;overflow:hidden!important;margin:0!important;padding:48px 0 0!important;box-sizing:border-box!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panels > .tab-panel {
+  position:relative!important;min-height:0!important;max-height:100%!important;
+  height:100%!important;box-sizing:border-box;padding:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panels > .tab-panel::-webkit-scrollbar {display:none;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panel > .indented {margin:0!important;padding:0!important;width:100%!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] ol.venue-directory-list {margin:0!important;padding:0!important;width:100%!important;list-style:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panel li.tt2-museum-row {
+  position:relative!important;display:flex!important;align-items:stretch!important;
+  box-sizing:border-box!important;margin:0!important;padding:18px 11px 0!important;
+  height:123.4px!important;min-height:123.4px!important;
+  width:100%!important;border:0!important;
+  border-bottom:1px solid rgba(210,210,210,.35)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-row-index {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-row-body {
+  width:100%!important;display:flex!important;align-items:stretch!important;flex-direction:column!important;
+  gap:0!important;margin:0!important;padding:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-name-line,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-primary-links {display:block!important;margin:0!important;padding:0!important;min-width:0!important;max-width:100%!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row a.venue-main-link:not(#_) {
+  display:block!important;width:100%;font:400 16px/20px var(--tt2-ui)!important;letter-spacing:0!important;
+  color:#f5f5f5!important;text-decoration:none!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .tt2-museum-ja {display:block;white-space:nowrap;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .tt2-museum-zh {
+  display:block;margin-top:6px;color:#929292;font:400 12px/16px var(--tt2-ui)!important;
+  white-space:nowrap;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-tag-list {
+  display:flex!important;flex-wrap:nowrap!important;gap:7px!important;
+  align-items:center!important;margin:17px 0 0!important;padding:0!important;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;max-width:100%;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-tag {
+  flex:none!important;display:inline-flex!important;align-items:center!important;white-space:nowrap;
+  box-sizing:border-box;height:19px!important;margin:0!important;padding:0 7px!important;
+  border-radius:4px!important;font:400 11px/17px var(--tt2-ui)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-status-source {
+  position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;
+  clip-path:inset(50%)!important;white-space:nowrap!important;
+}
+@media(max-width:350px){
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-pills {padding-left:66px!important;gap:30px!important;}
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-tag--tone-gold {background:transparent!important;border:1px solid #6e4d1d!important;color:#cca46e!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-tag--tone-red {background:transparent!important;border:1px solid #7b281e!important;color:#a84330!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-tag--tone-neutral {background:transparent!important;border:1px solid #535353!important;color:#989898!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panel li.tt2-museum-row:nth-child(4) {padding-top:15px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panels::before {top:48px!important;}
+
+/* from figma-photo-v207.css */
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] > .indented {height:100%!important;min-height:0!important;overflow:hidden!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab {
+  display:flex!important;flex-direction:column!important;height:100%!important;
+  margin:0!important;padding:0!important;min-height:0!important;overflow:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills {
+  display:grid!important;grid-template-columns:1fr 1fr!important;
+  flex:0 0 40px!important;
+  gap:0!important;margin:0!important;padding:0!important;width:100%!important;
+  border:0!important;border-bottom:1px solid rgba(210,210,210,.43)!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .tab-pill {
+  position:relative;display:flex!important;justify-content:center!important;align-items:center!important;
+  flex:1 1 auto!important;width:100%!important;height:40px!important;min-width:0!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  margin:0!important;padding:0 5px!important;background:transparent!important;
+  font:400 12px/1 var(--tt2-ui)!important;color:#9e9e9e!important;
+  white-space:nowrap!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .tab-pill[aria-controls='photo-spots-popular'] {order:0;border-right:1px solid rgba(210,210,210,.43)!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .tab-pill[aria-controls='photo-spots-artist'] {order:1;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .tab-pill[aria-selected='true'] {color:#fff!important;font-size:12.667px!important;font-weight:700!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .tab-pill[aria-selected='true']::after {
+  content:'';position:absolute;bottom:0;left:50%;width:69px;height:1px;
+  transform:translateX(-50%);background:#bcbcbc;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .icon,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills .inline-category-icon {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-panels {
+  position:relative!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;
+  margin:0!important;padding:48px 0 0!important;box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-count {
+  position:absolute;top:0;left:0;right:0;height:48px;
+  display:flex;align-items:center;box-sizing:border-box;padding:11px 12px 0;
+  color:#9e9e9e;font:400 10px/14px var(--tt2-ui);
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-panels > .tab-panel {
+  position:relative!important;min-height:0!important;height:100%!important;max-height:100%!important;
+  margin:0!important;padding:0!important;box-sizing:border-box!important;
+  overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-panel::-webkit-scrollbar {display:none;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-panel > .indented {padding:0!important;margin:0!important;width:100%!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] ol.venue-directory-list {margin:0!important;padding:0!important;width:100%!important;list-style:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] li.tt2-photo-row {
+  position:relative!important;display:flex!important;box-sizing:border-box!important;
+  width:100%!important;height:123.4px!important;min-height:123.4px!important;
+  padding:18px 11px 0!important;margin:0!important;border:0!important;
+  border-bottom:1px solid rgba(210,210,210,.35)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-row-index {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-row-body {
+  width:100%!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:0!important;margin:0!important;padding:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-name-line,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-primary-links {
+  display:block!important;min-width:0!important;width:100%!important;max-width:100%!important;
+  margin:0!important;padding:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row a.venue-main-link:not(#_) {
+  display:block!important;width:100%;min-width:0!important;
+  margin:0!important;padding:0!important;
+  font:400 16px/20px var(--tt2-ui)!important;letter-spacing:0!important;
+  color:#f5f5f5!important;text-decoration:none!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-ja {display:block;white-space:nowrap;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-desc {
+  display:block!important;margin-top:6px;color:#9e9e9e;
+  font:400 12px/16px var(--tt2-ui)!important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-tag-list {
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:7px!important;
+  margin:17px 0 0!important;padding:0!important;max-width:100%;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-tag {
+  display:inline-flex!important;flex:none!important;align-items:center!important;
+  box-sizing:border-box;height:19px!important;margin:0!important;padding:0 7px!important;
+  border-radius:4px!important;white-space:nowrap;
+  font:400 11px/17px var(--tt2-ui)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-tag--tone-gold {background:transparent!important;border:1px solid #6e4d1d!important;color:#cca46e!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-tag--tone-neutral {background:transparent!important;border:1px solid #535353!important;color:#989898!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-tag--tone-red {background:transparent!important;border:1px solid #7b281e!important;color:#a84330!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-panels::before {top:48px!important;}
+@media(max-width:350px){
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-row .venue-tag-list {gap:5px!important;}
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills {margin-top:-6px!important;flex-basis:46px!important;height:46px!important;min-height:46px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab > .tab-pills > .tab-pill.tab-pill {height:46px!important;max-height:none!important;padding-top:0!important;}
+
+/* from figma-sights-v210.css */
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panel li.tt2-sight-extra-row {
+  position:relative!important;display:flex!important;align-items:stretch!important;
+  box-sizing:border-box!important;margin:0!important;
+  height:123.4px!important;min-height:123.4px!important;border:0!important;
+  border-bottom:1px solid rgba(210,210,210,.35)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-row-index {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-row-body {
+  width:100%!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:0!important;margin:0!important;padding:0!important;min-width:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-name-line,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-primary-links {
+  display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;
+  margin:0!important;padding:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row a.venue-main-link:not(#_) {
+  display:block!important;min-width:0!important;width:100%;padding:0!important;margin:0!important;
+  color:#f5f5f5!important;text-decoration:none!important;
+  font:400 16px/20px var(--tt2-ui)!important;letter-spacing:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-ja {display:block!important;max-width:calc(100% - 70px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-zh {
+  display:block!important;margin-top:6px;color:#9e9e9e;
+  font:400 12px/16px var(--tt2-ui)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-secondary-links {
+  position:absolute!important;right:19px;
+  display:flex!important;max-width:70px!important;align-items:center;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row a.external-action-link:not(#_) {
+  display:inline-flex!important;align-items:center;justify-content:center;
+  box-sizing:border-box!important;min-width:43px;height:18px;margin:0!important;padding:0 6px!important;
+  font:400 9px/1 var(--tt2-ui)!important;color:#f3f3f3!important;text-decoration:none!important;
+  background:transparent!important;border:1px solid #a1a1a1!important;border-radius:11px!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-tag-list {
+  display:flex!important;align-items:center!important;flex-wrap:nowrap!important;
+  box-sizing:border-box!important;gap:7px!important;margin:17px 0 0!important;padding:0!important;
+  max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-no-subtitle .venue-tag-list {margin-top:37px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-tag {
+  display:inline-flex!important;flex:none!important;align-items:center!important;box-sizing:border-box!important;
+  height:19px!important;margin:0!important;padding:0 7px!important;
+  border-radius:4px!important;white-space:nowrap;font:400 11px/17px var(--tt2-ui)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-tag--tone-gold {background:transparent!important;border:1px solid #6e4d1d!important;color:#cca46e!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-tag--tone-neutral {background:transparent!important;border:1px solid #535353!important;color:#989898!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-tag--tone-red {background:transparent!important;border:1px solid #7b281e!important;color:#a84330!important;}
+
+@media(max-width:350px){
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-tag-list {gap:5px!important;}
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panel li.tt2-sight-extra-row {
+  width:calc(100% + 2px)!important;margin-left:-1px!important;
+  padding:21px 11px 0 10.5px!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row .venue-secondary-links {top:26px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-sight-extra-row:nth-child(4) {padding-top:18px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tab-panel li.tt2-sight-extra-row:nth-of-type(4) {padding-top:17.5px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] li.tt2-photo-film-row {padding:21px 11px 0 22px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tt2-photo-film-row .venue-tag-list {margin-top:39px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] li.tt2-photo-film-row .venue-name-line,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] li.tt2-photo-film-row .venue-row-body {min-width:0!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] li.tt2-photo-film-row .tt2-photo-ja {max-width:calc(100% - 3px);overflow:hidden;text-overflow:ellipsis;}
+html.tt2-fidelity[data-tt-view="sights"] #guide > details[data-tt2-panel-key="photo"] .tab-pills {
+  display:flex!important;
+  flex-flow:row nowrap!important;
+  grid-template-columns:none!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+  width:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:hidden!important;
+}
+html.tt2-fidelity[data-tt-view="sights"] #guide > details[data-tt2-panel-key="photo"] .tab-pills > .tab-pill {
+  display:flex!important;
+  flex:0 0 50%!important;
+  width:50%!important;
+  min-width:0!important;
+  max-width:50%!important;
+  height:40px!important;
+  box-sizing:border-box!important;
+  order:0;
+  text-overflow:clip;
+  overflow:hidden;
+}
+html.tt2-fidelity[data-tt-view="sights"] #guide > details[data-tt2-panel-key="photo"] .tab-pills > .tab-pill[aria-controls="photo-spots-popular"] {order:0!important;}
+html.tt2-fidelity[data-tt-view="sights"] #guide > details[data-tt2-panel-key="photo"] .tab-pills > .tab-pill[aria-controls="photo-spots-artist"] {order:1!important;}
+
+/* from figma-events-v229.css */
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'].tt2-panel-current #event-calendar {
+  --tt-event-content-ink:#f1f1f1;
+  --tt-event-detail:#9e9e9e;
+  --tt-event-rule:rgba(220,220,220,.34);
+  position:relative;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar {--tt-events-muted:#9e9e9e;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar.ec {
+  display:flex!important;flex-direction:column!important;
+  box-sizing:border-box;
+  height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px);
+  min-height:0!important;
+  padding-bottom:0;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar.ec > * {flex:none;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar.ec.is-heat .ec-full {padding-top:6px;padding-bottom:4px;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-mini-bars {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] > .indented,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] {overflow:clip!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'][data-tt2-panel-key='event'].tt2-panel-current {overflow:clip!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-summary {
+  display:block;
+  box-sizing:border-box;
+  min-height:52px;
+  /* v2.0.38: +8px for the 25px condition buttons. v2.0.39: month + count sit 4.5px lower,
+  so the count line ends on the buttons' bottom edge (height unchanged). */
+  padding:4.5px 0 14.5px 22px;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-summary {
+  position:relative!important;
+  top:auto!important;left:auto;right:auto;
+  width:auto;height:52px;
+  margin:0;
+  z-index:4;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-sum-lead {display:flex;flex-direction:column;align-items:flex-start;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-sum-month {
+  font:400 10px/15px 'Noto Sans JP',sans-serif;
+  letter-spacing:0;
+  color:var(--tt-event-detail);
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-sum-total {
+  font:500 17.5px/18px 'Noto Sans JP',sans-serif; /* v2.0.39: 17.5px, Medium */
+  letter-spacing:0;
+  align-items:baseline;
+  color:var(--tt-event-content-ink);
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-sum-total small {
+  font-size:17.5px;font-weight:inherit;
+  margin-left:5px;
+  letter-spacing:0;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-tri {display:none!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-summary > .ec-stat,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-summary > .ec-stat-gap {
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;margin:0!important;overflow:hidden!important;
+  clip-path:inset(50%);white-space:nowrap;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar button.ec-condition-open {
+  -webkit-appearance:none!important;appearance:none!important;
+  position:absolute!important;right:2px!important;top:11.5px!important;
+  width:auto!important;min-width:0!important;max-width:none!important;
+  height:26px!important;min-height:26px!important;max-height:26px!important;
+  box-sizing:border-box!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  gap:6px!important;margin:0!important;padding:0 12px!important;
+  border:0!important;border-radius:100px!important;
+  background:#fff!important;background-image:none!important;
+  color:#000!important;-webkit-text-fill-color:#000!important;
+  font:600 12px/1 'Noto Sans JP',sans-serif!important; /* v2.0.39: SemiBold */
+  letter-spacing:0!important;box-shadow:none!important;text-shadow:none!important;
+  outline-offset:2px;color-scheme:light;
+  white-space:nowrap;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-condition-open::after {
+  content:''!important;position:relative;top:0!important;flex:0 0 9.9px;
+  width:9.9px;height:9.9px;
+  background:linear-gradient(#000,#000) center/9.9px 1px no-repeat,
+  linear-gradient(#000,#000) center/1px 9.9px no-repeat!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-condition-open::before {content:'';position:absolute;inset:-6px -3px;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-condition-open:focus-visible {outline:2px solid #ddd;outline-offset:2px;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar:has(.ec-chips.is-open .ec-chip) button.ec-condition-open {
+  width:26px!important;min-width:26px!important;max-width:26px!important;
+  padding:0!important;gap:0!important;
+  border-radius:50%!important;
+  font-size:0!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar {--tt-ev-gap:19px; /* v2.0.39: everything under the cards 5px lower (was 14px) */}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips,
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips.is-open {
+  position:relative!important;
+  z-index:5;
+  inset:auto!important;
+  align-self:flex-end;
+  width:max-content!important;
+  max-width:calc(100% - 150px)!important;
+  height:25px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex-wrap:nowrap!important;
+  gap:7px!important; /* v2.0.39: 9 -> 7 */
+  padding:0!important;
+  /* v2.0.38: 25px chips centred on the count line (12px below the summary's top).
+  right: 2px edge + 26px「＋」+ 7px gap */
+  margin:calc(var(--tt-ev-gap) + 12px) 35px -37px 0!important;
+  background:transparent!important;
+  overflow:visible!important;
+  transition:none;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-chips:not(.is-open) {visibility:hidden;pointer-events:none;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips:has(> .ec-chip:nth-child(3)) {
+  justify-content:flex-start!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 12px,#000 calc(100% - 12px),transparent 100%);
+  padding:0 12px!important;
+  margin-right:28px!important; /* the strip (and its fade) ends at the「＋」 */
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips:has(> .ec-chip:nth-child(3))::-webkit-scrollbar {display:none;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-chip {
+  max-width:100%;
+  cursor:pointer;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chip,
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips button.ec-chip {
+  -webkit-appearance:none!important;appearance:none!important;
+  display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;
+  box-sizing:border-box!important;
+  flex:none!important;
+  min-width:0!important;
+  /* v2.0.38: Figma「Date Filter」(85×25) /「City Filter」(73×25): white capsule,
+  12px Noto Sans JP Medium in black, padding 0 12px, 6px to a 7×7 hairline ×.
+  All chips (日付指定・エリア・ジャンル) share it; the width follows the label. */
+  position:relative!important;
+  width:auto!important;max-width:none!important;
+  height:25px!important;min-height:25px!important;max-height:25px!important;
+  padding:0 12px!important;gap:6px!important;
+  background:#fff!important;background-image:none!important;
+  color:#000!important;-webkit-text-fill-color:#000!important;
+  border:0!important;border-radius:100px!important;
+  box-shadow:none!important;text-shadow:none!important;
+  font:600 12px/1 'Noto Sans JP',sans-serif!important; /* v2.0.39: SemiBold */
+  letter-spacing:0!important;white-space:nowrap!important;
+  margin:0!important;
+  outline-offset:2px;color-scheme:light;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips button.ec-chip::before {content:'';position:absolute;inset:-6px -3px;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-chip-label {
+  min-width:0;
+  display:block!important;flex:0 0 auto!important;
+  font:inherit!important;line-height:14px!important;
+  overflow:visible!important;text-overflow:clip!important;white-space:nowrap!important;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips .ec-chip-label {color:#000!important;-webkit-text-fill-color:#000!important;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-chip-x {font:400 10px/14px 'Noto Sans JP',sans-serif;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips .ec-chip-x {
+  display:block!important;position:relative!important;
+  flex:0 0 7px!important;width:7px!important;height:7px!important;
+  min-width:7px!important;min-height:7px!important;
+  padding:0!important;margin:0!important;
+  font-size:0!important;line-height:0!important;
+  align-items:center!important;justify-content:center!important;
+  background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  color:#171717!important;-webkit-text-fill-color:#171717!important;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips .ec-chip-x::before,
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips .ec-chip-x::after {
+  content:'';position:absolute;left:3px;top:-1.45px;width:1px;height:9.9px;
+  border-radius:0;background:#000;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips .ec-chip-x::before {transform:rotate(45deg);}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips .ec-chip-x::after {transform:rotate(-45deg);}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-filter-panel {
+  top:4px;
+  max-height:calc(100% - 8px);
+  overflow-y:auto;overscroll-behavior:contain;
+  left:15px;right:4px;
+  border:1px solid #636363;
+  border-radius:12px;
+  background:#111;
+  box-shadow:0 16px 42px rgba(0,0,0,.75);
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-list-box {
+  --ec-row-h:82px;
+  --ec-list-h:clamp(190px, calc(100dvh - 446px), 410px);
+  box-sizing:border-box;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box {
+  position:relative!important;
+  top:auto!important;left:auto;right:auto;
+  width:auto;
+  flex:1 1 0!important;min-height:0;
+  display:flex;flex-direction:column;
+  isolation:isolate;
+  z-index:1;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-list-scroll {
+  flex:1 1 auto;
+  height:auto!important;max-height:none!important;min-height:0;
+  overscroll-behavior-y:contain;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box::before {
+  position:absolute;
+  top:0;
+
+  z-index:0;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar ul.ec-list {padding:0 6px;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar ul.ec-list > li.ec-row {
+  min-height:0;
+  height:auto;
+  grid-template-columns:66px minmax(0,1fr);
+  column-gap:25px;
+  margin:0;
+  padding:12px 0 12px 15px;
+  border-bottom:none;
+  box-sizing:border-box;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar ul.ec-list > li.ec-row:first-child {min-height:0;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar ul.ec-list > li.ec-row:nth-child(2) {min-height:0;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar ul.ec-list > li.ec-row {align-items:start!important;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar ul.ec-list > li.ec-row.is-2line {align-items:center!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar ul.ec-list > li.ec-row::after {
+  content:'';position:absolute;bottom:0;left:3px;right:-7px;
+  height:1px;background:var(--tt-event-rule);
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-body {
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  gap:3px;
+  padding-right:9px;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-meta {
+  display:block;
+  min-width:0;
+  height:16px;
+  line-height:16px;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-meta-text {
+  display:block;
+  font-size:10.5px;line-height:16px;
+  color:var(--ec-sub);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec .ec-name,
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec a.ec-name:visited {
+  color:var(--tt-event-content-ink);
+  font:400 16px/20px 'Noto Sans JP',sans-serif;
+  letter-spacing:0;
+  max-height:40px;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow-wrap:anywhere;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar ul.ec-list > li.ec-row .ec-date,
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar ul.ec-list > li.ec-row.is-2line .ec-date {
+  display:grid!important;grid-template-columns:max-content max-content!important;
+  column-gap:0!important;row-gap:0!important;
+  justify-content:start!important;align-content:start!important;
+  padding-top:2px!important;line-height:1.15!important;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar ul.ec-list > li.ec-row.is-2line .ec-date {padding-top:0!important;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-date-m {padding-bottom:3px!important;font-size:10px!important;line-height:1.15!important;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-date-d {font-size:19px!important;line-height:1.15!important;letter-spacing:.02em!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-badge {
+  position:absolute;
+  top:8px;
+  right:-5px; /* right edge x376 on a 393 screen, as in Figma */
+  box-sizing:border-box;
+  height:13.4px;
+  padding:0 8px;
+  font:400 8px/11.4px 'Noto Sans JP',sans-serif;
+  border:1px solid currentColor;
+  border-radius:7px;
+  letter-spacing:0;
+  color:#e6e6e6;
+  background:transparent;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .is-ended .ec-badge {color:var(--ec-red);}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar .ec-row:has(.ec-badge) .ec-meta-text {padding-right:58px;}
+@media(max-width:350px){
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='event'] #event-calendar ul.ec-list > li.ec-row {
+  grid-template-columns:56px minmax(0,1fr);
+  column-gap:18px;
+  padding-left:11px;
+}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-date-d {font-size:16px!important;}
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips,
+html.tt2-fidelity[data-tt-view="sights"] #event-calendar .ec-chips.is-open {gap:6px!important;max-width:calc(100% - 140px)!important;}
+}
+@media(min-width:394px){
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box::before {left:50%;transform:translateX(-50%);}
+}
+@media(prefers-reduced-motion:reduce){
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-filter-panel {animation:none;}
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-card {transform-origin:50% 0;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-grid {margin-top:16px;}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-pick-date {top:-1px;}
+
+/* from figma-top-standard-v235.css */
+html.tt2-fidelity[data-tt-view='sights'] #guide > .tt2-chapter-tabs[data-tt2-chapter='sights'] {grid-template-columns:111.6px 137.4px minmax(0,1fr)!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-wheel {top:-6px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab > .tab-pills {border-bottom-color:var(--tt2-std-rule)!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab > .tab-pills > .tab-pill.tab-pill {
+  font-family:var(--tt2-std-ui)!important;font-size:12px!important;color:var(--tt2-std-off)!important;
+  border-right-color:var(--tt2-std-rule)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab > .tab-pills > .tab-pill.tab-pill[aria-selected='true'] {font-size:12px!important;font-weight:700!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab > .tab-pills > .tab-pill.tab-pill[aria-selected='true']::after {width:54px!important;height:1px!important;background:#bcbcbc!important;}
+
+/* from figma-glow-v236.css */
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box::before {
+  content:''!important;
+  right:0!important;width:auto!important;height:56px!important;
+  background:var(--tt2-glow)!important;
+  -webkit-mask-image:var(--tt2-glow-mask)!important;mask-image:var(--tt2-glow-mask)!important;
+  filter:blur(2px)!important;opacity:1!important;
+  transform:none;transform-origin:50% 0;
+  animation:tt2-glow-in .7s cubic-bezier(.2,.7,.3,1) both!important;
+  pointer-events:none!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box::before {left:10px!important;}
+
+/* from figma-lists-v243.css */
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) :is(.tt2-museum-zh,.tt2-sight-extra-zh,.tt2-photo-desc) {display:none!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) :is(.tt2-museum-ja,.tt2-sight-extra-ja,.tt2-photo-ja) {display:inline!important;margin:0!important;font:inherit!important;color:inherit!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details:is([data-tt2-panel-key='places'],[data-tt2-panel-key='photo']) :is(.tt2-sight-count,.tt2-photo-count) {height:52px!important;align-items:flex-start!important;padding:27px 12px 0!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details:is([data-tt2-panel-key='places'],[data-tt2-panel-key='photo']) .tab-panels {
+  flex:none!important;padding-top:52px!important;
+  height:calc(100dvh - var(--tt2l-gap) - var(--tt2-sitebar-height,104px) - 125px)!important;
+}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details:is([data-tt2-panel-key='places'],[data-tt2-panel-key='photo']) .tab-panels::before {top:52px!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details:is([data-tt2-panel-key='places'],[data-tt2-panel-key='photo']) .tab-panels > .tab-panel:not(#_a) {
+  height:calc(100dvh - var(--tt2l-gap) - var(--tt2-sitebar-height,104px) - 177px)!important;
+  max-height:none!important;min-height:0!important;
+}
+
+/* v2.0.108 — 撮影スポット: the sub-tab row (映えスポット | ロケ地・聖地巡礼) was pulled 6px up under the
+   chapter tabs, but its box (#photo-spots-tabs, overflow hidden) cut those 6px off, leaving a gap
+   between the chapter-tab rule and the divider between the two sub tabs. The whole box moves up
+   instead (85px → 79px); the row sits where it did, now whole. */
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'] .tab-pills {margin-top:0!important;}
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='photo'][data-tt2-panel='sights'].tt2-panel-current {top:79px!important;}

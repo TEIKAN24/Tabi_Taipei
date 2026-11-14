@@ -1,0 +1,737 @@
+/* TABI TAIPEI v2.0.95 — 散策: 夜市 map and detail, 商圏 area map and list
+   Collected in 2.0.95 (cleanup phase 2) from the per-version files, in their load order, so
+   one file holds the whole screen. Comments name the file each run came from. */
+
+/* from guide.css */
+.site-content .area-directory-section {overflow-anchor:none;}
+#guide #night-markets-section #night-markets-tabs .night-market-panel {padding:22px 4px 6px!important;max-height:none!important;overflow:visible!important;}
+#guide #night-markets-section #night-markets-tabs .nm-title {margin:0!important;font-size:20px!important;font-weight:800!important;line-height:1.3!important;letter-spacing:.02em;color:#F2F2F2!important;}
+#guide #night-markets-section #night-markets-tabs .nm-lead {margin:14px 0 0!important;font-size:13px!important;line-height:1.75!important;color:#8E8E8E!important;}
+#guide #night-markets-section #night-markets-tabs .nm-info {display:grid;grid-template-columns:auto 1fr;column-gap:26px;row-gap:9px;margin:30px 0 0!important;padding:0;}
+#guide #night-markets-section #night-markets-tabs .nm-info dt {margin:0;font-size:14px;line-height:1.5;color:#DADADA!important;font-weight:500;white-space:nowrap;}
+#guide #night-markets-section #night-markets-tabs .nm-info dd {margin:0;font-size:14px;line-height:1.5;color:#EDEDED!important;letter-spacing:.03em;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;}
+#guide #night-markets-section #night-markets-tabs .nm-station {display:inline-flex;align-items:center;gap:5px;}
+#guide #night-markets-section #night-markets-tabs .nm-line {
+  display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:18px;padding:0 4px;box-sizing:border-box;
+  border:2px solid var(--nm-line);border-radius:6px;background:#FFFFFF;color:#1A1A1A;font-size:10.5px;font-weight:800;line-height:1;letter-spacing:0;
+}
+#guide #night-markets-section #night-markets-tabs .nm-exit {display:inline-flex;align-items:center;gap:3px;}
+#guide #night-markets-section #night-markets-tabs .nm-exit-no {
+  display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:18px;padding:0 3px;box-sizing:border-box;
+  background:#FFD200;color:#111111;font-size:12px;font-weight:800;line-height:1;
+}
+#guide #night-markets-section #night-markets-tabs .nm-feature-label {margin:30px 0 10px!important;font-size:14px!important;line-height:1.4!important;color:#DADADA!important;}
+#guide #night-markets-section #night-markets-tabs .nm-features {display:flex;flex-wrap:wrap;gap:7px;margin:0!important;padding:0!important;list-style:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-features li {margin:0!important;padding:5px 10px!important;border-radius:6px;background:#333333!important;color:#BDBDBD!important;font-size:13px;line-height:1.35;list-style:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-features li::before,
+#guide #night-markets-section #night-markets-tabs .nm-features li::marker {content:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-go {display:flex;align-items:center;justify-content:center;margin:44px 0 6px;background:#F3F3F3!important;color:#151515!important;font-size:16px;font-weight:800;letter-spacing:.06em;text-decoration:none!important;-webkit-tap-highlight-color:transparent}
+#guide #night-markets-section #night-markets-tabs .nm-go:focus-visible {outline:2px solid #CCCCCC;outline-offset:3px;}
+#guide #night-markets-section #night-markets-tabs .nm-specialty-label {margin:18px 0 8px!important;}
+#guide #night-markets-section #night-markets-tabs .nm-specialties {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0!important;padding:0!important;list-style:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-specialties>li {align-items:center;justify-content:center;margin:0!important;box-sizing:border-box;border-radius:6px;color:#EEEEEE!important;font-size:clamp(13.5px,4vw,15px)!important;font-weight:500;line-height:1.3!important;text-align:center;letter-spacing:.02em;overflow-wrap:anywhere;list-style:none!important}
+#guide #night-markets-section #night-markets-tabs .nm-specialties>li::before,
+#guide #night-markets-section #night-markets-tabs .nm-specialties>li::marker {content:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-specialties + .nm-go {margin-top:14px!important;}
+#guide #night-markets-section #night-markets-tabs .nm-specialties>li {display:block!important;min-height:0!important;padding:0!important;background:none!important;}
+#guide #night-markets-section #night-markets-tabs .nm-specialty {display:flex;align-items:center;justify-content:center;width:100%;margin:0;box-sizing:border-box;border:0;border-radius:6px;background:#3A3A3A;color:#EEEEEE;cursor:pointer;-webkit-tap-highlight-color:transparent;font:inherit;font-size:clamp(13.5px,4vw,15px);font-weight:500;line-height:1.3;letter-spacing:.02em;text-align:center;overflow-wrap:anywhere;transition:background-color .15s ease}
+#guide #night-markets-section #night-markets-tabs .nm-specialty:active {background:#4A4A4A;}
+#guide #night-markets-section #night-markets-tabs .nm-specialty:focus-visible {outline:2px solid #CCCCCC;outline-offset:2px;}
+@media (hover:hover){
+#guide #night-markets-section #night-markets-tabs .nm-specialty:hover {background:#444444;}
+}
+#guide .walk-viewing-detail .walk-area-grid {display:none!important}
+#guide .walk-area-grid[hidden] {display:none!important}
+#guide details.walk-grid-ready > summary,
+#guide details.night-market-section > summary {transition:padding .22s ease}
+#guide details.walk-grid-ready > summary::after,
+#guide details.night-market-section > summary::after {transition:font-size .22s ease,transform .22s ease}
+#guide details.walk-grid-ready[open] > summary,
+#guide details.night-market-section[open] > summary {padding:8px 14px!important}
+#guide .walk-area-grid {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+  margin:0;padding:0;min-width:0;
+}
+#guide .walk-area-card {
+  appearance:none;position:relative;min-width:0;min-height:94px;display:flex;flex-direction:column;
+  justify-content:flex-start;align-items:flex-start;gap:0;
+  padding:14px 13px 12px;text-align:left;font:inherit;cursor:pointer;
+  background:var(--paper);color:var(--ink);border:1px solid #333333;
+  border-radius:10px;-webkit-tap-highlight-color:transparent;
+  transition:background-color .18s ease,border-color .18s ease,transform .12s ease;
+}
+#guide .walk-area-card::before {
+  content:"";display:block;flex:none;width:26px;height:2px;border-radius:2px;
+  background:rgb(var(--walk-tone));margin:0 0 9px;
+}
+#guide .walk-area-card-name {font-size:14.5px;font-weight:650;line-height:1.4;letter-spacing:.02em}
+#guide .walk-area-card-sub {
+  margin-top:auto;padding-top:12px;font-size:10.5px;line-height:1.4;font-weight:500;
+  letter-spacing:.03em;color:#8C8C8C;
+}
+#guide .walk-area-card:hover {border-color:#4A4A4A}
+#guide .walk-area-card:active {transform:scale(.985);background:#141414}
+#guide .walk-area-card:focus-visible {outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:360px){
+#guide .walk-area-card {min-height:88px;padding:12px 10px 11px}
+#guide .walk-area-card-name {font-size:13.5px}
+#guide .walk-area-card-sub {font-size:10px}
+}
+#guide .walk-inline-detail[hidden] {display:none!important}
+#guide .walk-inline-detail {
+  margin:0;border:0;border-radius:0;background:transparent;color:var(--ink);overflow:hidden;
+  animation:walk-detail-reveal .22s ease-out both;
+}
+#guide .walk-inline-inner {
+  height:clamp(402px,60svh,522px);
+  display:flex;flex-direction:column;min-height:0;padding:2px 0 0;
+}
+#guide .walk-inline-top {display:flex;flex-direction:row;align-items:center;gap:4px;flex:none;margin:0 0 14px}
+#guide .walk-inline-back {
+  flex:none;display:inline-grid;place-items:center;width:32px;height:40px;margin-left:-3px;
+  padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#guide .walk-inline-back:hover {background:rgba(255,255,255,.05)}
+#guide .walk-inline-back:focus-visible {outline:2px solid var(--accent);outline-offset:-2px}
+#guide .walk-inline-copy {min-width:0}
+#guide .walk-inline-heading {font-size:15px;font-weight:700;line-height:1.4;letter-spacing:.02em;margin:0!important;color:var(--ink)}
+#guide .walk-inline-description {color:#8C8C8C;font-size:11px;line-height:1.5;margin:2px 0 0!important}
+#guide .walk-inline-host {min-height:0;flex:1;display:flex;flex-direction:column;overflow:hidden}
+#guide .walk-inline-detail .area-cats.walk-chips-end {-webkit-mask-image:none;mask-image:none}
+#guide .walk-inline-detail .area-cat-panes.walk-list-more {
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 48px),transparent)!important;
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 48px),transparent)!important;
+}
+@keyframes walk-detail-reveal{from{opacity:.55;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes walk-glow-in{from{opacity:0;transform:scaleX(.6)}to{opacity:1;transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){
+#guide .walk-area-card,
+#guide details.walk-grid-ready > summary,
+#guide details.walk-grid-ready > summary::after {transition:none}
+#guide .walk-inline-detail {animation:none}
+}
+#guide #night-markets-section #night-markets-tabs .night-market-panel:not([hidden]) {display:flex!important;flex-direction:column}
+#guide #night-markets-section #night-markets-tabs .night-market-panel > .nm-info {margin-bottom:30px!important}
+#guide #night-markets-section #night-markets-tabs .night-market-panel > .nm-info + .nm-feature-label {margin-top:auto!important}
+#guide #night-markets-section #night-markets-tabs .nm-specialty {min-height:41.4px;padding:5.4px 2.7px}
+#guide #night-markets-section #night-markets-tabs .nm-go {min-height:50.4px}
+#guide .walk-area-card,
+#guide details.area-directory-section {--walk-tone:var(--walk-tone-dark,161,161,161);}
+#guide #night-markets-section #night-markets-tabs .nm-go {border-radius:7px;}
+#guide #night-markets-section #night-markets-tabs .nm-specialty {
+  text-decoration-line:underline!important;text-decoration-style:solid!important;text-decoration-thickness:1px!important;
+  text-underline-offset:4px!important;text-decoration-color:#BDBDBD!important;
+}
+#guide .walk-inline-detail .walk-inline-top {align-items:flex-start;}
+#guide .walk-inline-detail .walk-inline-copy {flex:1 1 auto;min-width:0;}
+#guide .walk-inline-detail a.walk-inline-go {
+  flex:none;align-self:flex-start;margin:0.5px 0 0 10px;display:inline-flex;align-items:center;justify-content:center;text-align:center;
+  /* v30.9.244: inner space above/below text -10% (6.5px→5.85px), horizontal -15% (13px→11.05px). */
+  min-height:24.7px;padding:0 8.05px 0 14.05px;border-radius:6px;
+  background:#F2F2F2!important;color:#111111!important;-webkit-text-fill-color:#111111;
+  font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1;text-decoration:none!important;white-space:nowrap;
+  opacity:1!important;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#guide .walk-inline-detail a.walk-inline-go:active {opacity:.75!important;}
+#guide .walk-inline-detail a.walk-inline-go:focus-visible {outline:2px solid #CCCCCC;outline-offset:3px;}
+@media (max-width:649px){
+#guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-top {
+  position:relative;display:grid;
+  grid-template-columns:32px minmax(0,1fr);
+  grid-template-rows:21px 19px;
+  column-gap:4px;row-gap:0;min-height:40px;
+}
+#guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-copy {display:contents;}
+#guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-back {grid-column:1;grid-row:1/3;}
+#guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-heading {grid-column:2;grid-row:1;}
+#guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) a.walk-inline-go {position:absolute;right:0;top:0.5px;margin:0;}
+#guide .walk-inline-detail:is([data-walk-area="台北駅"],[data-walk-area="東区"]) .walk-inline-description {
+  grid-column:2;grid-row:2;min-width:0;white-space:nowrap;
+  font-size:clamp(9.5px,2.9vw,11px);letter-spacing:-.025em;
+}
+}
+#guide #night-markets-section {
+  --nm-line-district:rgba(255,255,255,.24);--nm-line-city:rgba(255,255,255,.5);--nm-line-neighbor:rgba(255,255,255,.42);
+  --nm-name-district:#4A4A4A;--nm-name-city:#8E8E8E;--nm-name-station:#8A8A8A;--nm-name-station-strong:#B4B4B4;--nm-st-ink:#E6E6E6;--nm-name-border:#5A5A5A;
+  --nm-pin-bg:#F2F2F2;--nm-pin-ink:#111111;--nm-pin-shadow:0 2px 12px rgba(0,0,0,.55);
+  --nm-leader:#D6D6D6;--nm-ground:#0D0D0D;--nm-station:#BDBDBD;
+  --nm-me-rgb:242,242,242;--nm-glow:138,158,122;--nm-glow-strength:1;
+}
+#guide #night-markets-section > .indented {margin:0!important;padding:0!important;}
+#guide #night-markets-section #night-markets-tabs {margin:0!important;padding:0!important;}
+#guide #night-markets-section .nm-stage {position:relative;height:600px;overflow:clip;}
+#guide #night-markets-section .nm-sr {position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;}
+#guide #night-markets-section .nm-map {
+  position:absolute;inset:0;overflow:clip;outline:none;
+  touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+  cursor:grab;transition:opacity .24s ease,transform .24s ease,visibility 0s;
+}
+#guide #night-markets-section .nm-map.is-dragging {cursor:grabbing;}
+#guide #night-markets-section .nm-map:focus-visible {box-shadow:inset 0 0 0 2px rgba(204,204,204,.55);}
+#guide #night-markets-section .nm-map-base,
+#guide #night-markets-section .nm-map-leaders {position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none;}
+#guide #night-markets-section .nm-map-base {
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 13%,#000 87%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 11%,#000 87%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent 0,#000 13%,#000 87%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 11%,#000 87%,transparent 100%);
+  mask-composite:intersect;
+}
+#guide #night-markets-section .nm-world path {fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round;}
+#guide #night-markets-section .nm-neighbor-lines {stroke:var(--nm-line-neighbor);stroke-width:1;}
+#guide #night-markets-section .nm-neighbor-0 {opacity:.55;}
+#guide #night-markets-section .nm-neighbor-1 {opacity:.3;}
+#guide #night-markets-section .nm-neighbor-2 {opacity:.13;}
+#guide #night-markets-section .nm-district-lines {stroke:var(--nm-line-district);stroke-width:1;opacity:var(--nm-district-alpha,1);}
+#guide #night-markets-section .nm-city-lines {stroke:var(--nm-line-city);stroke-width:calc(1.25px + .35px * var(--nm-far,0));opacity:calc(.85 + .15 * var(--nm-far,0));}
+#guide #night-markets-section .nm-metro-lines {opacity:var(--nm-metro-alpha,.5);}
+#guide #night-markets-section .nm-metro-line {stroke-width:2.55;}
+#guide #night-markets-section .nm-map.is-deep .nm-metro-line {stroke-width:3.6;}
+#guide #night-markets-section .nm-rail {stroke-width:3;}
+#guide #night-markets-section .nm-rail-outside {opacity:.35;}
+#guide #night-markets-section :is(.nm-tier-a,.nm-tier-a-halo) {opacity:var(--nm-a-alpha,0);}
+#guide #night-markets-section :is(.nm-tier-b,.nm-tier-b-halo) {opacity:var(--nm-b-alpha,0);}
+#guide #night-markets-section :is(.nm-tier-c,.nm-tier-c-halo) {opacity:var(--nm-c-alpha,0);}
+#guide #night-markets-section .nm-station-halo {stroke:var(--nm-ground);stroke-width:6.4;}
+#guide #night-markets-section .nm-station {stroke:var(--nm-station);stroke-width:3.4;}
+#guide #night-markets-section .nm-transfer-halo {stroke:var(--nm-ground);stroke-width:9;}
+#guide #night-markets-section .nm-transfer {stroke:var(--nm-station);stroke-width:5.4;}
+#guide #night-markets-section .nm-district-names,
+#guide #night-markets-section .nm-border-names {opacity:var(--nm-district-alpha,1);}
+#guide #night-markets-section .nm-world text {text-anchor:middle;dominant-baseline:central;font-family:inherit;}
+#guide #night-markets-section .nm-district-names text {fill:var(--nm-name-district);font-weight:600;letter-spacing:.08em;}
+#guide #night-markets-section .nm-border-names text {fill:var(--nm-name-border);font-weight:600;letter-spacing:.14em;}
+#guide #night-markets-section .nm-city-names {opacity:var(--nm-city-name-alpha,0);}
+#guide #night-markets-section .nm-city-names text {fill:var(--nm-name-city);font-weight:700;letter-spacing:.16em;transition:opacity .25s ease;}
+#guide #night-markets-section .nm-city-names text.is-neighbor {fill:var(--nm-name-district);font-weight:600;}
+#guide #night-markets-section .nm-map-stations {position:absolute;inset:0;pointer-events:none;}
+#guide #night-markets-section :is(.nm-st,.nm-st-mark) {
+  position:absolute;left:0;top:0;opacity:0;visibility:hidden;will-change:transform;
+  transition:opacity .25s ease,visibility 0s .25s;
+}
+#guide #night-markets-section :is(.nm-st,.nm-st-mark).is-on {opacity:1;visibility:visible;transition:opacity .25s ease;}
+#guide #night-markets-section .nm-st {
+  display:flex;flex-direction:column;align-items:center;gap:3px;white-space:nowrap;
+  font-family:inherit;font-size:11px;font-weight:600;line-height:1.2;letter-spacing:.03em;color:var(--nm-name-station);
+  text-shadow:0 0 2px var(--nm-ground),0 0 2px var(--nm-ground),0 0 3px var(--nm-ground);
+}
+#guide #night-markets-section .nm-st.is-important {color:var(--nm-name-station-strong);font-weight:700;font-size:11.5px;}
+#guide #night-markets-section .nm-st-ops {display:flex;gap:3px;}
+#guide #night-markets-section .nm-op {
+  display:grid;place-items:center;width:16px;height:16px;padding:1.5px;box-sizing:border-box;border-radius:3.5px;
+  background:#FFFFFF no-repeat center/contain;background-origin:content-box;box-shadow:0 0 0 1px rgba(0,0,0,.18);text-shadow:none;
+}
+#guide #night-markets-section .nm-op b {font-size:6.5px;font-weight:800;line-height:1;letter-spacing:-.02em;color:#2A2A2A;}
+#guide #night-markets-section .nm-st-mark {display:none;}
+#guide #night-markets-section .nm-st-mark:is(.is-circle,.is-oval,.is-tile) {display:block;}
+#guide #night-markets-section .nm-st-mark > .nm-op {display:none;}
+#guide #night-markets-section .nm-st-mark.is-tile > .nm-op {display:grid;width:18px;height:18px;border-radius:4px;box-shadow:0 0 0 1.5px var(--nm-ground);}
+#guide #night-markets-section .nm-st-mark.is-circle {width:11px;height:11px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
+#guide #night-markets-section .nm-st-mark.is-oval {width:12px;height:22px;border-radius:6px;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
+#guide #night-markets-section .nm-stage.has-logo-trtc .nm-op-trtc {background-image:var(--nm-logo-trtc);}
+#guide #night-markets-section .nm-stage.has-logo-ntmc .nm-op-ntmc {background-image:var(--nm-logo-ntmc);}
+#guide #night-markets-section .nm-stage.has-logo-tymc .nm-op-tymc {background-image:var(--nm-logo-tymc);}
+#guide #night-markets-section .nm-stage.has-logo-tra .nm-op-tra {background-image:var(--nm-logo-tra);}
+#guide #night-markets-section .nm-stage.has-logo-thsr .nm-op-thsr {background-image:var(--nm-logo-thsr);}
+#guide #night-markets-section .nm-stage.has-logo-trtc .nm-op-trtc b,
+#guide #night-markets-section .nm-stage.has-logo-ntmc .nm-op-ntmc b,
+#guide #night-markets-section .nm-stage.has-logo-tymc .nm-op-tymc b,
+#guide #night-markets-section .nm-stage.has-logo-tra .nm-op-tra b,
+#guide #night-markets-section .nm-stage.has-logo-thsr .nm-op-thsr b {display:none;}
+#guide #night-markets-section .nm-locate {
+  position:absolute;right:10px;bottom:10px;z-index:3;display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;
+  border:0!important;border-radius:8px;background:var(--nm-pin-bg)!important;color:var(--nm-pin-ink)!important;
+  box-shadow:var(--nm-pin-shadow);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .2s ease,filter .15s ease;
+}
+#guide #night-markets-section .nm-locate::before {content:"";position:absolute;inset:-6px;}
+#guide #night-markets-section .nm-locate:active {filter:brightness(.86);}
+#guide #night-markets-section .nm-locate:focus-visible {outline:2px solid #CCCCCC;outline-offset:2px;}
+#guide #night-markets-section .nm-locate svg {display:block;overflow:visible;}
+#guide #night-markets-section .nm-locate-ring {fill:none;stroke:currentColor;stroke-width:2;}
+#guide #night-markets-section .nm-locate-dot {fill:none;stroke:none;transition:fill .2s ease;}
+#guide #night-markets-section .nm-locate-ticks {fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
+#guide #night-markets-section .nm-locate.is-here .nm-locate-dot {fill:currentColor;}
+#guide #night-markets-section .nm-locate.is-off {opacity:.5;}
+#guide #night-markets-section .nm-locate.is-busy svg {animation:nm-locate-busy .9s ease-in-out infinite;}
+@keyframes nm-locate-busy{50%{opacity:.35;}}
+#guide #night-markets-section .nm-toast {
+  position:absolute;right:46px;bottom:12px;z-index:3;margin:0!important;padding:4px 10px;border-radius:12px;
+  background:var(--nm-pin-bg);color:var(--nm-pin-ink)!important;font-size:11px!important;font-weight:700;line-height:1.4;white-space:nowrap;
+  box-shadow:var(--nm-pin-shadow);opacity:0;transform:translateX(6px);transition:opacity .2s ease,transform .2s ease;pointer-events:none;
+}
+#guide #night-markets-section .nm-toast.is-on {opacity:1;transform:none;}
+#guide #night-markets-section .nm-edge.is-pop .nm-edge-count {display:inline-block;animation:nm-pop .32s ease-out;}
+@keyframes nm-pop{40%{transform:scale(1.35);}}
+#guide #night-markets-section .nm-leader {opacity:0;transition:opacity .2s ease;}
+#guide #night-markets-section .nm-leader.is-on {opacity:1;}
+#guide #night-markets-section .nm-leader line {stroke:var(--nm-leader);stroke-width:1.1;stroke-linecap:round;}
+#guide #night-markets-section .nm-leader circle {fill:var(--nm-pin-bg);stroke:var(--nm-ground);stroke-width:1.4;}
+#guide #night-markets-section :is(.nm-pin,.nm-cluster,.nm-edge) {
+  position:absolute;left:0;top:0;margin:0;border:0!important;box-sizing:border-box;
+  background:var(--nm-pin-bg)!important;color:var(--nm-pin-ink)!important;-webkit-text-fill-color:var(--nm-pin-ink);
+  font-family:inherit;font-weight:800;white-space:nowrap;text-decoration:none;box-shadow:var(--nm-pin-shadow);cursor:pointer;
+  opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s .2s,filter .15s ease;
+  will-change:transform;-webkit-tap-highlight-color:transparent;
+}
+#guide #night-markets-section :is(.nm-pin,.nm-cluster,.nm-edge).is-on {opacity:1;visibility:visible;transition:opacity .2s ease,filter .15s ease;}
+#guide #night-markets-section :is(.nm-pin,.nm-cluster,.nm-edge):active {filter:brightness(.86);}
+#guide #night-markets-section :is(.nm-pin,.nm-cluster,.nm-edge,.nm-back):focus-visible {outline:2px solid #CCCCCC;outline-offset:2px;}
+#guide #night-markets-section .nm-pin {height:28.2px;padding:0 13.4px;border-radius:14.1px;font-size:12.6px;line-height:28.2px;letter-spacing:.06em;}
+#guide #night-markets-section :is(.nm-cluster,.nm-edge) {height:23.5px;min-width:31px;padding:0 10px;border-radius:11.75px;font-size:13.5px;line-height:23.5px;font-variant-numeric:tabular-nums;text-align:center;}
+#guide #night-markets-section .nm-edge {overflow:visible;}
+#guide #night-markets-section .nm-edge-count {position:relative;}
+#guide #night-markets-section .nm-edge-arrow {position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;color:var(--nm-pin-bg);pointer-events:none;overflow:visible;}
+#guide #night-markets-section .nm-me {position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity .5s ease;pointer-events:none;}
+#guide #night-markets-section .nm-me.is-on {opacity:1;}
+#guide #night-markets-section .nm-me-core,
+#guide #night-markets-section .nm-me-wave {position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;box-sizing:border-box;transform:translate(-50%,-50%);}
+#guide #night-markets-section .nm-me-core {
+  border:2px solid rgb(var(--nm-me-rgb));
+  background:radial-gradient(circle,rgb(var(--nm-me-rgb)) 0 2.6px,transparent 3.2px);
+  animation:nm-me-breathe 2.6s ease-in-out infinite;
+}
+#guide #night-markets-section .nm-me-wave {border:1.5px solid rgba(var(--nm-me-rgb),.7);opacity:0;animation:nm-me-wave 2.6s cubic-bezier(.2,.6,.35,1) infinite;}
+#guide #night-markets-section .nm-me-wave--late {animation-delay:1.3s;}
+@keyframes nm-me-breathe{0%,100%{opacity:.72;box-shadow:0 0 3px 0 rgba(var(--nm-me-rgb),.25);}
+  50%{opacity:1;box-shadow:0 0 14px 4px rgba(var(--nm-me-rgb),.5);}}
+@keyframes nm-me-wave{0%{width:16px;height:16px;opacity:.8;}
+  100%{width:78px;height:78px;opacity:0;}}
+#guide #night-markets-section .nm-detail {
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .24s ease,transform .24s ease,visibility 0s .24s;
+}
+#guide #night-markets-section .nm-stage[data-view="detail"] .nm-map {opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .22s ease,transform .22s ease,visibility 0s .22s;}
+#guide #night-markets-section .nm-stage[data-view="detail"] .nm-detail {opacity:1;visibility:visible;transform:none;transition:opacity .3s ease .05s,transform .3s ease .05s;}
+#guide #night-markets-section .nm-measure {position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;}
+#guide #night-markets-section .nm-measure .tab-pills {overflow:hidden;}
+#guide #night-markets-section .nm-detail-head {flex:none;display:flex;align-items:center;gap:4px;padding:10px 18px 6px 8px;}
+#guide #night-markets-section .nm-back {
+  flex:none;display:grid;place-items:center;width:38px;height:38px;margin:0;padding:0;border:0!important;border-radius:50%;
+  background:transparent!important;box-shadow:none!important;color:#F2F2F2;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#guide #night-markets-section .nm-back:active {background:rgba(255,255,255,.08)!important;}
+#guide #night-markets-section #night-markets-tabs .nm-detail .nm-title {margin:0!important;font-size:21px!important;font-weight:700!important;letter-spacing:.06em;}
+#guide #night-markets-section .nm-detail-body {
+  position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
+  padding:0 22px 20px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+#guide #night-markets-section .nm-detail-body > :not(.nm-glow) {position:relative;z-index:1;}
+#guide #night-markets-section .nm-glow {
+  position:sticky;top:0;display:block;flex:none;height:56px;margin:0 -22px -56px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,
+  rgba(var(--nm-glow),calc(.92 * var(--nm-glow-strength))) 0,
+  rgba(var(--nm-glow),calc(.5 * var(--nm-glow-strength))) 22%,
+  rgba(var(--nm-glow),calc(.18 * var(--nm-glow-strength))) 52%,
+  rgba(var(--nm-glow),0) 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  filter:blur(2px);
+  animation:walk-glow-in .45s ease-out both;
+}
+#guide #night-markets-section #night-markets-tabs .nm-detail-body > .nm-lead {margin:12px 0 0!important;}
+#guide #night-markets-section #night-markets-tabs .nm-detail-body > .nm-info {margin:26px 0 0!important;}
+#guide #night-markets-section .nm-detail-body > .nm-gap {flex:1 1 0;min-height:24px;}
+#guide #night-markets-section #night-markets-tabs .nm-detail-body > .nm-feature-label {margin:0 0 10px!important;}
+#guide #night-markets-section #night-markets-tabs .nm-detail-body > .nm-go {flex:none;margin:0!important;}
+#guide #night-markets-section .nm-fallback {padding:22px;cursor:auto;}
+#guide #night-markets-section .nm-fallback-note {margin:0 0 14px!important;font-size:13px!important;color:#8E8E8E!important;}
+#guide #night-markets-section .nm-fallback ul {display:flex;flex-wrap:wrap;gap:8px;margin:0!important;padding:0!important;list-style:none!important;}
+#guide #night-markets-section .nm-fallback li {margin:0!important;padding:0!important;list-style:none!important;}
+#guide #night-markets-section .nm-fallback li::before,
+#guide #night-markets-section .nm-fallback li::marker {content:none!important;}
+#guide #night-markets-section .nm-fallback button {padding:7px 14px;border:0;border-radius:16px;background:var(--nm-pin-bg);color:var(--nm-pin-ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;}
+@media (prefers-reduced-motion:reduce){
+#guide #night-markets-section .nm-me-core {animation:none;opacity:1;box-shadow:0 0 10px 3px rgba(var(--nm-me-rgb),.4);}
+#guide #night-markets-section .nm-me-wave {animation:none;opacity:0;}
+#guide #night-markets-section .nm-glow {animation:none;}
+#guide #night-markets-section :is(.nm-map,.nm-detail) {transition:none!important;}
+}
+
+/* from area-map.css */
+#guide #walk-area-host {
+  --nm-line-district:rgba(255,255,255,.24);--nm-line-city:rgba(255,255,255,.5);--nm-line-neighbor:rgba(255,255,255,.42);
+  --nm-name-district:#4A4A4A;--nm-name-city:#8E8E8E;--nm-name-station:#8A8A8A;--nm-name-station-strong:#B4B4B4;--nm-st-ink:#E6E6E6;--nm-name-border:#5A5A5A;
+  --nm-pin-bg:#F2F2F2;--nm-pin-ink:#111111;--nm-pin-shadow:0 2px 12px rgba(0,0,0,.55);
+  --nm-leader:#D6D6D6;--nm-ground:#0D0D0D;--nm-station:#BDBDBD;
+  --nm-me-rgb:242,242,242;--nm-glow:138,158,122;--nm-glow-strength:1;
+}
+#guide #walk-area-host #walk-area-map .nm-title {margin:0!important;font-size:20px!important;font-weight:800!important;line-height:1.3!important;letter-spacing:.02em;color:#F2F2F2!important;}
+#guide #walk-area-host #walk-area-map .nm-lead {margin:14px 0 0!important;font-size:13px!important;line-height:1.75!important;color:#8E8E8E!important;}
+#guide #walk-area-host #walk-area-map .nm-info {display:grid;grid-template-columns:auto 1fr;column-gap:26px;row-gap:9px;margin:30px 0 0!important;padding:0;}
+#guide #walk-area-host #walk-area-map .nm-info dt {margin:0;font-size:14px;line-height:1.5;color:#DADADA!important;font-weight:500;white-space:nowrap;}
+#guide #walk-area-host #walk-area-map .nm-info dd {margin:0;font-size:14px;line-height:1.5;color:#EDEDED!important;letter-spacing:.03em;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;}
+#guide #walk-area-host #walk-area-map .nm-station {display:inline-flex;align-items:center;gap:5px;}
+#guide #walk-area-host #walk-area-map .nm-line {
+  display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:18px;padding:0 4px;box-sizing:border-box;
+  border:2px solid var(--nm-line);border-radius:6px;background:#FFFFFF;color:#1A1A1A;font-size:10.5px;font-weight:800;line-height:1;letter-spacing:0;
+}
+#guide #walk-area-host #walk-area-map .nm-exit {display:inline-flex;align-items:center;gap:3px;}
+#guide #walk-area-host #walk-area-map .nm-exit-no {
+  display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:18px;padding:0 3px;box-sizing:border-box;
+  background:#FFD200;color:#111111;font-size:12px;font-weight:800;line-height:1;
+}
+#guide #walk-area-host #walk-area-map .nm-feature-label {margin:30px 0 10px!important;font-size:14px!important;line-height:1.4!important;color:#DADADA!important;}
+#guide #walk-area-host #walk-area-map .nm-features {display:flex;flex-wrap:wrap;gap:7px;margin:0!important;padding:0!important;list-style:none!important;}
+#guide #walk-area-host #walk-area-map .nm-features li {margin:0!important;padding:5px 10px!important;border-radius:6px;background:#333333!important;color:#BDBDBD!important;font-size:13px;line-height:1.35;list-style:none!important;}
+#guide #walk-area-host #walk-area-map .nm-features li::before,
+#guide #walk-area-host #walk-area-map .nm-features li::marker {content:none!important;}
+#guide #walk-area-host #walk-area-map .nm-go {display:flex;align-items:center;justify-content:center;margin:44px 0 6px;background:#F3F3F3!important;color:#151515!important;font-size:16px;font-weight:800;letter-spacing:.06em;text-decoration:none!important;-webkit-tap-highlight-color:transparent}
+#guide #walk-area-host #walk-area-map .nm-go:focus-visible {outline:2px solid #CCCCCC;outline-offset:3px;}
+#guide #walk-area-host #walk-area-map .nm-specialty-label {margin:18px 0 8px!important;}
+#guide #walk-area-host #walk-area-map .nm-specialties {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0!important;padding:0!important;list-style:none!important;}
+#guide #walk-area-host #walk-area-map .nm-specialties>li {align-items:center;justify-content:center;margin:0!important;box-sizing:border-box;border-radius:6px;color:#EEEEEE!important;font-size:clamp(13.5px,4vw,15px)!important;font-weight:500;line-height:1.3!important;text-align:center;letter-spacing:.02em;overflow-wrap:anywhere;list-style:none!important}
+#guide #walk-area-host #walk-area-map .nm-specialties>li::before,
+#guide #walk-area-host #walk-area-map .nm-specialties>li::marker {content:none!important;}
+#guide #walk-area-host #walk-area-map .nm-specialties + .nm-go {margin-top:14px!important;}
+#guide #walk-area-host #walk-area-map .nm-specialties>li {display:block!important;min-height:0!important;padding:0!important;background:none!important;}
+#guide #walk-area-host #walk-area-map .nm-specialty {display:flex;align-items:center;justify-content:center;width:100%;margin:0;box-sizing:border-box;border:0;border-radius:6px;background:#3A3A3A;color:#EEEEEE;cursor:pointer;-webkit-tap-highlight-color:transparent;font:inherit;font-size:clamp(13.5px,4vw,15px);font-weight:500;line-height:1.3;letter-spacing:.02em;text-align:center;overflow-wrap:anywhere;transition:background-color .15s ease}
+#guide #walk-area-host #walk-area-map .nm-specialty:active {background:#4A4A4A;}
+#guide #walk-area-host #walk-area-map .nm-specialty:focus-visible {outline:2px solid #CCCCCC;outline-offset:2px;}
+@media (hover:hover){
+#guide #walk-area-host #walk-area-map .nm-specialty:hover {background:#444444;}
+}
+#guide #walk-area-host #walk-area-map .night-market-panel > .nm-info {margin-bottom:30px!important}
+#guide #walk-area-host #walk-area-map .night-market-panel > .nm-info + .nm-feature-label {margin-top:auto!important}
+#guide #walk-area-host #walk-area-map .nm-specialty {min-height:41.4px;padding:5.4px 2.7px}
+#guide #walk-area-host #walk-area-map .nm-go {min-height:50.4px}
+#guide #walk-area-host #walk-area-map .nm-go {border-radius:7px;}
+#guide #walk-area-host #walk-area-map .nm-specialty {
+  text-decoration-line:underline!important;text-decoration-style:solid!important;text-decoration-thickness:1px!important;
+  text-underline-offset:4px!important;text-decoration-color:#BDBDBD!important;
+}
+#guide #walk-area-host .nm-stage {position:relative;height:600px;overflow:clip;}
+#guide #walk-area-host .nm-sr {position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;}
+#guide #walk-area-host .nm-map {
+  position:absolute;inset:0;overflow:clip;outline:none;
+  touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
+  cursor:grab;transition:opacity .24s ease,transform .24s ease,visibility 0s;
+}
+#guide #walk-area-host .nm-map.is-dragging {cursor:grabbing;}
+#guide #walk-area-host .nm-map:focus-visible {box-shadow:inset 0 0 0 2px rgba(204,204,204,.55);}
+#guide #walk-area-host .nm-map-base,
+#guide #walk-area-host .nm-map-leaders {position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none;}
+#guide #walk-area-host .nm-map-base {
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 13%,#000 87%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 11%,#000 87%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent 0,#000 13%,#000 87%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 11%,#000 87%,transparent 100%);
+  mask-composite:intersect;
+}
+#guide #walk-area-host .nm-world path {fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round;}
+#guide #walk-area-host .nm-neighbor-lines {stroke:var(--nm-line-neighbor);stroke-width:1;}
+#guide #walk-area-host .nm-neighbor-0 {opacity:.55;}
+#guide #walk-area-host .nm-neighbor-1 {opacity:.3;}
+#guide #walk-area-host .nm-neighbor-2 {opacity:.13;}
+#guide #walk-area-host .nm-district-lines {stroke:var(--nm-line-district);stroke-width:1;opacity:var(--nm-district-alpha,1);}
+#guide #walk-area-host .nm-city-lines {stroke:var(--nm-line-city);stroke-width:calc(1.25px + .35px * var(--nm-far,0));opacity:calc(.85 + .15 * var(--nm-far,0));}
+#guide #walk-area-host .nm-metro-lines {opacity:var(--nm-metro-alpha,.5);}
+#guide #walk-area-host .nm-metro-line {stroke-width:2.55;}
+#guide #walk-area-host .nm-map.is-deep .nm-metro-line {stroke-width:3.6;}
+#guide #walk-area-host .nm-rail {stroke-width:3;}
+#guide #walk-area-host .nm-rail-outside {opacity:.35;}
+#guide #walk-area-host :is(.nm-tier-a,.nm-tier-a-halo) {opacity:var(--nm-a-alpha,0);}
+#guide #walk-area-host :is(.nm-tier-b,.nm-tier-b-halo) {opacity:var(--nm-b-alpha,0);}
+#guide #walk-area-host :is(.nm-tier-c,.nm-tier-c-halo) {opacity:var(--nm-c-alpha,0);}
+#guide #walk-area-host .nm-station-halo {stroke:var(--nm-ground);stroke-width:6.4;}
+#guide #walk-area-host .nm-station {stroke:var(--nm-station);stroke-width:3.4;}
+#guide #walk-area-host .nm-transfer-halo {stroke:var(--nm-ground);stroke-width:9;}
+#guide #walk-area-host .nm-transfer {stroke:var(--nm-station);stroke-width:5.4;}
+#guide #walk-area-host .nm-district-names,
+#guide #walk-area-host .nm-border-names {opacity:var(--nm-district-alpha,1);}
+#guide #walk-area-host .nm-world text {text-anchor:middle;dominant-baseline:central;font-family:inherit;}
+#guide #walk-area-host .nm-district-names text {fill:var(--nm-name-district);font-weight:600;letter-spacing:.08em;}
+#guide #walk-area-host .nm-border-names text {fill:var(--nm-name-border);font-weight:600;letter-spacing:.14em;}
+#guide #walk-area-host .nm-city-names {opacity:var(--nm-city-name-alpha,0);}
+#guide #walk-area-host .nm-city-names text {fill:var(--nm-name-city);font-weight:700;letter-spacing:.16em;transition:opacity .25s ease;}
+#guide #walk-area-host .nm-city-names text.is-neighbor {fill:var(--nm-name-district);font-weight:600;}
+#guide #walk-area-host .nm-map-stations {position:absolute;inset:0;pointer-events:none;}
+#guide #walk-area-host :is(.nm-st,.nm-st-mark) {
+  position:absolute;left:0;top:0;opacity:0;visibility:hidden;will-change:transform;
+  transition:opacity .25s ease,visibility 0s .25s;
+}
+#guide #walk-area-host :is(.nm-st,.nm-st-mark).is-on {opacity:1;visibility:visible;transition:opacity .25s ease;}
+#guide #walk-area-host .nm-st {
+  display:flex;flex-direction:column;align-items:center;gap:3px;white-space:nowrap;
+  font-family:inherit;font-size:11px;font-weight:600;line-height:1.2;letter-spacing:.03em;color:var(--nm-name-station);
+  text-shadow:0 0 2px var(--nm-ground),0 0 2px var(--nm-ground),0 0 3px var(--nm-ground);
+}
+#guide #walk-area-host .nm-st.is-important {color:var(--nm-name-station-strong);font-weight:700;font-size:11.5px;}
+#guide #walk-area-host .nm-st-ops {display:flex;gap:3px;}
+#guide #walk-area-host .nm-op {
+  display:grid;place-items:center;width:16px;height:16px;padding:1.5px;box-sizing:border-box;border-radius:3.5px;
+  background:#FFFFFF no-repeat center/contain;background-origin:content-box;box-shadow:0 0 0 1px rgba(0,0,0,.18);text-shadow:none;
+}
+#guide #walk-area-host .nm-op b {font-size:6.5px;font-weight:800;line-height:1;letter-spacing:-.02em;color:#2A2A2A;}
+#guide #walk-area-host .nm-st-mark {display:none;}
+#guide #walk-area-host .nm-st-mark:is(.is-circle,.is-oval,.is-tile) {display:block;}
+#guide #walk-area-host .nm-st-mark > .nm-op {display:none;}
+#guide #walk-area-host .nm-st-mark.is-tile > .nm-op {display:grid;width:18px;height:18px;border-radius:4px;box-shadow:0 0 0 1.5px var(--nm-ground);}
+#guide #walk-area-host .nm-st-mark.is-circle {width:11px;height:11px;border-radius:50%;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
+#guide #walk-area-host .nm-st-mark.is-oval {width:12px;height:22px;border-radius:6px;background:#FFFFFF;box-shadow:0 0 0 2px #2A2A2A,0 0 0 3.5px var(--nm-ground);}
+#guide #walk-area-host .nm-stage.has-logo-trtc .nm-op-trtc {background-image:var(--nm-logo-trtc);}
+#guide #walk-area-host .nm-stage.has-logo-ntmc .nm-op-ntmc {background-image:var(--nm-logo-ntmc);}
+#guide #walk-area-host .nm-stage.has-logo-tymc .nm-op-tymc {background-image:var(--nm-logo-tymc);}
+#guide #walk-area-host .nm-stage.has-logo-tra .nm-op-tra {background-image:var(--nm-logo-tra);}
+#guide #walk-area-host .nm-stage.has-logo-thsr .nm-op-thsr {background-image:var(--nm-logo-thsr);}
+#guide #walk-area-host .nm-stage.has-logo-trtc .nm-op-trtc b,
+#guide #walk-area-host .nm-stage.has-logo-ntmc .nm-op-ntmc b,
+#guide #walk-area-host .nm-stage.has-logo-tymc .nm-op-tymc b,
+#guide #walk-area-host .nm-stage.has-logo-tra .nm-op-tra b,
+#guide #walk-area-host .nm-stage.has-logo-thsr .nm-op-thsr b {display:none;}
+#guide #walk-area-host .nm-locate {
+  position:absolute;right:10px;bottom:10px;z-index:3;display:grid;place-items:center;width:28px;height:28px;margin:0;padding:0;
+  border:0!important;border-radius:8px;background:var(--nm-pin-bg)!important;color:var(--nm-pin-ink)!important;
+  box-shadow:var(--nm-pin-shadow);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .2s ease,filter .15s ease;
+}
+#guide #walk-area-host .nm-locate::before {content:"";position:absolute;inset:-6px;}
+#guide #walk-area-host .nm-locate:active {filter:brightness(.86);}
+#guide #walk-area-host .nm-locate:focus-visible {outline:2px solid #CCCCCC;outline-offset:2px;}
+#guide #walk-area-host .nm-locate svg {display:block;overflow:visible;}
+#guide #walk-area-host .nm-locate-ring {fill:none;stroke:currentColor;stroke-width:2;}
+#guide #walk-area-host .nm-locate-dot {fill:none;stroke:none;transition:fill .2s ease;}
+#guide #walk-area-host .nm-locate-ticks {fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
+#guide #walk-area-host .nm-locate.is-here .nm-locate-dot {fill:currentColor;}
+#guide #walk-area-host .nm-locate.is-off {opacity:.5;}
+#guide #walk-area-host .nm-locate.is-busy svg {animation:nm-locate-busy .9s ease-in-out infinite;}
+#guide #walk-area-host .nm-toast {
+  position:absolute;right:46px;bottom:12px;z-index:3;margin:0!important;padding:4px 10px;border-radius:12px;
+  background:var(--nm-pin-bg);color:var(--nm-pin-ink)!important;font-size:11px!important;font-weight:700;line-height:1.4;white-space:nowrap;
+  box-shadow:var(--nm-pin-shadow);opacity:0;transform:translateX(6px);transition:opacity .2s ease,transform .2s ease;pointer-events:none;
+}
+#guide #walk-area-host .nm-toast.is-on {opacity:1;transform:none;}
+#guide #walk-area-host .nm-edge.is-pop .nm-edge-count {display:inline-block;animation:nm-pop .32s ease-out;}
+#guide #walk-area-host .nm-leader {opacity:0;transition:opacity .2s ease;}
+#guide #walk-area-host .nm-leader.is-on {opacity:1;}
+#guide #walk-area-host .nm-leader line {stroke:var(--nm-leader);stroke-width:1.1;stroke-linecap:round;}
+#guide #walk-area-host .nm-leader circle {fill:var(--nm-pin-bg);stroke:var(--nm-ground);stroke-width:1.4;}
+#guide #walk-area-host :is(.nm-pin,.nm-cluster,.nm-edge) {
+  position:absolute;left:0;top:0;margin:0;border:0!important;box-sizing:border-box;
+  background:var(--nm-pin-bg)!important;color:var(--nm-pin-ink)!important;-webkit-text-fill-color:var(--nm-pin-ink);
+  font-family:inherit;font-weight:800;white-space:nowrap;text-decoration:none;box-shadow:var(--nm-pin-shadow);cursor:pointer;
+  opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s .2s,filter .15s ease;
+  will-change:transform;-webkit-tap-highlight-color:transparent;
+}
+#guide #walk-area-host :is(.nm-pin,.nm-cluster,.nm-edge).is-on {opacity:1;visibility:visible;transition:opacity .2s ease,filter .15s ease;}
+#guide #walk-area-host :is(.nm-pin,.nm-cluster,.nm-edge):active {filter:brightness(.86);}
+#guide #walk-area-host :is(.nm-pin,.nm-cluster,.nm-edge,.nm-back):focus-visible {outline:2px solid #CCCCCC;outline-offset:2px;}
+#guide #walk-area-host .nm-pin {height:28.2px;padding:0 13.4px;border-radius:14.1px;font-size:12.6px;line-height:28.2px;letter-spacing:.06em;}
+#guide #walk-area-host :is(.nm-cluster,.nm-edge) {height:23.5px;min-width:31px;padding:0 10px;border-radius:11.75px;font-size:13.5px;line-height:23.5px;font-variant-numeric:tabular-nums;text-align:center;}
+#guide #walk-area-host .nm-edge {overflow:visible;}
+#guide #walk-area-host .nm-edge-count {position:relative;}
+#guide #walk-area-host .nm-edge-arrow {position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;color:var(--nm-pin-bg);pointer-events:none;overflow:visible;}
+#guide #walk-area-host .nm-me {position:absolute;left:0;top:0;width:0;height:0;opacity:0;transition:opacity .5s ease;pointer-events:none;}
+#guide #walk-area-host .nm-me.is-on {opacity:1;}
+#guide #walk-area-host .nm-me-core,
+#guide #walk-area-host .nm-me-wave {position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;box-sizing:border-box;transform:translate(-50%,-50%);}
+#guide #walk-area-host .nm-me-core {
+  border:2px solid rgb(var(--nm-me-rgb));
+  background:radial-gradient(circle,rgb(var(--nm-me-rgb)) 0 2.6px,transparent 3.2px);
+  animation:nm-me-breathe 2.6s ease-in-out infinite;
+}
+#guide #walk-area-host .nm-me-wave {border:1.5px solid rgba(var(--nm-me-rgb),.7);opacity:0;animation:nm-me-wave 2.6s cubic-bezier(.2,.6,.35,1) infinite;}
+#guide #walk-area-host .nm-me-wave--late {animation-delay:1.3s;}
+#guide #walk-area-host .nm-detail {
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .24s ease,transform .24s ease,visibility 0s .24s;
+}
+#guide #walk-area-host .nm-stage[data-view="detail"] .nm-map {opacity:0;visibility:hidden;transform:scale(.985);transition:opacity .22s ease,transform .22s ease,visibility 0s .22s;}
+#guide #walk-area-host .nm-stage[data-view="detail"] .nm-detail {opacity:1;visibility:visible;transform:none;transition:opacity .3s ease .05s,transform .3s ease .05s;}
+#guide #walk-area-host .nm-measure {position:absolute;left:0;top:0;visibility:hidden;pointer-events:none;}
+#guide #walk-area-host .nm-measure .tab-pills {overflow:hidden;}
+#guide #walk-area-host .nm-detail-head {flex:none;display:flex;align-items:center;gap:4px;padding:10px 18px 6px 8px;}
+#guide #walk-area-host .nm-back {
+  flex:none;display:grid;place-items:center;width:38px;height:38px;margin:0;padding:0;border:0!important;border-radius:50%;
+  background:transparent!important;box-shadow:none!important;color:#F2F2F2;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#guide #walk-area-host .nm-back:active {background:rgba(255,255,255,.08)!important;}
+#guide #walk-area-host #walk-area-map .nm-detail .nm-title {margin:0!important;font-size:21px!important;font-weight:700!important;letter-spacing:.06em;}
+#guide #walk-area-host .nm-detail-body {
+  position:relative;flex:1;min-height:0;display:flex;flex-direction:column;
+  padding:0 22px 20px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+#guide #walk-area-host .nm-detail-body > :not(.nm-glow) {position:relative;z-index:1;}
+#guide #walk-area-host .nm-glow {
+  position:sticky;top:0;display:block;flex:none;height:56px;margin:0 -22px -56px;pointer-events:none;z-index:0;
+  background:linear-gradient(to bottom,
+  rgba(var(--nm-glow),calc(.92 * var(--nm-glow-strength))) 0,
+  rgba(var(--nm-glow),calc(.5 * var(--nm-glow-strength))) 22%,
+  rgba(var(--nm-glow),calc(.18 * var(--nm-glow-strength))) 52%,
+  rgba(var(--nm-glow),0) 100%);
+  -webkit-mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+  filter:blur(2px);
+  animation:walk-glow-in .45s ease-out both;
+}
+#guide #walk-area-host #walk-area-map .nm-detail-body > .nm-lead {margin:12px 0 0!important;}
+#guide #walk-area-host #walk-area-map .nm-detail-body > .nm-info {margin:26px 0 0!important;}
+#guide #walk-area-host .nm-detail-body > .nm-gap {flex:1 1 0;min-height:24px;}
+#guide #walk-area-host #walk-area-map .nm-detail-body > .nm-feature-label {margin:0 0 10px!important;}
+#guide #walk-area-host #walk-area-map .nm-detail-body > .nm-go {flex:none;margin:0!important;}
+#guide #walk-area-host .nm-fallback {padding:22px;cursor:auto;}
+#guide #walk-area-host .nm-fallback-note {margin:0 0 14px!important;font-size:13px!important;color:#8E8E8E!important;}
+#guide #walk-area-host .nm-fallback ul {display:flex;flex-wrap:wrap;gap:8px;margin:0!important;padding:0!important;list-style:none!important;}
+#guide #walk-area-host .nm-fallback li {margin:0!important;padding:0!important;list-style:none!important;}
+#guide #walk-area-host .nm-fallback li::before,
+#guide #walk-area-host .nm-fallback li::marker {content:none!important;}
+#guide #walk-area-host .nm-fallback button {padding:7px 14px;border:0;border-radius:16px;background:var(--nm-pin-bg);color:var(--nm-pin-ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;}
+@media (prefers-reduced-motion:reduce){
+#guide #walk-area-host .nm-me-core {animation:none;opacity:1;box-shadow:0 0 10px 3px rgba(var(--nm-me-rgb),.4);}
+#guide #walk-area-host .nm-me-wave {animation:none;opacity:0;}
+#guide #walk-area-host .nm-glow {animation:none;}
+#guide #walk-area-host :is(.nm-map,.nm-detail) {transition:none!important;}
+}
+
+/* from chapter-tabs.css */
+#guide details.ct-on.ct-selected > .indented > #night-markets-tabs {flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected #night-markets-tabs > .nm-stage {flex:1 1 auto;min-height:0;height:auto!important}
+#guide details.has-area-map .walk-area-grid {display:none!important}
+#guide details.walk-viewing-detail .walk-area-map {display:none!important}
+#guide #walk-area-map > .nm-stage {height:480px}
+#guide details.ct-on.ct-selected > .indented > .walk-area-map,
+#guide details.ct-on.ct-selected #walk-area-map {flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected #walk-area-map > .nm-stage {flex:1 1 auto;min-height:0;height:auto!important}
+#guide .walk-inline-detail {--walk-tone:142,131,162!important}
+#guide details.ct-on.ct-selected > .indented > .walk-inline-detail:not([hidden]) {flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+#guide details.ct-on.ct-selected .walk-inline-inner {height:auto!important;flex:1 1 auto;min-height:0}
+#guide details.ct-on.ct-selected .walk-inline-top {margin-bottom:24px!important;padding-top:6px}
+#guide details.ct-on.ct-selected .walk-inline-heading {font-size:17px!important}
+#guide .walk-inline-detail a.walk-inline-go.walk-go-bottom {
+  position:static!important;flex:none;align-self:stretch;display:flex!important;align-items:center;justify-content:center;
+  min-height:50px;margin:14px 20px 22px!important;padding:0!important;border-radius:7px!important;border:0!important;
+  background:#F3F3F3!important;color:#151515!important;-webkit-text-fill-color:#151515;font-size:16px!important;font-weight:800!important;
+  letter-spacing:.06em;text-decoration:none!important
+}
+
+/* from figma-viewport-v205.css */
+html.tt2-fidelity[data-tt-view='city-walk'] #night-markets-section,
+html.tt2-fidelity[data-tt-view='city-walk'] #night-markets-tabs,
+html.tt2-fidelity[data-tt-view='city-walk'] .nm-map {border-radius:16px!important;}
+html.tt2-fidelity[data-tt-view='city-walk'] #night-markets-tabs,
+html.tt2-fidelity[data-tt-view='city-walk'] .nm-map {height:100%!important;max-height:100%!important;overflow:hidden!important;}
+html.tt2-fidelity[data-tt-view='city-walk'] #night-markets-tabs,
+html.tt2-fidelity[data-tt-view='city-walk'] #night-markets-section .nm-stage,
+html.tt2-fidelity[data-tt-view='city-walk'] #night-markets-section .nm-map {
+  height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px)!important;
+  max-height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px)!important;
+  min-height:0!important;
+}
+html.tt2-fidelity[data-tt-view='city-walk'] #walk-area-host,
+html.tt2-fidelity[data-tt-view='city-walk'] #walk-area-map,
+html.tt2-fidelity[data-tt-view='city-walk'] #walk-area-host .nm-stage,
+html.tt2-fidelity[data-tt-view='city-walk'] #walk-area-host .nm-map {
+  height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px)!important;
+  max-height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px)!important;
+  min-height:0!important;border-radius:16px;
+}
+
+/* ════════ v2.0.112 — 夜市 detail (Figma N2A 290:3729) ════════
+   Content at x20 (stage 16 + 4); title row: 9×16 chevron, 12px, 22px medium name (v2.0.113: no
+   glow, all 8px higher); info rows with rules; 特徴 as text with “·”; a rule;
+   名物 as pills with a chevron; 「マップで見る」 46px pill 24px below. */
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) {
+  --nm2-off:#8a8a8a;--nm2-rule:#3e3e3e;
+  --nm2-cta-low:clamp(2px,calc(100svh - 803px),49px); /* v2.0.113: the pill's bottom level with 商圏's */
+}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-head {padding:24px 20px 0 4px;gap:0;} /* v2.0.113: 8px up */
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-back {width:20px;height:40px;place-items:center start;border-radius:0;}
+/* v2.0.113: the name 22 → 18px; the chevron 9×16 → 7.5×13 with it, 12px before the name */
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-back svg,
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-back svg {width:7.5px;height:13px;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-back:active {background:transparent!important;opacity:.6;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-title {font-size:18px!important;font-weight:500!important;line-height:22px!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-body {padding:0 4px;}
+/* v2.0.113: no glow (the user's call) */
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-glow {display:none!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-body > .nm-lead {margin:25px 0 0!important;font-size:13px!important;line-height:18px!important;color:#bdbdbd!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-body > .nm-info {grid-template-columns:84px minmax(0,1fr);column-gap:0;row-gap:0;margin:27px 0 auto!important;} /* v2.0.113: 5px nearer the lead; the free height goes above 特徴 */
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-info > :is(dt,dd) {display:flex;align-items:center;min-height:41px;padding:0;box-sizing:border-box;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-info > :is(dt,dd):nth-child(n+3) {border-top:1px solid var(--nm2-rule);min-height:42px;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-info > dt {padding-right:12px;font-size:12px;line-height:15px;font-weight:400;color:var(--nm2-off)!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-info > dd {flex-wrap:wrap;gap:4px 6px;font-size:13px;line-height:17px;letter-spacing:0;color:#ebebeb!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) :is(.nm-station,.nm-exit) {gap:6px;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-station {font-size:14px;color:#fff;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-exit {font-size:13px;color:#cfcfcf;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) :is(.nm-line,.nm-exit-no) {
+  min-width:0;height:auto;padding:2px 5px;border:0;border-radius:3px;font-size:11px;font-weight:700;line-height:14px;
+}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-line {background:var(--nm-line);color:#fff;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-exit-no {background:#f2c200;color:#111;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-body > .nm-feature-label {margin:16px 0 6px!important;font-size:11px!important;line-height:13px!important;color:var(--nm2-off)!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-features {gap:4px 6px;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-features li {padding:0!important;border-radius:0;background:none!important;font-size:12px;line-height:15px;color:#bebebe!important;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-features li:not(:last-child)::after {content:'·';margin-left:6px;color:#5a5a5a;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-body > .nm-specialty-label {margin:18px 0 8px!important;padding-top:18px;border-top:1px solid var(--nm2-rule);}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-specialties {display:flex;flex-wrap:wrap;gap:8px;}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-specialty {
+  display:inline-flex;gap:5px;width:auto;min-height:0;padding:7px 12px 7px 14px;border:1px solid #464646;border-radius:100px;
+  background:transparent;font-size:13px;font-weight:400;line-height:16px;color:#e6e6e6!important;text-decoration:none!important;
+}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-specialty:is(:hover,:active) {background:rgba(255,255,255,.06);}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-specialty-more {flex:none;color:var(--nm2-off);}
+html.tt2-fidelity #guide :is(#night-markets-tabs,#walk-area-map) .nm-detail:not(#_n1):not(#_n2) .nm-detail-body > .nm-go {
+  position:sticky;bottom:var(--nm2-cta-low);z-index:2; /* one page: the pill stays in view even when a short screen has to scroll */
+  min-height:46px;margin:24px 0 var(--nm2-cta-low)!important;border-radius:100px;background:#f2f2f2!important;color:#111!important;
+  font-size:15px;font-weight:700;letter-spacing:0;
+}
+
+/* ════════ v2.0.112 — 商圏 detail (Figma S2A 290:4038) ════════
+   Title like N2A; the lead under it from x16; the site's category wheel (js/guide.js mounts
+   it over the hidden bubbles); numbered rows; a foot fade under a 「マップで見る」 pill that
+   stays at the bottom while the list scrolls behind it. */
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) {height:100%;--walk-cta-low:clamp(2px,calc(100svh - 803px),49px);} /* the pill ends at y 747 on 852 (Figma 737, 10px lower: v2.0.113); less room under it on shorter screens */
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-inner {position:relative;height:100%!important;padding:0;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) :is(.walk-inline-top,.walk-inline-host) {position:relative;z-index:1;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-top {
+  display:grid;grid-template-columns:20px minmax(0,1fr);grid-template-rows:auto;min-height:0;gap:0;align-items:center;margin:0!important;padding:22px 0 0 4px!important; /* v2.0.113: 8px up */
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-copy {display:contents;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-back {grid-row:auto;width:20px;height:40px;margin:0;place-items:center start;border-radius:0;color:#fff;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-back:is(:hover,:active) {background:transparent;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-heading {font-size:18px!important;font-weight:500;line-height:22px;letter-spacing:0;color:#fff;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-description {
+  grid-column:1/-1;margin:15px 0 0 -4px!important;font-size:13px!important;line-height:19px;letter-spacing:0!important;white-space:normal!important;color:#bdbdbd;
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-host {margin-top:28px;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .area-panel {display:flex!important;flex-direction:column;padding:0!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .area-cats.tt2-wheel-source {display:none!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .tt2-wheel {position:relative!important;top:auto!important;flex:none;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .area-cat-panes {
+  flex:1 1 auto;min-height:0;margin:12px 0 0!important;padding:0 0 135px!important; /* the last row ends where the foot fade starts */
+  -webkit-mask-image:none!important;mask-image:none!important;scrollbar-width:none;
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .area-cat-panes::-webkit-scrollbar {display:none;}
+/* the area's own purple (tone) glow over the list: gone (the user's call); the site glow above the lead stays */
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .area-cat-panes::before {content:none!important;display:none!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .area-cat-pane :is(ol,li) {margin:0!important;padding:0!important;list-style:none!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) li.venue-row {
+  display:flex!important;align-items:flex-start;gap:12px!important;min-height:0!important;padding:15px 4px!important;
+  border:0!important;border-bottom:1px solid #3e3e3e!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) li.venue-row::before,
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) li.venue-row::marker {content:none!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .venue-row-index {
+  position:static!important;flex:none;width:auto!important;margin:0!important;padding:0!important;
+  font:400 11px/19px 'Noto Serif JP',serif!important;color:#6e6e6e!important;
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .venue-row-body {display:flex;flex-direction:column;gap:4px!important;flex:1 1 auto;min-width:0;margin:0!important;padding:0!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) :is(.venue-name-line,.venue-primary-links) {display:block!important;margin:0!important;padding:0!important;line-height:19px!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) a.venue-main-link {
+  display:inline!important;padding:0!important;font-size:16px!important;font-weight:500!important;line-height:19px!important;letter-spacing:0!important;
+  color:#fff!important;-webkit-text-fill-color:#fff;text-decoration:none!important;background:none!important;
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) a.venue-main-link::after {content:none!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .venue-tag-list {display:flex!important;flex-wrap:wrap;gap:0 6px!important;margin:0!important;padding:0!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .venue-tag-list .venue-tag {
+  display:inline!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  font-size:11px!important;font-weight:500!important;line-height:13px!important;letter-spacing:0!important;color:#8a8a8a!important;
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .venue-tag-list .venue-tag:is(.venue-tag--featured,.venue-tag--tone-gold) {color:#cca46e!important;}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .venue-tag-list .venue-tag + .venue-tag::before {content:'·';margin-right:6px;font-weight:400;color:#5a5a5a;}
+/* foot fade (Figma: 120px, ends 15px above the pill's bottom) and the pill on it */
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) .walk-inline-inner::after {
+  content:'';position:absolute;left:0;right:0;bottom:0;height:calc(120px + 15px + var(--walk-cta-low,20px));z-index:2;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,0) 0,rgba(0,0,0,.92) 48px,#000 120px,#000 100%); /* and black on down to the box's end */
+}
+html.tt2-fidelity #guide .walk-inline-detail:not(#_w1):not(#_w2) a.walk-inline-go.walk-go-bottom {
+  position:relative!important;z-index:3;min-height:46px;margin:-46px 0 var(--walk-cta-low,20px)!important;border-radius:100px!important;
+  background:#f2f2f2!important;color:#111!important;-webkit-text-fill-color:#111;font-size:15px!important;font-weight:700!important;letter-spacing:0;
+}

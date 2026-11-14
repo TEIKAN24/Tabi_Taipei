@@ -24,7 +24,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.npm.gov.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/oK5BjjCsrEh26hfKA"
             },
             {
@@ -37,7 +43,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.nrm.gov.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/p3YFGjE2TEiHSVUt7"
             },
             {
@@ -54,7 +66,13 @@
                   "tone": "red"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://hotspringmuseum.taipei/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/jS5zVsSKsfBcoJBd6"
             },
             {
@@ -67,7 +85,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.mmot.com.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/S5uzWSWPHqEg6pmi7"
             },
             {
@@ -84,7 +108,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.ntm.gov.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/cAYTpZrnENXXZVdc8"
             },
             {
@@ -101,7 +131,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://waterpark.water.gov.taipei/"
+                }
+              ],
               "mapUrl": "https://www.google.com/maps/search/?api=1&query=%E8%87%AA%E4%BE%86%E6%B0%B4%E5%8D%9A%E7%89%A9%E9%A4%A8%20%E5%8F%B0%E5%8C%97%E5%B8%82%E4%B8%AD%E6%AD%A3%E5%8D%80%E6%80%9D%E6%BA%90%E8%A1%971%E8%99%9F"
             }
           ]
@@ -217,6 +253,11 @@
                   "type": "other",
                   "label": "内部見学無料",
                   "url": "https://tpac.org.taipei/tour-publicloop"
+                },
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://tpac.org.taipei/"
                 }
               ],
               "mapUrl": "https://maps.app.goo.gl/BfBsm97KAteD5k3M6"
@@ -296,6 +337,11 @@
                   "type": "other",
                   "label": "交代式",
                   "url": "https://www.cksmh.gov.tw/en/cp.aspx?n=6404"
+                },
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.cksmh.gov.tw/"
                 }
               ],
               "mapUrl": "https://maps.app.goo.gl/peei1gnNM6RePYHa8"
@@ -318,7 +364,13 @@
                   "tone": "gold"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.lungshan.org.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/RpREU4SBFQzqm1NP8"
             },
             {
@@ -352,7 +404,13 @@
                   "tone": "neutral"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.bopiliao.taipei/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/QGyiKkUs1xD18ZRH6"
             },
             {
@@ -399,7 +457,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://tncmmm.gov.taipei/"
+                }
+              ],
               "className": "venue-list-item"
             },
             {
@@ -444,7 +508,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.baoan.org.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/5Kj6HTcbH7sSEuc97"
             },
             {
@@ -461,7 +531,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.drnh.gov.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/8RtUyZdUnJV52J7j6"
             },
             {
@@ -474,7 +550,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.228.org.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/o7vcK5MKBtHa5Sz86"
             },
             {
@@ -559,7 +641,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.zoo.gov.taipei/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/esMANNEu8aWBDrae9"
             },
             {
@@ -593,7 +681,13 @@
                   "tone": "neutral"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "other",
+                  "label": "ゴンドラ",
+                  "url": "https://www.gondola.taipei/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/6tmfEQD5Hq9X51qF6"
             },
             {
@@ -623,7 +717,13 @@
                   "tone": "auto"
                 }
               ],
-              "links": [],
+              "links": [
+                {
+                  "type": "official",
+                  "label": "公式",
+                  "url": "https://www.ylgeopark.org.tw/"
+                }
+              ],
               "mapUrl": "https://maps.app.goo.gl/SezQNPeF6oapcS349"
             },
             {

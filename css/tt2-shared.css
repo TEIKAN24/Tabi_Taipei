@@ -1,0 +1,2158 @@
+/* TABI TAIPEI v2.0.100 — shared: the 2.0 page frame and the parts every chapter uses
+   Collected in 2.0.100 (cleanup phase 2) by joining the per-version files that were left after
+   each chapter got its own file, in their old load order, so the cascade is unchanged:
+     chapter-tabs.css                    chapter tabs (.ct-*)
+     first-wave.css                      first-wave panels, travel cautions, accordions
+     figma-stage1.css                    the 2.0 frame: header, chapter page, glows
+     figma-outlines.css                  brand / home outline marks
+     figma-precision-v203.css            home outline precision
+     figma-viewport-v204.css             iOS viewport
+     figma-viewport-v205.css             chapter page viewport
+     figma-directory-v211.css            #guide rule the 料理辞典 sheet needs (2.0.47)
+     infinite-category-wheel.css         category wheel (.tt2-wheel*)
+     figma-daytrip-v250.css              day-trips page frame (#guide)
+     figma-standalone-safe-area-v218.css home-screen app safe area
+     figma-identity-v225.css             home identity outlines
+     figma-food-v232.css                 #guide rule the 料理辞典 sheet needs (2.0.47)
+     figma-top-standard-v235.css         chapter top standard
+     figma-glow-v236.css                 chapter glows
+     figma-lists-v243.css                venue lists (.venue-*, .tt2l-*)
+     figma-dict-v245.css                 #guide rules the 料理辞典 sheet needs (2.0.51)
+     figma-emergency-v253.css            #guide rule the 料理辞典 sheet needs
+     figma-daytrip-v269.css              day-trips page frame (#guide)
+     figma-system-v273.css               the 2.0 system, all in @layer tt273
+   Chapter screens live in css/tt2-<chapter>.css, loaded after this file. */
+
+/* ════════ from chapter-tabs.css ════════ */
+/* TAIPEI CITY GUIDE — chapter tabs (chapters 03, 04, 05), v30.9.278. Built by js/chapter-tabs.js. */
+
+/* Folded rows: no + sign. */
+#guide details.ct-root:not(.ct-on) > summary::after{content:none!important}
+
+/* Chapter heading in tab mode: lead line hidden, title a little smaller. */
+#guide .chapter-lead.ct-hidden{display:none!important}
+/* v30.9.284: the title resizes on the same clock and curve as the rest (both ways). */
+#guide h2.ct-title{transition:font-size .61s cubic-bezier(.65,0,.35,1)}
+#guide h2.ct-title-small{font-size:var(--ct-title)!important}
+
+/* The tab row */
+#guide .ct-tabs{position:relative;display:flex;gap:4px;margin:14px 0 10px;padding:3px;border:1px solid var(--ct-line,#2E2E2E);border-radius:100px}
+#guide .ct-tabs[hidden]{display:none}
+#guide .ct-tab{flex:1 1 auto;min-width:0;height:34px;margin:0;padding:0 8px;border:1px solid transparent;border-radius:100px;background:transparent;
+  color:var(--ct-sub,#9A9A9A);font:inherit;font-size:13px;font-weight:650;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s ease,border-color .2s ease}
+#guide .ct-tab{position:relative;z-index:1}
+#guide .ct-tab[aria-selected="true"]{color:var(--ct-ink,#EDEDED)}
+/* v30.9.280: the white frame is one element that slides between tabs (js: placeInd). */
+#guide .ct-ind{position:absolute;top:3px;bottom:3px;left:0;width:0;box-sizing:border-box;border:1px solid var(--ct-hi,#E4E4E2);
+  border-radius:100px;pointer-events:none;z-index:0}
+/* While the rows glide into place, the real tabs wait underneath. */
+#guide .ct-tabs.ct-morphing .ct-tab,#guide .ct-tabs.ct-morphing .ct-ind{visibility:hidden}
+#guide .ct-tab:focus-visible{outline:2px solid var(--ct-sub,#9A9A9A);outline-offset:2px}
+
+@media(max-width:350px){#guide .ct-tab{font-size:12px;padding:0 5px}}
+
+/* Tab mode: only the chosen section shows, without its own title, in a box of fixed height. */
+#guide details.ct-on:not(.ct-selected){display:none!important}
+#guide details.ct-on > summary{display:none!important}
+/* The box's height is set on its content (a <details> keeps its children in an internal
+   wrapper, so a height or flex layout on the <details> itself does not reach them). */
+#guide details.ct-on.ct-selected{height:auto!important;max-height:none!important;margin-top:0!important;overflow:hidden}
+#guide details.ct-on.ct-selected > .indented{box-sizing:border-box;height:calc(var(--ct-h,520px) - 2px)!important;min-height:0;
+  display:flex;flex-direction:column;margin-top:0!important;margin-bottom:0!important;padding-top:10px!important;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain}
+
+/* イベントカレンダー: the event list takes the rest of the box. */
+
+
+
+
+
+/* 夜市マップ: the map takes the whole box. */
+
+
+
+/* v30.9.279 — 街歩きエリア map (js/area-map.js): it replaces the area cards; the area's
+   details still open in its place (‹ returns to the map). */
+
+
+
+
+
+
+/* v30.9.280 — row ⇄ tab stand-ins (in page coordinates, above everything, never tappable). */
+.ct-morph{position:absolute;left:0;top:0;width:0;height:0;z-index:50;pointer-events:none}
+.ct-ghost{position:absolute;box-sizing:border-box;border:1px solid transparent;overflow:hidden;white-space:nowrap;
+  font-family:inherit;font-weight:650;will-change:left,top,width,height}
+.ct-ghost > span{position:absolute;top:50%;transform:translateY(-50%);line-height:1.2}
+.ct-ghost-row{left:16px;font-weight:700}
+.ct-ghost-tab{left:0;right:0;text-align:center;font-size:13px;letter-spacing:.02em}
+
+/* v30.9.280 — the 街歩き list's top glow takes the chapter colour (04 CITY WALK). */
+
+/* The map sits exactly where the 夜市 map sits (same box, no margins), so switching tabs
+   leaves it perfectly still; the area details keep their usual margins. */
+#guide details.ct-on.ct-selected.has-area-map:not(.walk-viewing-detail) > .indented{margin-left:0!important;margin-right:0!important;padding:0!important}
+
+/* v30.9.282 — 街歩き details: title block, bubbles, the list filling the box, and a
+   full-width 「さっそく出発！」 at the bottom (the 夜市 details' button). */
+
+/* ════════ from first-wave.css ════════ */
+/* TABI TAIPEI — first-wave visual system, 2026-11-09.
+   All original venue, map, calendar, recommendation and transit styles remain untouched.
+   This file intentionally scopes the new shell and travel accordion to .tt-fwave. */
+html.tt-fwave {
+  --tt-bg: #050505;
+  --tt-ink: #f2f1ee;
+  --tt-muted: #999894;
+  --tt-dim: #6e6e6d;
+  --tt-rule: rgba(234,234,231,.37);
+  --tt-side-bg: #030303;
+  --tt-serif: "Hiragino Mincho ProN", "Yu Mincho", "BIZ UDPMincho", "Noto Serif JP", serif;
+  scroll-padding-top: 118px;
+}
+
+html.tt-fwave body {
+  background:var(--tt-bg)!important;color:var(--tt-ink);
+  min-width:0;overflow-x:clip;
+}
+html.tt-fwave .wrapper {width:min(calc(100% - 32px),460px);max-width:460px;}
+html.tt-fwave a { -webkit-tap-highlight-color:transparent; }
+html.tt-fwave button:focus-visible,
+html.tt-fwave a:focus-visible,
+html.tt-fwave summary:focus-visible {outline:1px solid currentColor;outline-offset:4px;}
+
+/* Global masthead: intentionally stays above the slide-out panel.
+   Fixed strokes live on the masthead, never inside a sliding element. */
+.tt-sitebar {
+  height:104px;position:sticky;top:0;z-index:120;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin:auto;padding:0 max(16px,calc((100vw - 460px)/2)) 9px;
+  background:var(--tt-bg);color:var(--tt-ink);
+}
+.tt-sitebar::after {content:"";position:absolute;bottom:0;left:max(16px,calc((100vw - 460px)/2));right:max(16px,calc((100vw - 460px)/2));height:1px;background:var(--tt-rule);}
+.tt-brand {display:flex;align-items:center;gap:9px;color:inherit!important;text-decoration:none!important;white-space:nowrap;min-height:31px;}
+.tt-brand-main {font-family:var(--tt-serif);font-size:25px;font-weight:400;line-height:1;letter-spacing:-.09em;}
+.tt-brand-small {display:none;color:#80ceae;font-family:system-ui,sans-serif;font-size:7px;line-height:1.1;letter-spacing:0;font-weight:550;}
+html.tt-fwave.tt-at-home .tt-brand-small {display:block;}
+
+
+
+
+
+
+
+
+
+
+/* Real native overlay; blur/dim only behind the panel. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes tt-rise {0%{opacity:0;transform:translate3d(0,12px,0);}100%{opacity:1;transform:translate3d(0,0,0);}}
+@keyframes tt-index {0%{opacity:0;transform:translate3d(-5px,3px,0);}100%{opacity:.86;transform:none;}}
+@keyframes tt-line {0%{opacity:0;transform:rotate(var(--angle)) translateX(-8px) scaleX(.6);}100%{opacity:.78;transform:rotate(var(--angle)) translateX(0) scaleX(1);}}
+
+
+
+
+
+
+
+/* Figma-inspired black, typographic seven-chapter entrance. Existing hero content
+   remains in DOM to satisfy old JS and deep-link behavior, but is visually retired. */
+
+html.tt-fwave #top.hero > .quick-nav {display:none!important;}
+
+
+
+
+
+
+
+
+
+
+/* New chapter labels are independent from the functional panels. */
+html.tt-fwave #guide {padding-bottom:110px;}
+.tt-chapter-heading {display:flex;align-items:center;gap:17px;min-height:37px;margin:0 0 4px;padding:4px 0 7px;border-bottom:1px solid var(--tt-rule);color:var(--tt-ink);font-family:var(--tt-serif);}
+.tt-chapter-number {font-size:18px;line-height:1;font-weight:400;min-width:23px;}
+.tt-chapter-name {font-size:14px;line-height:1.2;font-weight:400;}
+html.tt-fwave #guide .chapter-eyebrow,
+html.tt-fwave #guide > .chapter-lead,
+html.tt-fwave #guide > h2:not(.emergency-section-title),
+html.tt-fwave #guide .page-body > h2,
+html.tt-fwave #guide .page-body > .chapter-lead {display:none!important;}
+html.tt-fwave #guide > .chapter-divider,
+html.tt-fwave #guide > .divider {border-color:transparent!important;margin:30px 0 12px!important;}
+html.tt-fwave #guide > .divider:first-child {margin:0!important;border:0!important;}
+html.tt-fwave #guide .jump-anchor {scroll-margin-top:112px;}
+html.tt-fwave #guide .tt-chapter-heading {scroll-margin-top:120px;}
+
+/* Chapter 01: preserve the original <details> semantics and their Japanese copy.
+   Tabs control existing details, not a replacement duplicated data structure. */
+
+
+
+
+html.tt-fwave #guide .page-body > details:is(.travel-caution,.travel-twac,.travel-passes) {border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;margin:0!important;padding:0!important;}
+html.tt-fwave #guide .page-body > details:is(.travel-caution,.travel-twac,.travel-passes) > summary {display:none!important;}
+html.tt-fwave #guide .page-body > details:is(.travel-caution,.travel-twac,.travel-passes) > .indented {margin:0!important;padding:0!important;}
+html.tt-fwave #guide .page-body > details.travel-caution > .indented {display:flex!important;flex-direction:column;}
+html.tt-fwave #guide .page-body > details.travel-caution > .indented > .bulleted-list {order:10;margin:22px 0 40px!important;padding-left:22px!important;background:transparent!important;border:0!important;box-shadow:none!important;}
+html.tt-fwave #guide .page-body > details.travel-caution > .indented > details.nested-accordion {flex:0 0 auto;min-width:0;}
+html.tt-fwave #guide details.travel-caution .bulleted-list {font-size:11px;color:var(--tt-muted);margin:4px 0 23px!important;opacity:.78;padding-left:18px;}
+html.tt-fwave #guide details.travel-caution details.nested-accordion {
+  border:0!important;border-radius:0!important;background:transparent!important;
+  margin:0!important;padding:0!important;overflow:visible;box-shadow:none!important;
+}
+html.tt-fwave #guide details.travel-caution details.nested-accordion > summary {
+  display:flex!important;align-items:center;min-height:44px;box-sizing:border-box;
+  margin:0!important;padding:13px 4px 12px 32px!important;border:0!important;
+  background:transparent!important;box-shadow:none!important;color:var(--tt-muted)!important;
+  font:400 13px/1.45 -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif!important;
+  letter-spacing:0!important;
+}
+html.tt-fwave #guide details.travel-caution details.nested-accordion[open] > summary {color:var(--tt-ink)!important;font-weight:600!important;}
+html.tt-fwave #guide details.travel-caution details.nested-accordion > summary::after {display:none!important;content:none!important;}
+html.tt-fwave #guide details.travel-caution details.nested-accordion > summary::before {
+  content:"→";position:absolute;display:flex;align-items:center;justify-content:center;
+  width:18px;height:18px;left:0;top:50%;margin-top:-9px;
+  font:24px/1 Georgia,serif;transform:rotate(0deg);transform-origin:9px 9px;
+  transition:transform .32s cubic-bezier(.2,.75,.2,1);
+}
+html.tt-fwave #guide details.travel-caution details.nested-accordion[open] > summary::before {transform:rotate(45deg);}
+html.tt-fwave #guide details.travel-caution details.nested-accordion > .indented {padding:7px 0 23px 36px!important;margin:0!important;border:0!important;animation:tt-nested-open .36s ease both;}
+@keyframes tt-nested-open {from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+html.tt-fwave #guide details.travel-caution .callout {background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;margin:0 0 17px!important;box-shadow:none!important;}
+html.tt-fwave #guide details.travel-caution .callout > div:first-child:has(.icon) {display:none!important;}
+html.tt-fwave #guide details.travel-caution .callout > div:last-child {width:100%!important;}
+html.tt-fwave #guide details.travel-caution .callout p {font-family:var(--tt-serif)!important;font-size:12px!important;font-weight:400!important;line-height:1.95!important;letter-spacing:.01em!important;color:var(--tt-ink);opacity:.87;margin:0 0 12px!important;white-space:normal;}
+/* TWAC and transport pass panels keep all their original links and inner functional markup. */
+html.tt-fwave #guide details.travel-twac,
+html.tt-fwave #guide details.travel-passes {padding:0 0 10px!important;}
+
+/* The modules below are deliberately not overridden: city maps, event calendar,
+   SVG route drawing, day trips, search/recommend logic and airport transit. */
+@media(min-width:650px){
+
+  .tt-sitebar {padding-left:max(16px,calc((100vw - 460px)/2));padding-right:max(16px,calc((100vw - 460px)/2));}
+
+}
+
+@media(prefers-reduced-motion:reduce){
+
+
+
+  html.tt-fwave #guide details.travel-caution details.nested-accordion > .indented {animation:none!important;}
+}
+
+/* === First-wave screen navigation; no DOM removal/reparenting === */
+html.tt-fwave .tt-view-hidden {display:none!important;}
+
+html.tt-fwave.tt-route-home #guide {display:none!important;}
+html.tt-fwave.tt-route-home .tt-brand-small {display:block;}
+html.tt-fwave.tt-route-chapter .tt-brand-small {display:none!important;}
+html.tt-fwave.tt-route-chapter #guide {padding-top:15px;min-height:calc(100svh - 115px);}
+html.tt-fwave.tt-route-chapter #guide > .page-body {display:block;}
+html.tt-fwave.tt-route-chapter .tt-view-hidden {display:none!important;}
+@media (prefers-reduced-motion:no-preference) {
+ html.tt-fwave.tt-route-chapter #guide:not(.tt-view-hidden) {animation:tt-view-appear .26s ease-out both;}
+ @keyframes tt-view-appear {from {opacity:.65;transform:translateY(5px);}to {opacity:1;transform:none;}}
+}
+
+/* ════════ from figma-stage1.css ════════ */
+/* TABI TAIPEI 2.0 / Stage 01 / Figure-based measurements from Figma
+   1:408 (Title), 56:278 (1-1), 1:146 (1-2), 1:197 (1-3).
+   Figma is the sole style specification. No complete-page screenshot assets.
+   Font limitation: Kasumi Seiran Min2, IshiiMincho Old StdN, lithue-1.1
+   unavailable in runtime; use named families IF installed, Noto Serif CJK JP
+   as explicit temporary fallback. Actual vectors must replace those before
+   claiming pixel-perfect typography. */
+html.tt2-fidelity {
+  --tt2-serif:'A P-OTF Kasumi Seiran Min2','Noto Serif CJK JP','Hiragino Mincho ProN','Yu Mincho',serif;
+  --tt2-num:'A P-SK IshiiMincho Old StdN','Noto Serif CJK JP','Hiragino Mincho ProN','Yu Mincho',serif;
+  --tt2-ui:'Noto Sans JP','Noto Sans CJK JP',-apple-system,BlinkMacSystemFont,sans-serif;
+  --tt2-hairline:rgba(239,239,239,.43);
+}
+html.tt2-fidelity[data-theme='dark'] {--tt-bg:#000;--tt-side-bg:#000;--tt-ink:#fff;--tt-muted:#9e9e9e;--tt-rule:rgba(220,220,220,.43);}
+html.tt2-fidelity .tt-sitebar {height:104px;padding-bottom:10px;align-items:flex-end;background:#000;}
+html.tt2-fidelity .tt-sitebar::after {background:var(--tt2-hairline);}
+html.tt2-fidelity.tt-route-home .tt-sitebar::after {opacity:0;}
+html.tt2-fidelity .tt-brand {min-height:16px;gap:8px;align-items:center;line-height:1;}
+html.tt2-fidelity .tt-brand-main {font-family:'lithue-1.1',Georgia,'Times New Roman',serif;font-size:20px;letter-spacing:-.068em;line-height:1;white-space:nowrap;}
+html.tt2-fidelity .tt-brand-small {font:500 7px/.96 var(--tt2-ui);letter-spacing:-.02em;color:#7cc9a6;}
+
+
+
+
+/* Exact 393px home tile geometry from Figma node 1:408. All seven targets
+   remain native HTML anchors with readable Japanese text and click events. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Frame 1-1: 0–103 masthead, 104–137 chapter strip, 138–183 tabs,
+   209–501 notes. Footer line 26–369 at y776 in a 852px viewport. */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='travel'] #guide {padding-top:0!important;min-height:calc(100svh - 104px);padding-bottom:0!important;}
+html.tt2-fidelity[data-tt-view='travel'] #guide > hr.chapter-glow--travel {display:none!important;}
+html.tt2-fidelity[data-tt-view='travel'] #guide > .page-body {margin:0!important;padding:0!important;}
+html.tt2-fidelity[data-tt-view='travel'] .tt-chapter-heading[data-tt-chapter='travel'] {height:34px;min-height:34px;padding:0 0 1px;margin:0!important;gap:17px;border-bottom:1px solid var(--tt2-hairline);align-items:center;box-sizing:border-box;}
+html.tt2-fidelity[data-tt-view='travel'] .tt-chapter-heading .tt-chapter-number {font:400 18px/1.1 var(--tt2-num);min-width:20px;}
+html.tt2-fidelity[data-tt-view='travel'] .tt-chapter-heading .tt-chapter-name {font:400 15px/1.1 var(--tt2-serif);}
+
+
+
+
+html.tt2-fidelity[data-tt-view='travel'] .page-body>details.travel-caution,
+html.tt2-fidelity[data-tt-view='travel'] .page-body>details.travel-twac,
+html.tt2-fidelity[data-tt-view='travel'] .page-body>details.travel-passes {display:none!important;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes tt2-content-show {from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+html.tt2-fidelity[data-tt-view='travel'] .tt2-original-note-extra {padding:16px 0 20px;color:#a5a5a5;font:400 11px/1.7 var(--tt2-ui);margin-top:max(10px,calc(100svh - 790px));}
+html.tt2-fidelity[data-tt-view='travel'] .tt2-original-note-extra ul {padding-left:16px;margin:0;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Protect native Figma accordion from generic Notion <summary> rules. */
+
+
+
+
+
+
+
+/* Text continuation below the 852px Figma viewing window, without data removal. */
+html.tt2-fidelity[data-tt-view='travel'] .tt2-original-note-extra {display:block;box-sizing:border-box;padding:0 10px 32px;margin:0 10px;color:#9e9e9e;font:400 11px/1.75 var(--tt2-ui);}
+html.tt2-fidelity[data-tt-view='travel'] .tt2-original-note-extra[hidden] {display:none!important;}
+html.tt2-fidelity[data-tt-view='travel'] .tt2-original-note-extra ul {padding:0 0 0 17px;margin:0;}
+
+
+
+
+
+
+/* Measured against Figma frame 56:278: X=16.18/127.77/265.13/379.44
+   and footer X=25.72..369.90; no global wrapper changes. */
+@media (max-width:599px) {
+ html.tt2-fidelity .tt-sitebar::after {left:16.18px;right:13.56px;}
+ html.tt2-fidelity[data-tt-view='travel'] #guide {width:calc(100% - 29.74px)!important;margin-left:16.18px!important;margin-right:13.56px!important;max-width:none!important;}
+
+
+}
+
+html.tt2-fidelity .tt-brand-main {font-size:23.3px;line-height:1;transform:scaleY(.8);transform-origin:left bottom;}
+html.tt2-fidelity .tt-brand-small {font-size:7.6px;letter-spacing:.04em;}
+
+/* The supplied Figma screens exist only in dark appearance. Keep the two
+   approved screens dark even if the legacy site has a light-mode override;
+   otherwise white outlined-style chapter typography becomes illegible. */
+html.tt2-fidelity.tt-route-home body,
+html.tt2-fidelity[data-tt-view='travel'] body {background:#000!important;color:#fff!important;}
+html.tt2-fidelity.tt-route-home .tt-sitebar,
+html.tt2-fidelity[data-tt-view='travel'] .tt-sitebar {background:#000!important;color:#fff!important;}
+html.tt2-fidelity[data-tt-view='travel'] .tt-chapter-heading[data-tt-chapter='travel'] {color:#fff!important;}
+
+html.tt2-fidelity .tt-brand-main {transform:scaleY(.65);}
+html.tt2-fidelity .tt-sitebar {padding-bottom:11px;}
+/* `side` Figma frame: 300px panel, 50px Kasumi Min2 display headlines.
+   Render editable HTML text, pending original licensed outlines. */
+
+
+@keyframes tt2-side-rise {from{opacity:0;transform:translateY(12px) scaleY(.68)}to{opacity:1;transform:translateY(0) scaleY(.68)}}
+
+
+
+/* Original angled airport-link rule in the Figma `side` frame. */
+
+/* ════════ from figma-outlines.css ════════ */
+/* TABI TAIPEI 2.0.2 — original designer-supplied outlined glyphs.
+   Source: 文字SVG(1).zip. 18 original SVGs with <path>, no font-dependent <text>.
+   Only the outlined logotypes and display labels are SVG images.
+   Buttons, readable Japanese labels, navigation, lines and motion remain HTML/CSS/JS. */
+
+/* Preserve semantic text inside the native HTML link; render only exact outline
+   over it. The source words remain available for accessibility and find-in-page. */
+html.tt2-fidelity .tt-brand-main,html.tt2-fidelity .tt-brand-small {
+  font-size:0!important;
+  line-height:0!important;
+  letter-spacing:0!important;
+  -webkit-text-size-adjust:none;
+}
+html.tt2-fidelity .tt-brand-main,
+html.tt2-fidelity .tt-brand-small {
+  display:block;
+  flex:none;
+  transform:none!important;
+  height:16px;
+}
+html.tt2-fidelity .tt-brand-main {width:112px;}
+html.tt2-fidelity .tt-brand-small {width:55px;}
+html.tt2-fidelity .tt-brand-small br {display:none;}
+html.tt2-fidelity .tt-brand-main img,
+html.tt2-fidelity .tt-brand-small img {
+  display:block;
+  width:100%;
+  height:16px;
+  max-width:none;
+  object-fit:contain;
+}
+/* Chapter-only header should not show the small mint subtitle. */
+html.tt2-fidelity.tt-route-chapter .tt-brand-small {display:none!important;}
+
+/* Natural SVG viewBox dimensions. Explicitly cancel the fallback type
+   distortion used while original commercial fonts were unavailable. */
+
+html.tt2-fidelity .tt-home-label .tt-outline-glyph {
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:min(100%,60px);
+  object-fit:contain;
+}
+/* Side-heading images retain the native click target + original staggered
+   CSS animation. Anchor and accessible label are never converted to SVG. */
+
+html.tt2-fidelity .tt-side-title .tt-outline-glyph {
+  display:block;
+  height:auto;
+  width:auto;
+  max-width:min(100%,calc(100vw - 130px));
+}
+@keyframes tt2-outlined-side-rise {
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+html.tt2-fidelity .tt-side-link:focus-visible .tt-side-title .tt-outline-glyph,
+html.tt2-fidelity .tt-side-link:hover .tt-side-title .tt-outline-glyph {opacity:.82;}
+
+/* Two specially outlined side links, actual HTML anchors. */
+
+
+@media(max-width:355px) {
+  html.tt2-fidelity .tt-home-label .tt-outline-glyph {max-width:min(100%,56px);}
+  html.tt2-fidelity .tt-side-title .tt-outline-glyph {max-width:min(100%,calc(100vw - 135px));}
+}
+
+/* ════════ from figma-precision-v203.css ════════ */
+/* TABI-TAIPEI 2.0.3 / Figma geometric audit (393 × 852 CSS px)
+   Source nodes: Title 1:408, header 19:275/19:494, side 67:1170.
+   This sheet corrects only measured geometry. SVG glyphs remain the original
+   designer-supplied outlines inside semantic HTML anchors. No screenshots. */
+
+/* Masthead: Figma main logo x16 y78.06, mint mark x138.10 y78.00;
+   Figma menu strokes start y77.10, 84.01, 90.91. */
+html.tt2-fidelity .tt-brand { gap:10.1px; transform:translateY(1px); }
+
+
+/* Figma home glyph visible bounds, taken from ORIGINAL 1:408 vectors.
+   Base HTML box positions already match the 393 px grid; these are residual
+   subpixel corrections, not a rescale and not new typography. */
+html.tt2-fidelity .tt-home-item:nth-child(1) .tt-outline-glyph {transform:translate(.47px,-.76px);}
+html.tt2-fidelity .tt-home-item:nth-child(2) .tt-outline-glyph {transform:translate(1.65px,-.06px);}
+html.tt2-fidelity .tt-home-item:nth-child(3) .tt-outline-glyph {transform:translate(-1.17px,.08px);}
+html.tt2-fidelity .tt-home-item:nth-child(4) .tt-outline-glyph {transform:none;}
+html.tt2-fidelity .tt-home-item:nth-child(5) .tt-outline-glyph {transform:translate(-1px,.42px);}
+html.tt2-fidelity .tt-home-item:nth-child(6) .tt-outline-glyph {transform:translate(-2.38px,0);}
+html.tt2-fidelity .tt-home-item:nth-child(7) .tt-outline-glyph {transform:translate(5.03px,0);}
+
+/* Home line inventory in the Figma artboard is EXACTLY four vertical rules.
+   1–3: y162..322, x42.5,168,299; 4: y342..482, x42.5.
+   Old CSS mistakenly extended 4 and invented rules for cells 5–7. */
+
+
+
+
+/* The side menu has TWO separate vertical rhythms in the Figma original:
+   headlines at 57.65px steps; numerals/rules at ~36.4px steps. The previous
+   implementation erroneously moved the numerals and rules with headlines.
+   Never collapse these into one grid or animate everything as one object. */
+
+
+
+
+
+
+
+
+
+
+
+
+/* Figma side helper link glyphs: x31, y608.6 / y708 in its 300 px panel.
+   Keep the existing native links, arrows and original destinations. */
+
+
+
+@media (prefers-reduced-motion:reduce) {
+  html.tt2-fidelity .tt-home-item .tt-outline-glyph {transition:none;}
+}
+
+/* Original decorative vector from Figma node 1:414, exported read-only.
+   This is NOT a full-frame screenshot: only the 393×103 gradient artwork.
+   It preserves Figma's exact colors, path geometry and gradient stops. */
+
+
+/* Figma `side` original gradient strip 67:1345, exported read-only as
+   a decorative vector. No screenshot, background panel or UI rasterization. */
+
+/* ════════ from figma-viewport-v204.css ════════ */
+/* TABI-TAIPEI 2.0.4 — mobile Safari viewport/height calibration.
+   Screenshot reference: Title.png (393×852), IMG_4459.PNG (mobile Safari).
+   Geometric target: Figma frame Title 1:408 and Travel 56:278 / 1:146 / 1:197.
+   Figma owns design. All content and controls remain live HTML, CSS and JS.
+   No SVG screenshots or duplicated text data. */
+
+/* Safari TAB: WebKit presents the document below the iPhone's status-bar
+   region. The Figma 852px frame includes that top region, so keeping the old
+   104px sitebar double-counts ~58 CSS px of space. Correct only the Safari
+   tab, not the Home Screen app (display-mode:standalone), desktop or Android.
+   This value is sourced from the user's actual phone screenshot, and requires
+   final iPhone Safari verification for other status bar variants. */
+html.tt2-fidelity.tt-ios-safari-tab {
+  --tt2-sitebar-height:46px;
+}
+html.tt2-fidelity:not(.tt-ios-safari-tab) {
+  --tt2-sitebar-height:104px;
+}
+html.tt2-fidelity.tt-ios-safari-tab .tt-sitebar {
+  height:var(--tt2-sitebar-height);
+}
+
+/* An overlay is positioned relative to the same Safari tab viewport. Align
+   its seven titles and diagonal rules with the original screen coordinates,
+   while leaving the hamburger inside the fixed masthead at its original spot. */
+
+
+/* The old website credit remains in the DOM, but is not part of any of the
+   approved Figma chapter screens. Hide it; never delete the source text. */
+html.tt2-fidelity body > footer.wrapper {display:none!important;}
+
+/* No long one-page tail or blank credit space on the seven-chapter entrance.
+   Preserve 393px absolute element coordinates within the existing native
+   grid; only the viewport's usable height changes with Safari chrome. */
+
+
+
+/* The site is screen-based; the home view must not scroll to an obsolete
+   footer, but chapter content and its maps remain naturally scrollable. */
+html.tt2-fidelity.tt-route-home body {min-height:100%;}
+
+/* Chapter 01 native accordion: one consistent 18px centered arrow pivot,
+   with a complete CSS chevron. The row's label stays actual selectable text. */
+
+/* ════════ from figma-viewport-v205.css ════════ */
+/* TAIPEI CITY GUIDE 2.0.5 — fixed-screen navigation and scoped scrolling.
+   The Figma phone frame is not a vertically scrolling one-page document.
+   Text lists, maps with built-in pan, calendar and horizontally scrolling tabs
+   keep their native independent input, content and event handlers. */
+html.tt2-fidelity {
+  height:100%; width:100%; overflow:hidden!important; overscroll-behavior:none;
+}
+html.tt2-fidelity body {
+  height:100svh; max-height:100dvh; min-height:0!important;
+  margin:0; overflow:hidden!important; overscroll-behavior:none;
+  display:flex;flex-direction:column;
+}
+html.tt2-fidelity .tt-sitebar {flex:0 0 var(--tt2-sitebar-height,104px);position:relative;top:auto;}
+
+
+html.tt2-fidelity.tt-route-chapter #guide {
+  flex:1 1 auto; position:relative;box-sizing:border-box;
+  min-height:0!important;max-height:calc(100dvh - var(--tt2-sitebar-height,104px));
+  height:calc(100dvh - var(--tt2-sitebar-height,104px));
+  overflow:hidden!important;overscroll-behavior:none;
+  padding-top:0!important;padding-bottom:0!important;
+}
+/* 01 / 旅支度: header and three tabs stay fixed. Only the text list can scroll.
+   Figma's baseline is y184 content start, y776 thin bottom rule. */
+html.tt2-fidelity[data-tt-view='travel'] #guide > .page-body {
+  height:100%;max-height:100%;min-height:0;
+  display:flex!important;flex-direction:column;overflow:hidden!important;
+}
+html.tt2-fidelity[data-tt-view='travel'] .page-body > .tt-chapter-heading {flex:0 0 auto;}
+
+
+/* Additional legacy notes and secondary pass entries must remain accessible,
+   but may not extend the shell. Their content is already in native panels. */
+html.tt2-fidelity[data-tt-view='travel'] .tt2-original-note-extra {display:none!important;}
+/* All other chapters: freeze the section heading and category navigation.
+   Original data-backed <details> are the ONLY scrollable content panels. */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='city-walk'] #guide > :not(.tt-chapter-heading):not(.tt2-chapter-tabs):not(details) {
+  display:none!important;
+}
+html.tt2-fidelity[data-tt-view='city-walk'] #guide > .tt-chapter-heading[data-tt-chapter='city-walk'] {
+  display:flex!important;position:absolute;top:0;left:0;right:0;
+  width:100%;height:34px;min-height:34px;box-sizing:border-box;
+  margin:0!important;padding:0 0 1px;
+  gap:17px;align-items:center;
+  /* v2.0.31: transparent — the sitebar line above (y103) is the only rule here; a second
+     visible line at y104 made it look doubled. The 1px box keeps the layout unchanged. */
+  border-top:1px solid transparent;
+  border-bottom:1px solid rgba(239,239,239,.43);
+  z-index:3;
+}
+html.tt2-fidelity[data-tt-view='city-walk'] #guide > .tt-chapter-heading .tt-chapter-number {font:400 18px/1.1 var(--tt2-num);min-width:20px;}
+html.tt2-fidelity[data-tt-view='city-walk'] #guide > .tt-chapter-heading .tt-chapter-name {font:400 15px/1.1 var(--tt2-serif);}
+html.tt2-fidelity #guide > .tt2-chapter-tabs {display:none;}
+html.tt2-fidelity[data-tt-view='city-walk'] #guide > .tt2-chapter-tabs[data-tt2-chapter='city-walk'] {
+  display:grid;position:absolute;top:34px;left:0;right:0;
+  grid-auto-flow:column;grid-auto-columns:1fr;
+  height:46px;min-height:46px;z-index:3;
+  border-bottom:1px solid rgba(239,239,239,.43);
+}
+html.tt2-fidelity .tt2-chapter-tab {
+  min-width:0;padding:0 4px;border:0;border-right:1px solid rgba(239,239,239,.43);
+  color:#9e9e9e;background:#000;white-space:nowrap;
+  font:400 12px/1.2 var(--tt2-ui);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity .tt2-chapter-tab:last-child {border-right:0;}
+html.tt2-fidelity .tt2-chapter-tab[aria-selected='true'] {color:white;font-weight:700;}
+html.tt2-fidelity .tt2-chapter-tab:focus-visible {outline:1px solid white;outline-offset:-3px;}
+html.tt2-fidelity #guide > details[data-tt2-panel] {display:none!important;}
+html.tt2-fidelity[data-tt-view='city-walk'] #guide > details[data-tt2-panel='city-walk'].tt2-panel-current {
+  display:block!important;position:absolute!important;
+  top:85px;left:0;right:0;width:100%;
+  height:calc(100% - 141px)!important;
+  min-height:0!important;max-height:calc(100% - 141px)!important;
+  box-sizing:border-box;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  overflow:hidden!important;box-shadow:none!important;
+  background:transparent!important;
+}
+html.tt2-fidelity #guide > details[data-tt2-panel] > summary {display:none!important;}
+html.tt2-fidelity #guide > details[data-tt2-panel] > .indented {
+  margin:0!important;padding:0!important;display:block!important;
+  height:100%!important;max-height:none!important;overflow:hidden!important;
+}
+/* The map is a native original SVG interaction surface with existing markers,
+   zoom/pan and location controls. Figma: x16..379 y189..797 rounded 16px. */
+
+
+html.tt2-fidelity[data-tt-view='city-walk'] .area-panel {
+  height:100%!important;max-height:100%!important;min-height:0!important;
+}
+html.tt2-fidelity[data-tt-view='city-walk'] .area-cat-panes {
+  overflow-y:auto!important;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+
+/* More detailed sights typography and tagged cards will be calibrated only
+   after the original data lists load on-device; no fake data is introduced. */
+/* Side gradient: preserve Figma's vector color stops but fade the strip on
+   BOTH ends to prevent the hard cut at the panel's left/right edges. */
+
+/* All side-menu movement and seven staggered fades run at 2× speed.
+   Letterforms, final positions and the original rightward-entering direction
+   do not change. */
+
+
+
+
+
+
+
+
+
+
+/* Compatibility refinements validated in the actual 393×852 renderer. */
+html.tt2-fidelity .tt-sitebar {
+  width:100%;max-width:none;margin:0;box-sizing:border-box;
+}
+/* Exactly one travel-pane scroll viewport; legacy airport tool must not spill
+   below the Figma note list unless invoked from the original side-menu link. */
+html.tt2-fidelity[data-tt-view='travel'] #guide > .page-body > :not(.tt-chapter-heading):not(.tt-travel-tabs):not(.tt2-travel-pane) {
+  display:none!important;
+}
+
+/* `details > .indented` is wrapped in a browser native details box whose
+   percentage height resolves to zero in WebKit/Chromium. Use viewport units
+   instead: this equals 607 px on the 393×852 reference phone. */
+html.tt2-fidelity[data-tt-view='city-walk'] #guide > details[data-tt2-panel] > .indented {
+  height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px)!important;
+  max-height:calc(100dvh - var(--tt2-sitebar-height,104px) - 141px)!important;
+  min-height:0!important;
+}
+/* The original airport-route controls have no approved replacement design.
+   Keep the original module fully functional when directly requested from
+   the already existing side link; do NOT invent a new airport interface.
+   v2.0.54: + :not(#_a) — the 旅支度 rule above that hides every other child of .page-body
+   (three :not() classes) was one class stronger, so 空港アクセス opened as an empty page. */
+
+
+/* Until their corresponding Figma screen structures have been calibrated,
+   preserve access to every original line, card, recommendation and route by
+   using a contained scroll surface, never unlocking the document itself. */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='food'] #guide,
+html.tt2-fidelity.tt-route-chapter[data-tt-view='experiences'] #guide,
+html.tt2-fidelity.tt-route-chapter[data-tt-view='souvenirs'] #guide,
+html.tt2-fidelity.tt-route-chapter[data-tt-view='day-trips'] #guide,
+html.tt2-fidelity.tt-route-chapter[data-tt-view='emergency'] #guide {
+  overflow-y:auto!important;overflow-x:hidden!important;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+}
+html.tt2-fidelity.tt-route-chapter #guide::-webkit-scrollbar {display:none;}
+/* 散策 / 商圏 uses the ORIGINAL second interactive map. Its source list
+   is intentionally hidden by the legacy map module. Give the native map
+   the same 607px viewport as 夜市, without forcing source lists visible. */
+
+/* 観光 / 名所・博物館 (Figma 4-1-1): secondary classification is a
+   flat line-based horizontal strip, not the old rounded bubble buttons. */
+
+/* ════════ from figma-directory-v211.css ════════ */
+/* v2.0.97: everything else in this file moved to css/tt2-directory.css. This one rule stays here
+   on purpose: it decides whether #guide scrolls on 体験 / おみやげ, which is what the 料理辞典
+   sheet depends on (see 2.0.51); it moves with the shared page-layout rules later. */
+/* TABI-TAIPEI 2.0.11 — Figma 5-1 体験 / 7-1 おみやげ.
+ * Real HTML cards, existing JSON/list enhancer, existing tab controls and links.
+ * Header and categories are fixed; only directory list scrolls. No placeholder cards.
+ * Reference 393x852: header 104..138, tabs 138..184, count 252,
+ * first card 277..400, subsequent cards every 123.4 px. */
+/* v2.0.51: + .tt-route-chapter — figma-viewport-v205 (same chapters, one class more) made #guide a
+   scroll box here, which on iPhone put the 料理辞典 sheet (a fixed child of #guide) under its own
+   backdrop: dimmed, and every tap went to the backdrop. Only the list scrolls, as intended. */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='experiences'] #guide,
+html.tt2-fidelity.tt-route-chapter[data-tt-view='souvenirs'] #guide {
+  overflow:hidden!important; padding:0!important;
+}
+
+
+
+
+
+/* Prevent the inactive sibling's original full-screen frame from
+ * intercepting taps. This is essential when routing 05 <-> 07. */
+
+
+
+
+/* Decorative Figma vector, not a screen image. Always behind editable text. */
+
+/* Original category buttons remain the actual interactive tab controls. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Keep the design's fixed shell, while scroll behavior applies only to cards. */
+
+
+
+/* Suppress old, chapter-colored glow. Only the original Figma 393x103
+ * decorative vector above should draw over the data-driven list. */
+
+/* ════════ from infinite-category-wheel.css ════════ */
+/* TAIPEI CITY GUIDE 2.0.12 – Infinite, centered inertial category selector.
+ * Scoped to 3 deliberate areas only: Places secondary, Experience, Souvenir.
+ * Underlying original tabs/panels remain intact, only visual tab bar replaced.
+ */
+html.tt2-fidelity #guide .tab-pills.tt2-wheel-source {
+  visibility:hidden!important;
+  pointer-events:none!important;
+  opacity:0!important;
+  scroll-snap-type:none!important;
+  overscroll-behavior:none!important;
+}
+html.tt2-fidelity #guide .tt2-wheel {
+  position:absolute!important;top:0!important;left:0!important;right:0!important;
+  width:100%!important;height:46px!important;
+  overflow:hidden!important;z-index:9;touch-action:pan-y;
+  box-sizing:border-box!important;
+  user-select:none;-webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  outline:none!important;
+  cursor:grab;
+}
+html.tt2-fidelity #guide .tt2-wheel:active{cursor:grabbing}
+html.tt2-fidelity #guide .tt2-wheel-viewport{
+  position:absolute;inset:0;overflow:hidden;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 10%,#000 90%,transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 10%,#000 90%,transparent 100%);
+}
+html.tt2-fidelity #guide .tt2-wheel-track {position:absolute;top:0;left:0;width:0;height:46px;will-change:transform;}
+html.tt2-fidelity #guide .tt2-wheel-item {
+  box-sizing:border-box!important;position:absolute!important;top:0;left:0;
+  display:flex;align-items:center;justify-content:center;
+  height:45px;padding:0 9px!important;margin:0!important;
+  white-space:nowrap;font:400 12px/1.2 -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif;
+  color:#929292;letter-spacing:0;
+  transition:font-size .22s ease,color .22s ease,font-weight .22s ease;
+  pointer-events:none;
+}
+html.tt2-fidelity #guide .tt2-wheel-item.tt2-wheel-active {
+  font-size:13.2px!important;font-weight:600!important;color:#fff!important;
+}
+/* Fixed reference needle: never translates with the text/track. */
+html.tt2-fidelity #guide .tt2-wheel-notch {
+  position:absolute;left:calc(50% - .5px);bottom:0;
+  height:10px;width:1px;background:#fff;z-index:4;pointer-events:none;
+}
+html.tt2-fidelity #guide .tt2-wheel-gauge {
+  position:absolute;left:-9999px;top:-9999px;width:auto;height:auto;
+  white-space:nowrap;visibility:hidden;pointer-events:none;
+}
+html.tt2-fidelity #guide .tt2-wheel-gauge>span {
+  display:inline-block;white-space:nowrap;
+  font:600 13.2px/1.2 -apple-system,BlinkMacSystemFont,'Noto Sans JP',sans-serif;
+}
+html.tt2-fidelity #guide .tt2-wheel-announcement {
+  position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
+  white-space:nowrap;
+}
+@media(prefers-reduced-motion:reduce){
+ html.tt2-fidelity #guide .tt2-wheel-item {transition:none}
+}
+
+html.tt2-fidelity #guide .tt2-wheel:focus,html.tt2-fidelity #guide .tt2-wheel:focus-visible {outline:none!important;box-shadow:none!important;}
+
+/* v2.0.13 — the stationary reference needle meets the full-width horizontal
+   dividing rule, as in the user's approved Figma.  The rule never rotates. */
+html.tt2-fidelity #guide .tt2-wheel::after {
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:rgba(220,220,220,.46);z-index:3;pointer-events:none;
+}
+
+/* ════════ from figma-daytrip-v250.css ════════ */
+/* TABI TAIPEI v2.0.50 — 06 遠出, one file.
+   Merged in their original order from figma-daytrip-v213.css, figma-daytrip-v216.css,
+   figma-daytrip-fidelity-v219.css and figma-daytrip-route-v224.css (section markers below).
+   Declarations that a later rule in this file always overrode (same selector, same property)
+   and selectors that never match anything on the site were removed; nothing else changed. */
+
+/* ===== from figma-daytrip-v213.css ===== */
+/* TABI TAIPEI 2.0.13 / 06 遠出 — Figma 6-1/6-1-1/6-1-2.
+ * Real source tabs/route data are read by figma-daytrip-v213.js. The original
+ * modules are left available for other destinations and for future updates.
+ * All rules scoped to this chapter to prevent past chapter regressions. */
+html.tt2-fidelity[data-tt-view='day-trips'] #guide {
+  padding-top:0!important;padding-bottom:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  scrollbar-width:none;scroll-behavior:auto;
+  background:#000!important;
+}
+/* Remove inactive chapter separator glows that leaked through original
+   !important display declarations under the view router. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* New Jiufen-specific native HTML stage.  It is *not* a screenshot overlay. */
+
+/* The only new animation is the route as it is redrawn. The source site's
+   original daytrip and route modules are not mutated. */
+
+
+
+/* Last-layer overrides for the old compact-toolbar absolute positioning.
+   Parent buttons must own the text's horizontal centering, not the old span. */
+
+
+
+/* TABI TAIPEI 2.0.15 / Figma 6-1 style: two-tier destination + underline transport tabs.
+   The 2nd tier is a collapsible strip. Only the selected label receives
+   the short white underline; the full baseline remains stationary. */
+
+/* The original controllers still own all trip data and selection state.
+   Their redundant transport tabs are visually hidden only. */
+
+
+/* The 46px transport bar now lives outside the Jiufen route stage. Maintain
+   the previous footer line's screen position, not a duplicate offset. */
+
+
+
+
+/* ===== from figma-daytrip-v216.css ===== */
+/* TABI TAIPEI 2.0.16 / 06 遠出 — fixed-height route screens.
+ * Shared visual hierarchy is established in 2.0.13 (Jiufen Figma 6-1).
+ * This layer extends that hierarchy to Shifen, Keelung and Yehliu, without
+ * moving, duplicating or altering the transport source data.
+ */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='day-trips'] #guide {
+  overscroll-behavior-y:none!important;
+  touch-action:auto!important;
+}
+
+/* The extended stage is an editable, semantic, source-driven route—not a
+   rasterized Figma frame. Disable the old source panel *visually* only. */
+
+/* Remove the ornamental line along the bottom of all route screens. Leave
+   the two actual navigation-level divider rules in place. */
+
+/* Apply exactly the same station / legend / route typographic hierarchy as
+   Jiufen. Three-stop connections use an equal middle stop and split line. */
+
+/* Access to longer original notes and geolocated sightseeing / food links:
+   an overlay inside the fixed chapter frame (only this pane may scroll). */
+
+
+
+
+/* Avoid legacy focus scrolling the 16px overhanging edge of the stage. */
+
+
+/* ===== from figma-daytrip-fidelity-v219.css ===== */
+/* TABI TAIPEI 2.0.19 — 06 遠出, Figma 6-1-1 393×852 route refinements.
+   Route panels only. Figma text is outlined in the supplied SVG; do not
+   distribute an unlicensed Morisawa webfont. The fallback uses iOS Japanese
+   UI fonts, while keeping author-specified type sizes and line rhythm. */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='day-trips'],
+html.tt2-fidelity.tt-route-chapter[data-tt-view='day-trips'] body,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide {
+  background-color:#000!important;
+}
+/* Figma's two navigation rules start at x=16 and end at x=377, whereas
+   the timeline stage intentionally bleeds through the entire viewport. */
+
+
+/* The actual screenshot's first row labels are restrained and their active
+   state uses weight rather than bigger geometry or a filled capsule. */
+
+
+/* The parent 2.0.13 style did not explicitly set summary colour, so a
+   legacy grey summary rule won despite the new route's white information. */
+
+/* Existing licensed-to-use local symbol assets are only shown where a source
+   rail route actually supplies a rail/metro label: never add logos to buses. */
+
+/* No changes to the x=32 route cards, x=73 line or their y positions.
+   Prevent iOS system button styling only inside the new route navigation. */
+
+
+/* ===== from figma-daytrip-route-v224.css ===== */
+/* TABI TAIPEI 2.0.24 — Figma 6-1-1(1), 6-1-2 routeA/routeB, 393×852.
+   Specific UI-only styling. Route data and other site views are untouched.
+   Never scroll the route page, including in iPhone Safari tab mode. */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='day-trips'] #guide {
+  overflow:hidden!important;overflow-x:hidden!important;overflow-y:hidden!important;
+  padding:0!important;overscroll-behavior:none!important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Interchange node: original 393px artwork's 18px concentric circles.
+   Preserve the original 75px horizontal axis and +6px nominal vertical centre. */
+
+
+/* White 30×16px interchange badge to match the authored artwork.
+   Its centre is on the same baseline as the 18px transfer node. */
+
+
+
+
+/* Start and end names: +1.5pt = +2 CSS px at standard 96dpi.
+   Transfer station keeps its authored hierarchy. */
+
+
+
+
+
+
+
+
+
+
+/* Use the source frame's shared top navigation; legacy two-column cards and
+   animations remain present as data but are not shown in this mode. */
+
+
+
+
+/* On compact-height iPhones the three-stop route must not overlap its transfer
+   station. Preserve the authored primary type size; suppress secondary copy
+   before crowding the line or allowing scrolling. */
+
+
+/* v2.0.33: the note sat at a viewport-height offset from the stage bottom, while the route
+   is laid out by the track's own height. In the home-screen app the stage ends higher, so
+   the note ran into 到着. Anchor it below the track instead: track top 101px + track height
+   (same formula as .tt221-track) + 67px — exactly where it was on a 393×852 Safari screen. */
+
+
+
+/* v2.0.41: place names open their map position. Same text, with a quiet underline so
+   they read as tappable (like the 料理辞典 links in 味わい). */
+
+/* ════════ from figma-standalone-safe-area-v218.css ════════ */
+/* TABI TAIPEI v2.0.18 — correction for the v2.0.17 top overlap.
+   v2.0.17 treated screen.height - innerHeight as a top safe-area reservation,
+   but that delta can include bottom system UI and is NOT a top-inset reading.
+   Remove that subtraction entirely; keep the original Figma 104px masthead.
+   Only expand it for a device whose *real* CSS safe-area top exceeds the
+   available masthead clearance. Safari-tab calibration is unchanged. */
+html.tt2-fidelity:not(.tt-ios-safari-tab) {
+  --tt2-sitebar-height: max(104px, calc(env(safe-area-inset-top, 0px) + 42px));
+}
+/* Keep both the physical masthead box and its flex allocation in sync. */
+html.tt2-fidelity:not(.tt-ios-safari-tab) .tt-sitebar {
+  height: var(--tt2-sitebar-height);
+  flex-basis: var(--tt2-sitebar-height);
+}
+/* No page translation, negative margin, or side-menu offset compensation. */
+
+/* ════════ from figma-identity-v225.css ════════ */
+/* TAIPEI CITY GUIDE v2.0.25 — name and TRA asset only.
+   Original SVG outlines retain their authored 67×63 and 92×41 proportions.
+   No global font, margin or layout changes. */
+/* Figma Title fix.png increases the size of the original six outlined titles.
+   The replaced 「見所」 title uses its native 67×63 artwork box. */
+html.tt2-fidelity .tt-home-item .tt-home-label .tt-outline-glyph {
+ display:block;max-width:none;object-fit:contain;
+}
+html.tt2-fidelity .tt-home-item:nth-child(1) .tt-outline-glyph {width:66px;height:96px;}
+html.tt2-fidelity .tt-home-item:nth-child(2) .tt-outline-glyph {width:63px;height:90px;}
+html.tt2-fidelity .tt-home-item:nth-child(3) .tt-outline-glyph {width:66px;height:65px;}
+html.tt2-fidelity .tt-home-item:nth-child(4) .tt-outline-glyph {width:67px;height:63px;}
+html.tt2-fidelity .tt-home-item:nth-child(5) .tt-outline-glyph {width:68px;height:64px;}
+html.tt2-fidelity .tt-home-item:nth-child(6) .tt-outline-glyph {width:66px;height:64px;}
+html.tt2-fidelity .tt-home-item:nth-child(7) .tt-outline-glyph {width:57px;height:120px;}
+/* Residual sub-pixel alignment measured against Title fix.png (393×852). */
+html.tt2-fidelity .tt-home-item:nth-child(1) .tt-outline-glyph {transform:translate(1.47px,-.76px);}
+html.tt2-fidelity .tt-home-item:nth-child(2) .tt-outline-glyph {transform:translate(2.65px,.94px);}
+html.tt2-fidelity .tt-home-item:nth-child(3) .tt-outline-glyph {transform:translate(-4.17px,1.08px);}
+html.tt2-fidelity .tt-home-item:nth-child(5) .tt-outline-glyph {transform:translate(0px,.42px);}
+html.tt2-fidelity .tt-home-item:nth-child(6) .tt-outline-glyph {transform:translate(-3.38px,0);}
+html.tt2-fidelity .tt-home-item:nth-child(7) .tt-outline-glyph {transform:translate(6.03px,0);}
+
+@media(max-width:355px){
+ html.tt2-fidelity .tt-home-item .tt-home-label .tt-outline-glyph {
+  max-width:min(100%, calc(100vw / 3 - 40px));height:auto;
+ }
+}
+/* The uploaded TRA mark is authored white, so do not invert it a second time. */
+
+/* ════════ from figma-food-v232.css ════════ */
+/* v2.0.98: the rest of this file moved to css/tt2-food.css. This rule stays here on purpose:
+   it sets #guide on the 味わい page, which the 料理辞典 sheet depends on (see 2.0.51); it
+   moves with the shared page-layout rules later. */
+/* TABI TAIPEI v2.0.32 — 02 味わい. Figma 2-1 現在地 / 2-2 駅から探す / 2-3 一覧 (393×852).
+   One fixed screen: heading y104, tabs y138, place/time row y183, sort y236, cards from
+   y263 (3 per page), 「ほかの3軒を見る」y691, 注意事項 y748. The 一覧 list scrolls inside.
+   Structure comes from js/figma-food-v232.js; data and behaviour from js/recommend.js.
+   Dark only for now (light theme is on hold). */
+
+/* ---------- screen ---------- */
+html.tt2-fidelity.tt-route-chapter[data-tt-view='food'] #guide {
+  overflow:hidden!important;
+}
+
+
+
+
+
+
+
+
+/* ---------- tabs (same look as 見所 / 散策; dividers at x128 / x265) ---------- */
+
+
+
+/* ---------- the panel below the tabs ---------- */
+/* Spare height beyond the fixed parts (row, sort, 3 card bodies, button, 注意事項):
+   the same inputs as the panel box (100dvh − sitebar − 79px). The gaps between cards
+   use it and reach Figma's 26/24px at 852px; on short screens they close evenly. */
+
+/* v2.0.40 (Figma 2-1/2-2 revised): sort row 45.6px; elastic gaps at most 20.5/19 per card,
+   26 above 「ほかの3軒を見る」, 13 above 注意事項 (157.5px in all, reached together). */
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- place / time row (y183–236) ---------- */
+
+
+
+
+
+/* v2.0.40: badge at x62, name at x91 (Figma 2-2). The mode is on the section itself. */
+
+ /* v2.0.40: x308.6 */
+
+
+
+/* Station badge: white square, line-colour frame, number (as on the MRT signs). */
+
+
+
+
+
+
+
+
+/* The original controls stay live but invisible; their menus open under the row. */
+
+
+
+
+
+
+
+/* ---------- sort + conditions row (y236–263) ---------- */
+
+
+
+
+/* v2.0.40: the chosen order is underlined (62×2, 4px under the text). */
+
+
+
+
+/* 条件を指定 ＋: the イベント capsule (Figma「Filter Button」, x275–375, y251–277; v2.0.40). */
+
+
+
+
+
+
+/* ＋ drawn as two 1px bars so it sits on the capsule's exact centre line. */
+
+
+
+
+
+
+
+
+
+/* Condition panel: floats over the cards, like the イベント filter. */
+
+
+/* ---------- cards (y263–679, three rows) ---------- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ● 営業中  00:00まで — right edge x373. */
+
+
+
+ /* v2.0.40: Figma */
+
+
+
+/* Tags: same capsules as 撮影スポット (gold = featured, grey = the rest). */
+
+
+
+
+
+
+/* ---------- pager + 注意事項 (v2.0.43: 「17軒中 1–3軒目」 + 「次の3軒 ›」; v2.0.33: 注意事項 in place) ---------- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- 一覧 (Figma 2-3) ---------- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* recommend.js alignCards() writes --rc-type-y / --rc-venue-y for the old card layout and
+   recommend.css moves the kind and the name by them. The 2.0 grid places them itself. */
+
+
+/* ---------- v2.0.40: menus and the condition panel in the イベント filter style ----------
+   Same box as the イベント panel (#111, 1px #636363, 12px corners, 12/12/14 padding), small
+   grey group titles, and outlined capsules (1px #363636, 12.5px text); the chosen one is
+   filled (#e4e4e2 on #121212). The station menus stay lists, one capsule per row. */
+
+
+/* Group titles */
+
+
+
+
+
+/* Search field: a capsule like the options. 16px text: iOS zooms into smaller fields. */
+
+
+
+
+
+/* Rows */
+
+
+
+
+
+
+
+
+
+
+
+/* Time band options */
+
+
+/* Condition panel */
+
+
+
+
+
+/* ---------- 駅検索 (js/figma-food-v232.js) ----------
+   v2.0.44: Figma 「Station Picker Renew」, 310×470, top-left where the v2.0.43 panel was.
+   search y12 · 路線 y57 · wheel y79–139 (36px chips every 62.5px, the centred one is the line,
+   white mark 1.5×10 at the centre, rule at y139) · line name y148 · list y183–447 (44px rows,
+   badge · name 13 · English 10.5 · ✓), green glow at y177 and a fade over the last 48px. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* typing: the search results replace the wheel and the list (same rows) */
+
+
+
+
+
+
+
+
+
+/* v2.0.46 station picker: no glow strip over the list; station names / English +1.5px
+   (list and search results). */
+
+
+
+
+
+/* v2.0.49 一覧: the 1.0 fade strip under the list (.food-directory::after) ends in #0d0d0d, not
+   the page black, so it showed as a lighter band with a hard bottom edge. The list already fades
+   out with its own mask. */
+
+/* ════════ from figma-top-standard-v235.css ════════ */
+/* TABI TAIPEI v2.0.35 — one standard for the controls at the top of every chapter (393×852).
+   Loaded last; it only touches these rows, never their content.
+
+   L0  chapter heading       y104–138
+   L1  chapter categories    y138–184, 46px. Three cells: rules at x128 / x265 (Figma);
+                             two or four cells: equal. 12px Noto Sans JP, #9e9e9e;
+                             selected white 700, no underline.
+       (体験 / おみやげ use the category wheel in this slot.)
+   L2  second categories     y183–229, 46px. Same type as L1. Side-by-side buttons:
+                             selected underline 54×1px #bcbcbc. Wheels keep their needle.
+       Exception (user's choice): 遠出 交通 row keeps its 54×2px white underline.
+   Rules everywhere           1px rgba(239,239,239,.43). */
+html.tt2-fidelity {
+  --tt2-std-ui:'Noto Sans JP','Noto Sans CJK JP',-apple-system,BlinkMacSystemFont,sans-serif;
+  --tt2-std-rule:rgba(239,239,239,.43);
+  --tt2-std-off:#9e9e9e;
+}
+
+/* ---------- L1 ---------- */
+/* 見所: three cells on the Figma rules (it was three equal columns, x136 / x257). */
+
+/* 遠出: destinations — same type, colours and rules as the other L1 rows. */
+
+
+
+
+
+/* ---------- L2 ---------- */
+/* 名所・博物館 wheel: y183–229 like every other L2 row (it sat at y189–235). */
+
+/* 撮影スポット: no size jump on the selected item; the standard 54×1 underline. */
+
+
+
+
+/* 遠出 交通 row: y183–229 (was y184), standard type and rules; underline kept (exception). */
+
+
+
+
+/* ---------- category wheels (名所, 体験, おみやげ, 味わい 一覧) ---------- */
+html.tt2-fidelity #guide .tt2-wheel .tt2-wheel-item {
+  font-family:var(--tt2-std-ui)!important;color:var(--tt2-std-off)!important;
+}
+html.tt2-fidelity #guide .tt2-wheel .tt2-wheel-item.tt2-wheel-active {color:#fff!important;}
+/* The hidden gauge measures label widths in the same face, so spacing stays right. */
+html.tt2-fidelity #guide .tt2-wheel .tt2-wheel-gauge > span {font-family:var(--tt2-std-ui)!important;}
+html.tt2-fidelity #guide .tt2-wheel::after {background:var(--tt2-std-rule)!important;}
+
+/* v2.0.37: the masthead as a real top bar. iOS 26 adds its own soft "scroll edge" blur and
+   dim under the status bar when the top of the page is ordinary content; it left the logo
+   and the menu icon fading downward in the home-screen app. A sticky, opaque masthead is
+   recognised as the page's top bar instead. The page itself never scrolls, so nothing moves. */
+html.tt2-fidelity .tt-sitebar {
+  position:sticky!important;top:0!important;
+  background-color:#000!important;
+}
+
+/* ════════ from figma-glow-v236.css ════════ */
+/* TABI TAIPEI v2.0.36 — one glow for every list top: the 見所 (名所・博物館 / 撮影スポット)
+   style from 1.0 (guide.css, details.venue-tone-sights .tab-panels::before):
+   a 56px green fade (rgb 138,158,122: .92 → .5 → .18 → 0), side edges masked, 2px blur,
+   and the same short entrance (fade in while widening from 55%).
+   It replaces the Figma SVG glows and the 遠出 radial glow. The side menu keeps its own
+   artwork (user's choice). Each glow keeps the y where its old one started. */
+html.tt2-fidelity {
+  --tt2-glow:linear-gradient(to bottom,rgba(138,158,122,.92) 0,rgba(138,158,122,.5) 22%,rgba(138,158,122,.18) 52%,rgba(138,158,122,0) 100%);
+  --tt2-glow-mask:linear-gradient(to right,transparent 0,rgba(0,0,0,.35) 4%,#000 14%,#000 86%,rgba(0,0,0,.35) 96%,transparent 100%);
+}
+
+/* 遠出's glow is an element inside a stage that runs 16px past both edges. */
+
+/* イベント: the list box starts 10px left of the content edge. */
+
+@keyframes tt2-glow-in {from{opacity:0;transform:scaleX(.55)}to{opacity:1;transform:scaleX(1)}}
+
+/* ════════ from figma-lists-v243.css ════════ */
+/* TABI TAIPEI v2.0.43 — list rows and list frame for 名所・博物館 / 撮影スポット / 体験 / おみやげ,
+   as settled in Figma (「定案まとめ」, 2026-11-11). Loaded last. Rows are reshaped by
+   js/figma-lists-v243.js (class .tt2l-row).
+   Row:   meta 10px grey (category or original name) · links 12px grey with the Link Sample arrow
+          name 16px Medium · one sub line 11px · tags as plain text joined by「 · 」(gold = featured,
+          Medium) · red notes. Lines a row does not have are simply absent.
+   Frame: 「掲載 N件」 27px under the last tab rule, the list 25px under it; every list ends at the
+          same height (the bottom of 味わい's「次の3軒」button: 136px above the bottom at 852px,
+          40px at 667px) and fades out over its last 70px. */
+html.tt2-fidelity {
+  --tt2l-gap:clamp(40px, calc((100dvh - 667px) * .52 + 40px), 136px);
+}
+
+/* ---------- row ---------- */
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) {
+  position:relative!important;display:block!important;box-sizing:border-box!important;
+  width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:18px 4px 18px 11px!important;
+  border:0!important;border-bottom:1px solid rgba(220,220,220,.34)!important;background:transparent!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) > .venue-row-index {display:none!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) > .venue-row-body {
+  position:static!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:6px!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .tt2l-kind {
+  display:block!important;height:auto!important;min-height:14px;margin:0!important;padding:0!important;
+  font:400 10px/14px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row.tt2l-has-link:not(#_a):not(#_b) .tt2l-kind {padding-right:120px!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) :is(.venue-name-line,.venue-primary-links) {
+  display:block!important;position:static!important;width:100%!important;min-width:0!important;max-width:100%!important;
+  height:auto!important;margin:0!important;padding:0!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) a.venue-main-link {
+  display:block!important;width:auto!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;
+  font:500 16px/23px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  text-decoration:none!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) a.venue-main-link::after {content:none!important;}
+
+
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .tt2l-sub {
+  margin:0;font:400 11px/17px var(--tt2-ui);color:#9e9e9e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+/* tags: plain text */
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-tag-list {
+  display:block!important;height:auto!important;max-width:100%!important;margin:0!important;padding:0!important;gap:0!important;
+  overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis;
+  font:400 11px/17px var(--tt2-ui)!important;color:#8a8a8a!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-tag-list.tt2l-empty {display:none!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) :is(.venue-tag-list,.tt2l-note) .venue-tag {
+  display:inline!important;flex:none!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  font:400 11px/17px var(--tt2-ui)!important;letter-spacing:0!important;color:#8a8a8a!important;text-decoration:none!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-tag-list .venue-tag + .venue-tag::before {
+  content:'·';margin:0 6px;color:#6f6f6f;font-weight:400;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-tag-list .venue-tag:is(.venue-tag--featured,.venue-tag--tone-gold) {
+  color:#cca46e!important;font-weight:500!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .tt2l-note {margin:0;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .tt2l-note .venue-tag {display:block!important;color:#d0645c!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .tt2l-note .venue-tag::before {content:'※ ';}
+/* links: top right of the meta line */
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-secondary-links {
+  position:absolute!important;top:16px!important;right:4px!important;left:auto!important;bottom:auto!important;
+  display:flex!important;align-items:center!important;gap:12px!important;
+  width:auto!important;max-width:60%!important;margin:0!important;padding:0!important;transform:none!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-secondary-links a {
+  display:inline-flex!important;align-items:center!important;gap:3px!important;
+  width:auto!important;height:auto!important;min-width:0!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  font:400 12px/15px var(--tt2-ui)!important;letter-spacing:0!important;white-space:nowrap!important;
+  color:#9e9e9e!important;-webkit-text-fill-color:#9e9e9e!important;text-decoration:none!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-secondary-links a::before {content:none!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b) .venue-secondary-links a::after {
+  content:''!important;display:block!important;flex:none;width:9px;height:9px;margin:0!important;
+  background:currentColor!important;border:0!important;transform:none!important;position:static!important;
+  -webkit-mask:url('../assets/figma/icons/link-arrow.svg') center/9px 9px no-repeat;
+          mask:url('../assets/figma/icons/link-arrow.svg') center/9px 9px no-repeat;
+}
+
+/* ---------- frame: count, list top, glow, one bottom line ---------- */
+/* 体験 / おみやげ: tabs end y184 → count y211, list y236. */
+
+
+
+/* 名所・博物館 / 撮影スポット: tabs end y229 → count y256, list y281. */
+
+
+
+/* The scrolling list fills exactly what is left (older layers gave it 100% of different
+   boxes, so it overran the frame and its fade was cut off) and fades over its last 70px. */
+
+
+
+/* v2.0.48: guide.js no longer evens these lists out (it also set their overflow inline). */
+
+/* ════════ from figma-dict-v245.css ════════ */
+/* v2.0.98: the rest of this file moved to css/tt2-dict.css. These rules stay here on purpose:
+   they set #guide (and the root) while the 料理辞典 sheet is open — overflow and visibility
+   that keep the fixed sheet on top on iOS (see 2.0.47 / 2.0.51). They move with the shared
+   page-layout rules later. */
+/* TABI TAIPEI v2.0.45 — 料理辞典 V4 (Figma 「料理辞典 V4-a / b / c」, 2026-11-11). Loaded last.
+   The drawer is a bottom sheet from y150 (852px tall screens), full width, #111 with a 16px top
+   radius; it slides up instead of in from the right and can be dragged down by its head.
+   Content: 17px sides. Text: Noto Sans for labels, the serif for descriptions and the card name;
+   gold #cca46e only on characters that match the search. States come from js/figma-dict-v245.js
+   (data-tt2d-mode = list | single | multi).
+   v2.0.52 (Figma V4-b): card padding 14/16/16, Japanese name 13px (no 「日本語名」 label),
+   description Noto Sans 11/16 grey, section titles 24px above, chips 12px sides. */
+/* #guide keeps the end of its tt-view-appear animation (fill-mode both), an identity
+   transform that makes it the box of every position:fixed child: the sheet was placed
+   against the page instead of the screen. While the dictionary is shown the animation
+   keeps no end state (it ends at transform:none anyway); it does not restart. */
+html.tt-fwave.tt-route-chapter body:is(.food-swipe-active,.tt2d-on) #guide:not(.tt-view-hidden) {animation-fill-mode:backwards!important;}
+/* v2.0.47: the dictionary opens on every page. Most chapter pages hide every other child of
+   #guide (figma-viewport-v205 / figma-daytrip-v213), and on the home page #guide itself is
+   hidden, so only the dim backdrop appeared (e.g. a 夜市 名物 tap in 散策). While the sheet is
+   in use it is shown regardless; on the home page #guide is shown with nothing but the sheet. */
+/* v2.0.53: only while in use — a closed sheet sits below the screen and, on a page whose #guide
+   scrolls (緊急連絡先), it made ~400px of empty scroll. */
+
+
+/* v2.0.51: while the sheet is on screen #guide must not be a scroll box (on iPhone a scrolling
+   parent puts the fixed sheet under the backdrop; see figma-directory-v211.css). */
+html.tt2-fidelity body:is(.food-swipe-active,.tt2d-on) #guide:not(#_a):not(#_b) {overflow:hidden!important;}
+html.tt2-fidelity body:is(.food-swipe-active,.tt2d-on) #guide.tt-view-hidden:not(#_a) {
+  display:block!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:visible!important;
+}
+html.tt2-fidelity body:is(.food-swipe-active,.tt2d-on) #guide.tt-view-hidden:not(#_a) > :not(#food-search) {display:none!important;}
+html.tt2-fidelity {--tt2d-serif:'Noto Serif JP','Noto Serif CJK JP','Hiragino Mincho ProN','Yu Mincho',serif;}
+
+/* v2.0.48: a slower, softer rise (0.62s, long ease-out); closing stays brisk (0.42s). The dim
+   follows the same timing. guide.js hides the page behind 0.36s after closing starts; body.tt2d-on
+   (js/figma-dict-v245.js) keeps it until the sheet has left the screen. */
+
+
+
+
+
+
+
+
+
+/* head */
+
+
+
+
+
+
+
+
+/* search */
+
+
+
+
+
+
+
+/* shortcuts: one row that scrolls sideways, hidden while a typed word is searched */
+
+
+
+
+
+
+
+
+
+
+
+/* list frame: count line, then the list or the V4 view; a 90px fade at the bottom */
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* a: list rows — name 15 Medium, Japanese name 11, description in the serif, two lines */
+
+
+
+
+
+
+
+
+
+
+
+/* b: one word */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* c: several words */
+
+/* ════════ from figma-emergency-v253.css ════════ */
+/* v2.0.99: the rest of this file moved to css/tt2-emergency.css. This rule stays here on purpose:
+   it sets #guide on the 緊急連絡先 page, which the 料理辞典 sheet depends on (see 2.0.51); it
+   moves with the shared page-layout rules later. */
+/* TABI TAIPEI v2.0.53 — 緊急連絡先, Figma 「緊急連絡先 更新案 A（タイル＋リスト）— 採用」 (393×852).
+   The 1.0 markup is kept (tel: links, classes); index.html only gained the chapter heading, the two
+   group labels (.tt2e-label), the footnote (.tt2e-foot) and the 日本語可 mark (.tt2e-key).
+   Heading 104–138 · lead y150 · 「緊急」 y186 · 110 / 119 tiles y206 (176.5×148, outline #2e2e2e,
+   r12, number 44px serif, outlined call circle bottom right) · 「相談・手続き」 y382 · rows y400 / y510
+   (110px: name 16 Medium, note 11, number 20px serif, call circle right) · link y640 · note y738. */
+html.tt2-fidelity[data-tt-view='emergency'] #guide {padding:0!important;overflow-x:hidden!important;}
+
+
+/* heading: same box as the other chapters (name only — this page has no number) */
+
+
+
+
+/* layout */
+
+
+
+
+
+/* 110 / 119 */
+
+
+
+
+/* the call circle (outline) and the phone glyph already in the markup */
+
+
+
+
+
+/* 観光署 / 日本台湾交流協会 */
+
+
+
+
+
+
+
+
+
+
+/* official link and note */
+
+/* ════════ from figma-daytrip-v269.css ════════ */
+/* TABI TAIPEI v2.0.69 — 遠出, Figma 「遠出 試作 D-4（写真＋紹介が主）」 (js/figma-daytrip-v269.js).
+   The destination tabs stay put (y138–184); below them one page scrolls:
+   photo 393×307 (fades to black from 142px), JIUFEN y212 · 九份 40px y228 · tagline y286,
+   sections ruled #666464 (rule → label 16 · label → bubbles 9 · → next rule 16),
+   bubbles 30px high, 1px #666464, round; 行き方 14px white; rows 44px, rule #3e3e3e.
+   The old mode tabs and route stage (js/figma-daytrip-route-v225.js) stay in the page, hidden. */
+
+
+
+
+
+/* ---------- photo and name ---------- */
+   /* v2.0.70: x16–377, flush with the heading rules */
+
+
+
+
+
+
+
+/* ---------- 見どころ / 食べ歩き ---------- */
+
+
+
+
+
+
+/* v2.0.70: a bubble is a link to the place on Google Maps (the whole bubble is the target) */
+
+
+
+
+
+
+
+/* ---------- 行き方 ---------- */
+
+
+
+
+
+
+
+
+
+
+/* open: the facts move into the body, 「経路を見る」 takes the right side */
+
+
+
+
+
+
+
+/* the small horizontal route: mode above each line, stations below the dots */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* the first station reads from its dot, the last ends on it */
+
+
+
+
+
+/* ---------- notes at the end ---------- */
+
+
+
+
+/* the guide's own p / h3 / h4 colours are !important; these are this page's */
+
+/* ════════ from figma-system-v273.css ════════ */
+/* TABI TAIPEI v2.0.73 — design review P1 (greys, rules, type scale, tap areas, food chips).
+   Everything sits in one cascade layer: an !important rule inside a layer wins over every
+   unlayered !important rule, whatever its selector, so these few lines override the older
+   per-page files without longer selectors. Only !important rules belong here.
+   Left alone on purpose: the home index and side menu artwork, the 空港アクセス page
+   (pixel-matched to Figma), the 散策 map labels (they move with the map's zoom).
+
+   System:
+   text  #fff headings · #ededed body · #9e9e9e secondary · #8a8a8a notes
+   rules #666464 block lines (header, tab bars, sections) · #3e3e3e between list items
+   type  11 labels · 12 secondary · 13 body · 16 item names · weights 400 / 500 / 700 */
+@layer tt273 {
+
+/* ---------- P1-1 text greys ---------- */
+html.tt2-fidelity :is(.tt2n-num,.tt2e-dot) {color:#8a8a8a!important;}
+html.tt2-fidelity :is(.tt2n-intro,.tt2-note-copy,.tt2-note-copy strong) {color:#ededed!important;}
+html.tt2-fidelity .recommend-card-type {color:#9e9e9e!important;}
+
+/* ---------- P1-1 rules ---------- */
+html.tt2-fidelity .tt-sitebar::after,
+html.tt2-fidelity .tt2-wheel::after {background-color:#666464!important;}
+html.tt2-fidelity :is(.tt-chapter-heading,.tt-travel-tabs,.tt2-chapter-tabs,.tt2-food-where) {border-bottom-color:#666464!important;}
+html.tt2-fidelity :is(.tt-travel-tabs > button,.tt2-chapter-tab):not(:last-child) {border-right-color:#666464!important;}
+html.tt2-fidelity .tt2-note,
+html.tt2-fidelity .venue-row,
+html.tt2-fidelity .emergency-line {border-bottom-color:#3e3e3e!important;}
+html.tt2-fidelity .recommend-card {border-top-color:#3e3e3e!important;}
+html.tt2-fidelity .emergency-tile {border-color:#3e3e3e!important;}
+
+/* ---------- P1-2 type scale: section labels 11px / 500 / #9e9e9e ---------- */
+html.tt2-fidelity :is(.tt269-label,.tt269-ro,.tt2e-label,#recommend-mood-title) {font-size:11px!important;font-weight:500!important;color:#9e9e9e!important;}
+html.tt2-fidelity :is(.tt269-group,.tt269-hint,.tt269-foot,.tt269-caution,.tt2-food-where-label,.tt2-food-notes p,.recommend-card-type,.tt2-sight-count,.tt2-directory-count,.tt2l-kind) {font-size:11px!important;}
+html.tt2-fidelity .tt2e-foot {font-size:11px!important;color:#8a8a8a!important;}
+/* at 11px two 遠出 notes need two lines: js/figma-daytrip-v269.js wraps each sentence in
+   .tt269-sent, so the line breaks after 「。」 and never leaves a lone 「認。」 */
+html.tt2-fidelity .tt269-sent {display:inline-block!important;}
+/* weights: 600 / 680 / 750 / 800 → 500 or 700 */
+html.tt2-fidelity :is(.recommend-sort-option[aria-pressed='true'],.tt2-food-pager-label,.tt2-wheel-item.tt2-wheel-active,.tt2-note-copy strong,.nm-pin,.nm-cluster,.nm-edge-count) {font-weight:700!important;}
+html.tt2-fidelity .recommend-venue {font-weight:500!important;}
+
+/* ---------- P1-3 tap areas ----------
+   An invisible ::before grows the target; each one stops at half the gap to its nearest
+   neighbour, so no two targets overlap. Sizes reached: menu 44×44 · route pill 82×44 ·
+   sketch stops ≥44×44 · sort tabs 44 high · bubbles 40 high (12px row gap) ·
+   公式サイト／予約 34 high (7px above the card title link). */
+html.tt2-fidelity :is(.tt269-bubbles a,.tt269-stop-name a,.venue-row .external-action-link) {position:relative!important;}
+html.tt2-fidelity :is(.tt-menu-toggle,.tt269-bubbles a,.tt269-map,.tt269-stop-name a,.venue-row .external-action-link,.recommend-sort-option)::before {
+  content:''!important;position:absolute!important;display:block!important;background:none!important;border:0!important;
+}
+html.tt2-fidelity .tt-menu-toggle::before {inset:-5px -1px -4px!important;}
+html.tt2-fidelity .tt269-bubbles a::before {inset:-6px -8px!important;}
+html.tt2-fidelity .tt269-map::before {inset:-9px 0!important;}
+html.tt2-fidelity .tt269-stop-name a::before {inset:-16px -10px!important;}
+/* the stop's grey sub line sits over the lower half of that area: let taps pass through */
+html.tt2-fidelity .tt269-stop-sub {pointer-events:none!important;}
+html.tt2-fidelity .venue-row .external-action-link::before {inset:-16px -4px -3px -12px!important;}
+html.tt2-fidelity .recommend-sort-option::before {inset:-10px -9px -17px!important;}
+
+/* ---------- P1-4 味わい 条件 panel ----------
+   Chips match the 遠出 bubbles (1px #666464, 13px / 500); the emoji are gone from
+   js/recommend.js. The panel still floats over the cards: it is a short-lived menu
+   (user's choice, 2.0.74). */
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel {border-color:#666464!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel .recommend-pill {
+  border-color:#666464!important;color:#fff!important;font:500 13px/1 var(--tt2-ui)!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel .recommend-pill[aria-pressed='true'] {
+  border-color:#e4e4e2!important;color:#121212!important;font-weight:500!important;
+}
+
+/* ================= v2.0.75 — design review P2 ================= */
+
+/* P2-2 radii: capsules 999 (100px is the same shape), boxes 12. Badges (station codes,
+   tags) keep their small radius; the map's own controls are left as they are.
+   Only the イベント cards and filter panel were off (14px). */
+html.tt2-fidelity #guide :is(.ec-card,.ec-filter-panel) {border-radius:12px!important;}
+
+/* P2-3 list glow 56 → 32px: same colours and fade, so it ends before the first row's
+   small label (17–18px below the glow's top) instead of tinting it green. */
+html.tt2-fidelity .tt-home::before,
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section #taipei-recommender #recommend-results::before,
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section #food-flip-back .food-directory-summary::after,
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box::before,
+html.tt2-fidelity[data-tt-view='experiences'] #guide .tt2-directory-section .tab::before,
+html.tt2-fidelity[data-tt-view='souvenirs'] #guide .tt2-directory-section .tab::before,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-glow {height:32px!important;}
+
+/* P2-4 one green: the glow's sage #8a9e7a (rgb 138,158,122) for 営業中 too; the logo
+   subtitle SVG fill was changed to the same colour. The 「〜まで」 grey joins the notes grey. */
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-opening-open {color:#8a9e7a!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-opening-status[data-until]::after {color:#8a8a8a!important;}
+
+/* P2-5 空港アクセス: with no route yet, the 出発地／目的地 row waits in the middle of the
+   page box (45% down, a little above centre); once a route opens it slides back to the top.
+   v2.0.103: the airport page only (#guide); the 空港アクセス sheet keeps the row at its top. */
+html.tt2-fidelity #guide #airport-route-selector .airsel-route-fields {
+  transition:transform .55s cubic-bezier(.22,1,.36,1)!important;
+}
+html.tt2-fidelity #guide #airport-route-selector:not(:has(.airsel-results-clip.is-open)) .airsel-route-fields {
+  transform:translateY(calc(45cqh - 56px))!important;
+}
+@media (prefers-reduced-motion:reduce) {
+  html.tt2-fidelity #guide #airport-route-selector .airsel-route-fields {transition:none!important;}
+}
+
+/* ================= v2.0.76 — P2-1 type ================= */
+
+/* Figma's display words as outlines (js/figma-type-v276.js adds .tt2o and the sizes).
+   The box keeps the old line height; the Figma text box is centred in it as a mask
+   painted with the text colour, so colour, opacity and animations still apply. */
+html.tt2-fidelity .tt2o {
+  display:block!important;width:var(--tt2o-w)!important;min-width:0!important;height:var(--tt2o-h)!important;
+  font-size:0!important;line-height:0!important;letter-spacing:0!important;
+  background-color:currentColor!important;
+  -webkit-mask:var(--tt2o-url) 0 50%/var(--tt2o-w) var(--tt2o-mh) no-repeat!important;
+  mask:var(--tt2o-url) 0 50%/var(--tt2o-w) var(--tt2o-mh) no-repeat!important;
+}
+
+/* v2.0.77: the 遠出 place name had -2px to pull the font's side bearing back; the outline
+   starts at the ink itself, so it sits on the text line without it. */
+html.tt2-fidelity #guide .tt269-place.tt2o {margin-left:0!important;}
+
+/* ================= v2.0.78 — design review P3 ================= */
+
+/* P3-1 home index (user's choice): three equal columns (was 126 / 131 / 104), and one rule
+   for the vertical lines on all seven cells (the Figma artboard had lines on 01–04 only).
+   Each line starts under its number and runs down to the next row's number; the last
+   row stops 8px above the bottom of its cell. */
+html.tt2-fidelity .tt-home-grid {grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+html.tt2-fidelity .tt-home-grid > .tt-home-item::before {
+  display:block!important;left:26.5px!important;top:35px!important;bottom:auto!important;height:calc(100% - 22px)!important;
+}
+html.tt2-fidelity .tt-home-grid > .tt-home-item:nth-child(n+7)::before {height:calc(100% - 43px)!important;}
+@media (max-width:392px) {
+  html.tt2-fidelity .tt-home-grid > .tt-home-item::before {left:21.5px!important;}
+}
+
+/* ================= v2.0.79 — 味わい B 細修版 (Figma 259:1406–262:1406) =================
+   One summary row: place (dot + district / station) · time capsule · order capsule · ＋.
+   The old sort row (result head) is gone; time and order live in the 条件 panel.
+   js/figma-food-v232.js builds the row, js/recommend.js picks the order automatically. */
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section {--tt-food-slack:calc(100dvh - var(--tt2-sitebar-height,104px) - 79px - 402.8px)!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where {
+  display:flex!important;align-items:center!important;gap:6px!important;height:52px!important;padding:0 0 0 11px!important;
+  border-bottom:0!important;position:relative!important; /* v2.0.80: no rule above the glow (user) */
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where-time,
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where-label,
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-result-head {display:none!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where-place {flex:1 1 auto!important;min-width:0!important;height:44px!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where-place .tt2-food-where-value {
+  position:static!important;height:44px!important;display:flex!important;align-items:center!important;gap:8px!important;
+  padding:0!important;font:500 16px/22px var(--tt2-ui)!important;color:#ededed!important;animation:none!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender[data-location-status='success'] .tt2-food-where-place .tt2-food-where-value,
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section[data-tt2-food-mode='station'] .tt2-food-where-place .tt2-food-where-value {color:#fff!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-dot {flex:none;width:7px;height:7px;border-radius:50%;background:#666464;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender[data-location-status='success'] .tt2-food-dot {background:#8a9e7a;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender[data-location-status='loading'] .tt2-food-dot {background:#8a9e7a;animation:tt2-food-dot 1s ease-in-out infinite alternate;}
+/* outside the area: the site's red (user's choice) */
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender[data-location-status='outside'] .tt2-food-dot {background:#d0645c;}
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section[data-tt2-food-mode='station'] .tt2-food-dot {display:none;}
+@keyframes tt2-food-dot {from{opacity:1}to{opacity:.25}}
+@media (prefers-reduced-motion:reduce) {
+  html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-dot {animation:none!important;}
+}
+/* capsules: outline = chosen by the site, white + ✕ = chosen by the visitor */
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip {
+  flex:none;display:inline-flex;align-items:center;height:30px;box-sizing:border-box;border:1px solid #666464;border-radius:100px;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip .tt2-food-chip-main {
+  display:block!important;height:28px!important;padding:0 12px!important;font:500 13px/28px var(--tt2-ui)!important;color:#fff!important;white-space:nowrap!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip .tt2-food-chip-main::before {content:'';position:absolute;inset:-8px 0;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip .tt2-food-chip-x {display:none!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip.is-set {background:#fff;border-color:#fff;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip.is-set .tt2-food-chip-main {color:#000!important;padding-right:4px!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip.is-set .tt2-food-chip-x {
+  display:block!important;width:22px!important;height:28px!important;padding:0!important;font-size:0!important;color:transparent!important;
+  /* v2.0.80: the イベント filter chip's hairline cross (7×7, 1px), not a text ✕ */
+  background:
+    linear-gradient(45deg,transparent calc(50% - .5px),#000 calc(50% - .5px),#000 calc(50% + .5px),transparent calc(50% + .5px)) 4px 50%/7px 7px no-repeat,
+    linear-gradient(-45deg,transparent calc(50% - .5px),#000 calc(50% - .5px),#000 calc(50% + .5px),transparent calc(50% + .5px)) 4px 50%/7px 7px no-repeat!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-chip.is-set .tt2-food-chip-x::before {content:'';position:absolute;inset:-8px 0;}
+/* ＋ : the 条件 summary, now a 30px white circle at the end of the row */
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where .recommend-control-advanced-wrap,
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where #recommend-advanced {position:static!important;flex:none!important;margin:0!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where .recommend-advanced-trigger {
+  position:relative!important;width:30px!important;min-width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;gap:0!important;border-radius:50%!important;overflow:visible!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where :is(.recommend-control-advanced-wrap,#recommend-advanced) {overflow:visible!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where .recommend-advanced-trigger::before {content:'';position:absolute;inset:-7px -6px -7px 0;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where .recommend-advanced-label {display:none!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where .recommend-advanced-plus {
+  flex:0 0 12px!important;width:12px!important;height:12px!important;min-width:12px!important;min-height:12px!important;
+  background:linear-gradient(#000,#000) center/12px 1.2px no-repeat,linear-gradient(#000,#000) center/1.2px 12px no-repeat!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-badge {
+  position:absolute;right:0;top:-6px;width:15px;height:15px;border-radius:50%;background:#8a9e7a;color:#000;
+  font:700 9px/15px var(--tt2-ui);text-align:center;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-badge[hidden] {display:none;}
+/* the panel: full row width under the summary row, sections 時間帯 · 並び順 · 料理種類 */
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .tt2-food-where .recommend-advanced-panel {
+  position:absolute!important;top:calc(100% + 6px)!important;left:0!important;right:0!important;width:auto!important;max-width:none!important;z-index:30!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel :is(.tt2-food-panel-title,#recommend-mood-title) {
+  margin:0 0 6px!important;padding:0 2px!important;font:500 11px/19px var(--tt2-ui)!important;letter-spacing:.05em!important;color:#9e9e9e!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel :is(.tt2-food-panel-time,.tt2-food-panel-sort) {
+  display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:6px!important;margin:0 0 12px!important;padding:0!important;position:static!important;border:0!important;height:auto!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel :is(.tt2-food-panel-time .recommend-option,.tt2-food-panel-sort .recommend-sort-option) {
+  -webkit-appearance:none!important;appearance:none!important;position:relative!important;display:inline-flex!important;align-items:center!important;
+  height:30px!important;min-height:30px!important;width:auto!important;margin:0!important;padding:0 12px!important;box-sizing:border-box!important;
+  border:1px solid #666464!important;border-radius:100px!important;background:transparent!important;box-shadow:none!important;
+  font:500 13px/1 var(--tt2-ui)!important;color:#fff!important;letter-spacing:0!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel :is(.tt2-food-panel-time .recommend-option,.tt2-food-panel-sort .recommend-sort-option)[aria-pressed='true'] {
+  background:#e4e4e2!important;border-color:#e4e4e2!important;color:#121212!important;
+}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel .tt2-food-panel-sort .recommend-sort-option:disabled {opacity:.35!important;}
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel .tt2-food-panel-sort .recommend-sort-option::before,
+html.tt2-fidelity[data-tt-view='food'] #taipei-recommender .recommend-advanced-panel .tt2-food-panel-sort .recommend-sort-option::after {display:none!important;content:none!important;}
+
+/* Running text: Hiragino Mincho, built into every iPhone and Mac, so the preview and the
+   phone match (the Figma faces never reached phones). Words without an outline yet use it too. */
+html.tt2-fidelity {
+  --tt2-serif:'Hiragino Mincho ProN','Hiragino Mincho Pro','Yu Mincho','YuMincho','Noto Serif JP',serif!important;
+  --tt2-num:'Hiragino Mincho ProN','Hiragino Mincho Pro','Yu Mincho','YuMincho','Noto Serif JP',serif!important;
+}
+
+}
+
+/* v2.0.104 — until view-router.js has chosen the screen (html[data-tt-view]), the chapters stay
+   unseen: on reload the top of 01 旅支度 (its heading and glow) peeked in under the home on
+   phones whose home box ends a few px short of the screen. Laid out as before (visibility). */
+html.tt2-fidelity:not([data-tt-view]) #guide {visibility:hidden!important;}
+
+/* v2.0.107 — 見所 / 体験 / おみやげ list rows, Figma 「見所リスト 改善案 C」: the links (公式サイト,
+   予約, 紹介 …) are outlined capsules in a column of their own at the right, centred on the row and
+   stacked when there are two (the official site on top). js/tt2-lists.js moves them out of the
+   text and no longer makes an empty top line for them, so every row is: original name → name →
+   description → tags. */
+html.tt2-fidelity #guide li.venue-row.tt2l-row.tt2l-has-link:not(#_a):not(#_b):not(#_c) {
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;column-gap:12px!important;align-items:center!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row.tt2l-has-link:not(#_a):not(#_b):not(#_c) > .venue-row-body {grid-column:1;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row.tt2l-has-link:not(#_a):not(#_b):not(#_c) .tt2l-kind {padding-right:0!important;}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b):not(#_c) > .venue-secondary-links {
+  grid-column:2;position:static!important;inset:auto!important;transform:none!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:6px!important;
+  width:auto!important;max-width:none!important;margin:0!important;padding:0!important;
+}
+html.tt2-fidelity #guide li.venue-row.tt2l-row:not(#_a):not(#_b):not(#_c) > .venue-secondary-links a {
+  display:inline-flex!important;align-items:center!important;gap:4px!important;margin:0!important;padding:5px 10px 5px 11px!important;
+  border:1px solid #464646!important;border-radius:100px!important;background:none!important;box-shadow:none!important;opacity:1!important;
+  font:400 11px/14px var(--tt2-ui)!important;color:#9e9e9e!important;-webkit-text-fill-color:#9e9e9e!important;white-space:nowrap!important;
+}
+
+/* v2.0.109 — into a chapter from the home: a slower fade, no movement (was .26s from .65 opacity and
+   5px lower). It starts a moment late and from nothing, so what a chapter builds on arrival
+   (遠出 lays out its destination page, a little later still) happens unseen. No end state is
+   kept (fill backwards): an identity transform or opacity left on #guide is not wanted (see
+   the dictionary note above). The header (#tt-sitebar, sticky, z-index 120) is never animated
+   and stays above. */
+@media (prefers-reduced-motion:no-preference) {
+  html.tt-fwave.tt-route-chapter #guide:not(.tt-view-hidden) {animation:tt2-chapter-in .6s ease-out .06s backwards!important;}
+  html.tt-fwave.tt-route-chapter[data-tt-view='day-trips'] #guide:not(.tt-view-hidden) {animation:tt2-chapter-in .7s ease-out .18s backwards!important;}
+  @keyframes tt2-chapter-in {from {opacity:0;} to {opacity:1;}}
+}
+html.tt-fwave.tt-route-chapter body:is(.food-swipe-active,.tt2d-on) #guide:not(.tt-view-hidden) {animation:none!important;}
+
+/* v2.0.109 — the tab rows a little larger: 12px → 13px; 散策's two tabs (夜市 / 商圏, half the width
+   each) 14px. */
+html.tt2-fidelity #guide :is(.tt2-chapter-tab, [data-tt-travel-tab], .daytrip-destination-button, .daytrip-destination-button-name):not(#_a):not(#_b) {font-size:13px!important;}
+html.tt2-fidelity #guide .tt2-chapter-tab[data-tt2-chapter='city-walk']:not(#_a):not(#_b) {font-size:14px!important;}
+
+/* v2.0.111 — the glows at the top of a list open the way 撮影スポット's do: 0.3s after the list
+   shows (guide.js gives 見所 / 体験 .venue-glow-in after 0.3s); the others started at once. The
+   home glow keeps its own timing. Raised specificity: these rules live in later chapter files. */
+html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box:not(#_g1):not(#_g2)::before,
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section #taipei-recommender #recommend-results:not(#_g1):not(#_g2)::before,
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section #food-flip-back .food-directory-summary:not(#_g1):not(#_g2)::after,
+html.tt2-fidelity[data-tt-view='experiences'] #guide .tt2-directory-section .tab:not(#_g1):not(#_g2)::before,
+html.tt2-fidelity[data-tt-view='souvenirs'] #guide .tt2-directory-section .tab:not(#_g1):not(#_g2)::before,
+html.tt2-fidelity[data-tt-view='day-trips'] #guide .tt221-glow:not(#_g1):not(#_g2),
+html.tt2-fidelity #guide #night-markets-section .nm-glow:not(#_g1):not(#_g2),
+html.tt2-fidelity #guide #walk-area-host .nm-glow:not(#_g1):not(#_g2) {animation-delay:.3s!important;}
+/* … except 味わい 一覧 after a turn of its wheel (js/tt2-motion.js .tt2-still): its summary is built
+   again on every turn, and its glow stays as it is. */
+html.tt2-fidelity[data-tt-view='food'] #food-recommend-section #food-flip-back.tt2-still .food-directory-summary:not(#_g1):not(#_g2):not(#_g3)::after {animation:none!important;}

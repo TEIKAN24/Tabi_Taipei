@@ -1,0 +1,369 @@
+/* TABI TAIPEI v2.0.93 — side menu: drawer, chapter links, utilities, About
+   Collected in 2.0.93 (cleanup phase 2) from the per-version files, in their load order, so
+   one file holds the whole screen. Comments name the file each run came from. */
+
+/* from first-wave.css */
+.tt-menu-toggle {
+  position:relative;z-index:151;display:grid;place-items:center;flex:none;
+  width:44px;height:40px;margin:0 -10px -4px 0;
+  border:0;border-radius:0;background:transparent;color:inherit;cursor:pointer;
+  touch-action:manipulation;
+}
+.tt-menu-strokes {width:23px;height:18px;display:block;position:relative;}
+.tt-menu-strokes i {display:block;position:absolute;left:2px;width:19px;height:1px;background:currentColor;transform-origin:center;transition:transform .44s cubic-bezier(.22,1,.36,1);}
+.tt-menu-strokes i:nth-child(1) {top:2px;}
+.tt-menu-strokes i:nth-child(2) {top:9px;}
+.tt-menu-strokes i:nth-child(3) {top:16px;}
+html.tt-fwave.tt-nav-open .tt-menu-strokes i:nth-child(1) {transform:translateX(3.4px);}
+html.tt-fwave.tt-nav-open .tt-menu-strokes i:nth-child(3) {transform:translateX(-3.1px);}
+html.tt-fwave.tt-nav-open .tt-sitebar {background:transparent;}
+html.tt-fwave.tt-nav-open .tt-brand {opacity:0;pointer-events:none;}
+html.tt-fwave.tt-nav-open .tt-sitebar::after {opacity:0;}
+.tt-menu-backdrop {
+  position:fixed;inset:0;z-index:101;opacity:0;pointer-events:none;
+  background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(80px);backdrop-filter:blur(80px);
+  transition:opacity .48s ease;
+}
+html.tt-fwave.tt-nav-open .tt-menu-backdrop {opacity:1;pointer-events:auto;}
+.tt-side-menu {
+  position:fixed;right:0;top:0;bottom:0;z-index:110;
+  width:min(300px,calc(100vw - 22px));overflow-x:hidden;overflow-y:auto;
+  background:var(--tt-side-bg);color:var(--tt-ink);visibility:hidden;
+  transform:translate3d(104%,0,0);transition:transform .68s cubic-bezier(.2,.76,.16,1),visibility 0s linear .7s;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+}
+html.tt-fwave.tt-nav-open .tt-side-menu {visibility:visible;transform:translate3d(0,0,0);transition-delay:0s;}
+.tt-side-shine {pointer-events:none;position:absolute;left:0;right:0;top:102px;height:44px;background:radial-gradient(ellipse at 55% 0%,rgba(231,233,225,.16),transparent 72%);opacity:.95;}
+.tt-side-chapters {height:540px;position:relative;padding-top:0;}
+.tt-side-link {
+  --i:0;position:absolute;left:0;right:0;height:60px;top:calc(117px + var(--i)*57.65px);
+  text-decoration:none!important;color:inherit!important;
+  display:flex;align-items:start;min-width:0;
+}
+.tt-side-index {position:absolute;left:15px;top:11px;font-family:var(--tt-serif);font-size:10px;line-height:1;opacity:0;color:var(--tt-muted);}
+.tt-side-title {
+  font-family:var(--tt-serif);position:absolute;right:14px;top:-2px;
+  font-size:clamp(33px,10vw,41px);letter-spacing:-.09em;font-weight:400;
+  line-height:1.18;white-space:nowrap;opacity:0;
+  transform:translate3d(0,12px,0);color:var(--tt-ink);
+}
+.tt-side-line {
+  --line-len:100px;
+  position:absolute;left:27px;top:16px;width:var(--line-len);height:1px;
+  background:var(--tt-rule);opacity:0;transform-origin:left center;
+  transform:rotate(var(--angle)) translateX(-8px);
+}
+.tt-side-link:nth-child(1) {--line-len:110px;--angle:5deg;}
+.tt-side-link:nth-child(2) {--line-len:119px;--angle:15deg;}
+.tt-side-link:nth-child(3) {--line-len:143px;--angle:22deg;}
+.tt-side-link:nth-child(4) {--line-len:153px;--angle:29deg;}
+.tt-side-link:nth-child(5) {--line-len:167px;--angle:35deg;}
+.tt-side-link:nth-child(6) {--line-len:176px;--angle:41deg;}
+.tt-side-link:nth-child(7) {--line-len:155px;--angle:69deg;}
+.tt-side-link:nth-child(7) .tt-side-title {right:14px;}
+.tt-side-link:hover .tt-side-title,
+.tt-side-link:focus-visible .tt-side-title {color:#c6cfca;}
+html.tt-fwave.tt-nav-open .tt-side-title {animation:tt-rise 1s cubic-bezier(.22,.7,.28,1) both;animation-delay:calc(var(--i)*.3s);}
+html.tt-fwave.tt-nav-open .tt-side-index {animation:tt-index .72s ease-out both;animation-delay:calc(var(--i)*.3s + .12s);}
+html.tt-fwave.tt-nav-open .tt-side-line {animation:tt-line .72s cubic-bezier(.22,.8,.25,1) both;animation-delay:calc(var(--i)*.3s + .28s);}
+.tt-side-extras {position:absolute;top:604px;left:30px;right:19px;display:flex;flex-direction:column;gap:71px;font-family:var(--tt-serif);font-size:13px;}
+.tt-side-extras a {display:flex;align-items:center;justify-content:space-between;color:var(--tt-ink)!important;text-decoration:none!important;position:relative;}
+.tt-side-extras a::after {content:"";position:absolute;left:75px;right:16px;top:50%;height:1px;background:var(--tt-rule);opacity:.5;}
+.tt-side-extras a span {font-size:20px;line-height:1;}
+.tt-side-extras {opacity:0;transform:translateY(8px);transition:opacity .55s ease,transform .55s ease;}
+html.tt-fwave.tt-nav-open .tt-side-extras {opacity:1;transform:none;transition-delay:2.2s;}
+@media(min-width:650px){
+.tt-side-menu {right:max(0px,calc((100vw - 760px)/2));}
+}
+@media(max-width:355px){
+.tt-side-title {font-size:36px;}
+.tt-side-line {max-width:55%;}
+}
+@media(prefers-reduced-motion:reduce){
+.tt-menu-strokes i,
+.tt-menu-backdrop,
+.tt-side-menu,
+.tt-side-extras {transition:none!important;}
+html.tt-fwave.tt-nav-open .tt-side-title,
+html.tt-fwave.tt-nav-open .tt-side-index,
+html.tt-fwave.tt-nav-open .tt-side-line {animation:none!important;opacity:1!important;transform:none!important;}
+html.tt-fwave.tt-nav-open .tt-side-line {transform:rotate(var(--angle))!important;}
+}
+
+/* from figma-stage1.css */
+html.tt2-fidelity .tt-menu-toggle {height:35px;width:42px;margin-bottom:-4px;}
+html.tt2-fidelity .tt-menu-strokes {width:24px;height:17px;}
+html.tt2-fidelity .tt-menu-strokes i {width:19px;height:1px;left:2px;}
+html.tt2-fidelity .tt-side-link {top:calc(112px + var(--i)*57.65px);}
+html.tt2-fidelity .tt-side-title {font-family:var(--tt2-serif);}
+html.tt2-fidelity .tt-side-index {font-family:var(--tt2-num);}
+
+html.tt2-fidelity .tt-side-extras a:nth-child(2)::after {left:94px;right:auto;width:149px;transform-origin:left center;transform:rotate(-32deg);}
+html.tt2-fidelity .tt-side-extras a:nth-child(1)::after {left:70px;right:20px;top:18px;}
+
+html.tt2-fidelity .tt-side-extras a:nth-child(2)::after {top:22px;}
+html.tt2-fidelity .tt-side-extras a:nth-child(2) span {position:absolute;right:0;top:-53px;}
+
+/* from figma-outlines.css */
+html.tt2-fidelity .tt-side-title {
+  font-size:0!important;
+  line-height:0!important;
+  letter-spacing:0!important;
+  -webkit-text-size-adjust:none;
+}
+html.tt2-fidelity .tt-side-title {
+  display:block;
+  height:auto;
+  width:max-content;
+  white-space:nowrap;
+  transform:translateY(12px);
+  transform-origin:right top;
+}
+html.tt2-fidelity.tt-nav-open .tt-side-title {animation-name:tt2-outlined-side-rise;}
+
+@media(prefers-reduced-motion:reduce){
+html.tt2-fidelity.tt-nav-open .tt-side-title {animation:none!important;opacity:1!important;transform:none!important;}
+}
+
+/* from figma-precision-v203.css */
+html.tt2-fidelity .tt-menu-strokes {transform:translateY(4px);}
+html.tt2-fidelity .tt-side-index {left:14.9px;top:calc(11.28px - var(--i)*21.235px);}
+html.tt2-fidelity .tt-side-title {right:23px;top:11px;}
+html.tt2-fidelity .tt-side-link:nth-child(7) .tt-side-title {right:22px;}
+html.tt2-fidelity .tt-side-line {
+  max-width:none;width:var(--tt2-line-length,var(--line-len));
+  left:var(--tt2-line-x,27px);top:var(--tt2-line-top,22.5px);
+  height:1px;transform-origin:left center;
+}
+html.tt2-fidelity .tt-side-link:nth-child(1) {--tt2-line-x:27px;--tt2-line-top:22.5px;--tt2-line-length:105.48px;--angle:5.44deg;}
+html.tt2-fidelity .tt-side-link:nth-child(2) {--tt2-line-x:27.5px;--tt2-line-top:1.36px;--tt2-line-length:109.48px;--angle:16.45deg;}
+html.tt2-fidelity .tt-side-link:nth-child(3) {--tt2-line-x:28.5px;--tt2-line-top:-20.8px;--tt2-line-length:155.66px;--angle:20.30deg;}
+html.tt2-fidelity .tt-side-link:nth-child(4) {--tt2-line-x:29px;--tt2-line-top:-41.95px;--tt2-line-length:165px;--angle:27.03deg;}
+html.tt2-fidelity .tt-side-link:nth-child(5) {--tt2-line-x:30px;--tt2-line-top:-63.09px;--tt2-line-length:172.8px;--angle:33.56deg;}
+html.tt2-fidelity .tt-side-link:nth-child(6) {--tt2-line-x:31.5px;--tt2-line-top:-83.25px;--tt2-line-length:180.14px;--angle:38.24deg;}
+html.tt2-fidelity .tt-side-link:nth-child(7) {--tt2-line-x:30px;--tt2-line-top:-104.39px;--tt2-line-length:151.09px;--angle:65.97deg;}
+html.tt2-fidelity .tt-side-extras {left:31px;top:615px;gap:85px;}
+@media (max-width:359px){
+html.tt2-fidelity .tt-side-title {right:12px;}
+html.tt2-fidelity .tt-side-line {max-width:calc(100% - 112px);}
+}
+html.tt2-fidelity .tt-side-shine {
+  top:103.83px;height:44px;left:0;right:0;opacity:1;
+  background:url('../assets/figma/artwork/side-glow.svg') left top / 100% 44px no-repeat;
+}
+
+/* from figma-viewport-v204.css */
+html.tt2-fidelity.tt-ios-safari-tab .tt-side-menu,
+html.tt2-fidelity.tt-ios-safari-tab .tt-menu-backdrop {top:-58px;}
+
+/* from figma-viewport-v205.css */
+html.tt2-fidelity .tt-side-shine {
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%);
+}
+html.tt2-fidelity .tt-menu-strokes i {transition-duration:.22s;}
+html.tt2-fidelity .tt-menu-backdrop {transition-duration:.24s;}
+html.tt2-fidelity .tt-side-menu {transition-duration:.34s,0s;}
+
+html.tt2-fidelity.tt-nav-open .tt-side-title {animation-duration:.5s;animation-delay:calc(var(--i)*.15s);}
+html.tt2-fidelity.tt-nav-open .tt-side-index {animation-duration:.36s;animation-delay:calc(var(--i)*.15s + .06s);}
+html.tt2-fidelity.tt-nav-open .tt-side-line {animation-duration:.36s;animation-delay:calc(var(--i)*.15s + .14s);}
+html.tt2-fidelity .tt-side-extras {transition-duration:.275s;}
+html.tt2-fidelity.tt-nav-open .tt-side-extras {transition-delay:1.1s;}
+@media (prefers-reduced-motion:reduce){
+html.tt2-fidelity .tt-menu-strokes i,
+html.tt2-fidelity .tt-menu-backdrop,
+html.tt2-fidelity .tt-side-menu,
+html.tt2-fidelity .tt-side-extras {transition:none!important;}
+html.tt2-fidelity.tt-nav-open .tt-side-title,
+html.tt2-fidelity.tt-nav-open .tt-side-index,
+html.tt2-fidelity.tt-nav-open .tt-side-line {animation:none!important;opacity:1!important;}
+}
+
+/* from figma-sights-v210.css */
+html.tt-fwave .tt-menu-backdrop,
+html.tt2-fidelity .tt-menu-backdrop {
+  background:rgba(0,0,0,.20)!important;
+  -webkit-backdrop-filter:blur(40px)!important;
+  backdrop-filter:blur(40px)!important;
+  filter:none!important;
+}
+html.tt-fwave .tt-side-menu,
+html.tt2-fidelity .tt-side-menu {
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* from figma-side-angled-v227.css */
+html.tt2-fidelity .tt-menu-backdrop {
+  position:fixed!important;inset:0!important;
+  /* v2.0.67: 65% black, blur halved (56 → 28px) */
+  background:rgba(0,0,0,.65)!important;
+  -webkit-backdrop-filter:blur(28px)!important;
+  backdrop-filter:blur(28px)!important;
+  filter:none!important;
+  transition:opacity .33s ease!important;
+}
+html.tt2-fidelity .tt-side-menu {
+  position:fixed!important;inset:0!important;
+  top:0!important;right:0!important;bottom:0!important;left:0!important;
+  width:100vw!important;height:100dvh!important;max-width:none!important;
+  box-sizing:border-box!important;overflow:hidden!important;
+  overscroll-behavior:none!important;
+  background:transparent!important;color:#fff!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  transform:translate3d(100%,0,0);
+  transition:transform .33s cubic-bezier(.22,1,.36,1),visibility 0s linear .33s!important;
+  transition-delay:0s,.33s!important;
+  will-change:transform;touch-action:pan-y;
+}
+html.tt2-fidelity.tt-nav-open .tt-side-menu {
+  visibility:visible!important;transform:translate3d(0,0,0);
+  transition-duration:.45s,0s!important;
+  transition-delay:0s,0s!important;
+}
+html.tt2-fidelity.tt-nav-open .tt-menu-backdrop {transition-duration:.45s!important;}
+html.tt2-fidelity.tt-nav-open .tt-brand {opacity:1!important;pointer-events:auto!important;}
+html.tt2-fidelity.tt-nav-open .tt-sitebar {background:transparent!important;color:#fff!important;}
+html.tt2-fidelity.tt-nav-open .tt-sitebar::after {opacity:0!important;}
+html.tt2-fidelity .tt-side-shine {display:none!important;}
+html.tt2-fidelity .tt227-stage-holder {
+  position:absolute;top:var(--tt2-sitebar-height,104px);left:0;right:0;
+  display:flex;justify-content:center;align-items:flex-start;
+  pointer-events:none;
+}
+html.tt2-fidelity .tt227-stage {
+  position:relative;box-sizing:border-box;flex:0 0 393px;
+  width:393px;height:748px;
+  transform:scale(var(--tt227-fit,1));transform-origin:top center;
+  pointer-events:none;
+}
+html.tt2-fidelity .tt227-decor {
+  position:absolute;top:0;left:0;width:393px;height:748px;
+  overflow:visible;pointer-events:none!important;user-select:none;
+}
+html.tt2-fidelity .tt227-rule,
+html.tt2-fidelity .tt227-num {pointer-events:none!important;}
+html.tt2-fidelity .tt-side-chapters.tt227-chapters,
+html.tt2-fidelity .tt-side-extras.tt227-extras {
+  position:absolute!important;inset:0!important;
+  width:393px!important;height:748px!important;
+  padding:0!important;margin:0!important;gap:0!important;
+  display:block!important;transform:none!important;
+  opacity:1!important;overflow:visible!important;
+  pointer-events:none!important;
+  transition:none!important;
+}
+html.tt2-fidelity .tt-side-link.tt227-title-link,
+html.tt2-fidelity .tt-side-link.tt227-number-link {
+  position:absolute!important;right:auto!important;bottom:auto!important;
+  display:flex!important;align-items:center;justify-content:center;
+  box-sizing:border-box;padding:0!important;margin:0!important;
+  border:none;background:transparent;color:#fff!important;
+  text-decoration:none!important;overflow:visible!important;
+  -webkit-tap-highlight-color:transparent;
+  cursor:pointer;pointer-events:auto!important;touch-action:pan-y;
+}
+html.tt2-fidelity .tt-side-link.tt227-title-link {
+  /* Keep all title vectors at the original 1:1 scale. Increase the invisible
+  touch area by 6px; adjacent labels are separated by at least 11px. */
+  left:calc(var(--x)*1px - 3px)!important;
+  top:calc((var(--y) - 104)*1px - 3px)!important;
+  width:calc(var(--w)*1px + 6px)!important;
+  height:calc(var(--h)*1px + 6px)!important;
+}
+html.tt2-fidelity .tt227-title-link img {
+  display:block;flex:0 0 auto;
+  width:calc(var(--w)*1px)!important;height:calc(var(--h)*1px)!important;
+  max-width:none!important;object-fit:contain;
+  pointer-events:none!important;user-select:none;-webkit-user-drag:none;
+}
+html.tt2-fidelity .tt-side-link.tt227-number-link {
+  left:10px!important;
+  top:calc((var(--y) - 104)*1px - 10px)!important;
+  width:31px!important;height:29px!important;
+}
+html.tt2-fidelity .tt227-sr {
+  position:absolute;width:1px;height:1px;padding:0;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+html.tt2-fidelity .tt227-title-link:hover img,
+html.tt2-fidelity .tt227-title-link:active img {opacity:.76;}
+html.tt2-fidelity .tt227-number-link:focus-visible,
+html.tt2-fidelity .tt227-title-link:focus-visible,
+html.tt2-fidelity .tt227-utility:focus-visible {
+  outline:1px solid rgba(255,255,255,.78)!important;
+  outline-offset:-1px!important;
+}
+html.tt2-fidelity .tt227-utility {
+  position:absolute!important;left:calc(var(--x)*1px - 6px)!important;
+  top:calc((var(--y) - 104)*1px - 9px)!important;
+  width:calc(max(var(--w)*1px + 14px, 110px))!important;height:32px!important;
+  display:flex!important;align-items:center;justify-content:flex-start;
+  padding:0 6px!important;margin:0!important;
+  background:transparent!important;color:#fff!important;border:none!important;
+  border-radius:0!important;text-decoration:none!important;
+  cursor:pointer;pointer-events:auto!important;touch-action:pan-y;
+  transform:none!important;box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+html.tt2-fidelity .tt227-utility img {
+  display:block!important;max-width:none!important;
+  width:calc(var(--w)*1px)!important;height:calc(var(--h)*1px)!important;
+  pointer-events:none!important;-webkit-user-drag:none;user-select:none;
+}
+html.tt2-fidelity .tt227-utility:hover img,
+html.tt2-fidelity .tt227-utility:active img {opacity:.76!important;}
+html.tt2-fidelity .tt227-utility::before,
+html.tt2-fidelity .tt227-utility::after {content:none!important;display:none!important;}
+@keyframes tt227-arrive{from{opacity:0;transform:translateY(2px)}
+  to{opacity:1;transform:translateY(0)}}
+@keyframes tt227-path-arrive{from{opacity:0}to{opacity:1}}
+html.tt2-fidelity.tt-nav-open .tt227-title-link img,
+html.tt2-fidelity.tt-nav-open .tt227-utility img {
+  animation:tt227-arrive .34s ease-out both;
+  animation-delay:calc(180ms + var(--i)*40ms);
+}
+html.tt2-fidelity.tt-nav-open .tt227-rule,
+html.tt2-fidelity.tt-nav-open .tt227-num {
+  animation:tt227-path-arrive .34s ease-out both;
+  animation-delay:calc(180ms + var(--i)*40ms);
+}
+html.tt2-fidelity.tt227-dragging .tt-side-menu {transition:none!important;}
+
+html.tt2-fidelity .tt226-about[hidden] {display:none!important;}
+html.tt2-fidelity .tt226-about {
+  position:absolute;z-index:2;left:24px;right:24px;
+  top:clamp(160px,30dvh,280px);padding:22px 22px 30px;
+  color:#fff;background:rgba(5,5,5,.96);
+  border:1px solid rgba(230,230,230,.3);
+  font-family:'Noto Sans JP',system-ui,sans-serif;
+}
+html.tt2-fidelity .tt226-about h2 {font:400 18px/1.4 Georgia,serif;letter-spacing:.015em;margin:0 0 22px;}
+html.tt2-fidelity .tt226-about p {font-size:11px;line-height:1.8;color:#bbb;margin:0 0 12px;}
+html.tt2-fidelity .tt226-about p:first-of-type {padding-right:36px;}
+html.tt2-fidelity .tt226-about p:last-of-type {margin-bottom:0;}
+html.tt2-fidelity .tt226-about .tt226-about-gap {margin-top:26px;}
+html.tt2-fidelity .tt226-about a {color:inherit;text-decoration:underline;text-underline-offset:2px;}
+html.tt2-fidelity .tt226-about-close {
+  position:absolute;right:8px;top:6px;border:0;background:none;color:#fff;
+  width:42px;height:42px;font-size:26px;cursor:pointer;
+}
+@media (prefers-reduced-motion:reduce){
+html.tt2-fidelity .tt-side-menu,
+html.tt2-fidelity .tt-menu-backdrop {transition:none!important;}
+html.tt2-fidelity.tt-nav-open .tt227-title-link img,
+html.tt2-fidelity.tt-nav-open .tt227-utility img,
+html.tt2-fidelity.tt-nav-open .tt227-rule,
+html.tt2-fidelity.tt-nav-open .tt227-num {animation:none!important;opacity:1!important;transform:none!important;}
+}
+html.tt2-fidelity:not(.tt-nav-open) .tt-menu-backdrop {
+  visibility:hidden!important;
+  transition:opacity .33s ease,visibility 0s linear .33s!important;
+}
+html.tt2-fidelity.tt-nav-open .tt-menu-backdrop {
+  visibility:visible!important;
+  transition:opacity .45s ease,visibility 0s linear 0s!important;
+}
+html.tt2-fidelity.tt227-dragging .tt-menu-backdrop {visibility:visible!important;transition:none!important;}
