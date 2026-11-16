@@ -1,4 +1,4 @@
-/* TABI TAIPEI v2.0.101 — js/tt2-dict.js: 料理辞典: the bottom sheet
+/* TABI TAIPEI v2.0.122 — js/tt2-dict.js: 料理辞典: the bottom sheet
    Was js/figma-dict-v245.js until 2.0.101 (cleanup phase 3). */
 /* TABI TAIPEI v2.0.45 — 料理辞典 V4 (Figma 「料理辞典 V4-a / b / c」, 2026-11-11).
  * The dictionary drawer becomes a bottom sheet (css/figma-dict-v245.css) and shows one of
@@ -46,7 +46,7 @@
   titles.append(title, sub);
   head.append(titles, close);
   panel.prepend(grab, head);
-  input.placeholder = '料理名・漢字で検索（スペースで複数）';
+  input.placeholder = '料理名で検索'; // v2.0.122: not only kanji
 
   // The original shortcuts are emoji buttons in a pop-up; here they are one row of words
   // (kanji in the serif) that press the same buttons, so their toggling stays as it was.
@@ -210,7 +210,9 @@
     const found = hits.filter(hit => hit.found.length).length;
     const summary = found === hits.length ? `${hits.length}語すべて見つかりました`
       : found ? `${found}語が見つかりました` : '見つかりませんでした';
-    const frag = [el('p', 'tt2d-summary', `${hits.length}語を検索　·　${summary}`)];
+    const head = el('p', 'tt2d-summary', `${hits.length}語を検索`); // v2.0.115: · as on the rest of the site
+    head.append(el('span', 'tt2d-dot', '·'), summary);
+    const frag = [head];
     for (const hit of hits) {
       const group = el('section', 'tt2d-group');
       const top = el('div', 'tt2d-group-head');

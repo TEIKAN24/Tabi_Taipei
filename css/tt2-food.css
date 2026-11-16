@@ -1782,7 +1782,7 @@ html.tt2-fidelity[data-tt-view='food'] #food-recommend-section #food-flip-back .
   left:0!important;right:0!important;width:auto!important;height:56px!important;
   background:var(--tt2-glow)!important;
   -webkit-mask-image:var(--tt2-glow-mask)!important;mask-image:var(--tt2-glow-mask)!important;
-  filter:blur(2px)!important;opacity:1!important;
+  filter:blur(2px)!important;opacity:1; /* v2.0.120: not !important, or tt2-glow-in cannot fade it in (it sat as a short bright bar during its 0.3s delay) */
   transform:none;transform-origin:50% 0;
   animation:tt2-glow-in .7s cubic-bezier(.2,.7,.3,1) both!important;
   pointer-events:none!important;

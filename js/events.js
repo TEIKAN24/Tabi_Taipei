@@ -784,6 +784,25 @@
     setTimeout(() => grow(current), 180);    // let the section start opening first
   });
 
+  // v2.0.118: another page opens the calendar on one day (遠出 十分 → 平渓天燈祭): that month, the
+  // calendar face, the day picked (as after a long press).
+  window.tabiEventsShowDay = iso => {
+    const day = parseDay(iso);
+    if (day === null) return false;
+    ensureBuilt();
+    const i = months.findIndex(mo => day >= mo.first && day <= mo.last);
+    if (i < 0) return false;
+    if (i !== current) select(i);
+    if (measure()) jumpTo(i);
+    if (!isHeat()) toggleFace();
+    selDay = day;
+    cards[current].classList.add('has-sel');
+    placeBox(day);
+    renderBelow();
+    labelScroller();
+    return true;
+  };
+
   // Coming back to the page on another day (the home-screen app stays open): refresh the statuses.
   document.addEventListener('visibilitychange', () => {
     if (built && document.visibilityState === 'visible' && taipeiToday() !== today) {

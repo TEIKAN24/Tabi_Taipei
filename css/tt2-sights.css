@@ -60,6 +60,8 @@
 }
 #guide .ec-card.is-grown .ec-bars i {transform:none;transition:transform .55s cubic-bezier(.22,1,.36,1) calc(var(--i,0) * 55ms)}
 #guide .ec-bars i.is-zero {opacity:.3}
+/* v2.0.115: opened from 見所's tabs the bars are simply there (js/tt2-motion.js .tt2-tab-in); they still grow when a month is swiped */
+html.tt2-tab-in #guide .ec-bars i {transition:none!important;}
 #guide .ec-heat-head {display:flex;gap:12px;font-size:10.5px;line-height:1.3;color:var(--ec-sub);letter-spacing:.03em}
 #guide .ec-heat-head span:nth-child(2) {color:var(--ec-ink)}
 #guide .ec-grid {position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-top:8px;transition:row-gap .28s cubic-bezier(.22,1,.36,1)}
@@ -308,8 +310,7 @@ html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights
   background:transparent!important;
 }
 html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-panels,
-html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-panel,
-html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .event-calendar-list {
+html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel='sights'] .tab-panel {
   max-height:100%!important;min-height:0;
   overflow-y:auto!important;overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
@@ -411,10 +412,6 @@ html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='pl
   color:#f5f5f5!important;text-decoration:none!important;
 }
 html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .tt2-museum-ja {display:block;white-space:nowrap;}
-html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .tt2-museum-zh {
-  display:block;margin-top:6px;color:#929292;font:400 12px/16px var(--tt2-ui)!important;
-  white-space:nowrap;
-}
 html.tt2-fidelity[data-tt-view='sights'] #guide > details[data-tt2-panel-key='places'] .tt2-museum-row .venue-tag-list {
   display:flex!important;flex-wrap:nowrap!important;gap:7px!important;
   align-items:center!important;margin:17px 0 0!important;padding:0!important;
@@ -953,7 +950,7 @@ html.tt2-fidelity[data-tt-view='sights'] #event-calendar .ec-list-box::before {
   right:0!important;width:auto!important;height:56px!important;
   background:var(--tt2-glow)!important;
   -webkit-mask-image:var(--tt2-glow-mask)!important;mask-image:var(--tt2-glow-mask)!important;
-  filter:blur(2px)!important;opacity:1!important;
+  filter:blur(2px)!important;opacity:1; /* v2.0.120: not !important, or tt2-glow-in cannot fade it in (it sat as a short bright bar during its 0.3s delay) */
   transform:none;transform-origin:50% 0;
   animation:tt2-glow-in .7s cubic-bezier(.2,.7,.3,1) both!important;
   pointer-events:none!important;

@@ -364,7 +364,7 @@
             {label: '九份から十分へ', rows: [[2, 0, 'タクシー']]}]},
     {ro: 'SHIFEN', name: '十分', photo: 'shifen', tagline: '願いを込めて、天燈を空へ',
      sections: [{label: '見どころ', bubbles: ['ランタン上げ体験', '十分老街'],
-                 event: {label: 'イベント・祭り', name: '平渓天燈祭 2027｜十分会場', sub: '2027.2.20 · 十分廣場'}},
+                 event: {label: 'イベント・祭り', name: '平渓天燈祭 2027｜十分会場', sub: '2027.2.20 · 十分廣場', date: '2027-02-20'}},
                 {label: '食べ歩き', bubbles: ['平溪街']}],
      ways: [{label: '台北市内から', rows: [[0, 0, '台鉄 ＋ 平渓線']]},
             {label: '十分から九份へ', rows: [[1, 0, 'タクシー']]}]},
@@ -444,18 +444,30 @@
     }).join('')).join('');
     const sections = P.sections.map(s => `<section class="tt269-sec"><h4 class="tt269-label">${safe(s.label)}</h4>
       <ul class="tt269-bubbles">${s.bubbles.map(b => MAPS[b] ? `<li><a href="${safe(MAPS[b])}" target="_blank" rel="noopener noreferrer" aria-label="${safe(b)}を地図で見る">${safe(b)}</a></li>` : `<li>${safe(b)}</li>`).join('')}</ul>
-      ${s.event ? `<h4 class="tt269-label tt269-label--sub">${safe(s.event.label)}</h4><p class="tt269-event"><strong>${safe(s.event.name)}</strong><span>${safe(s.event.sub)}</span></p>` : ''}</section>`).join('');
+      ${s.event ? `<h4 class="tt269-label tt269-label--sub">${safe(s.event.label)}</h4><a class="tt269-event" href="#view/sights" data-date="${safe(s.event.date || '')}" aria-label="${safe(s.event.name)}をイベントカレンダーで見る"><strong>${safe(s.event.name)}</strong><span>${safe(s.event.sub)}</span></a>` : ''}</section>`).join('');
     page.dataset.dest = String(d);
     page.innerHTML = `<div class="tt269-hero"><img src="assets/daytrips/photo/${P.photo}.jpg" alt="" decoding="async">
         <div class="tt269-hero-text"><span class="tt269-ro">${P.ro}</span><h3 class="tt269-place">${P.name}</h3><p class="tt269-tagline">${safe(P.tagline)}</p></div></div>
       ${sections}
-      <section class="tt269-access"><h3 class="tt269-access-title">行き方</h3>${ways}</section>
-      <p class="tt269-hint">タップで路線図と「経路を見る」（Google Maps）を表示</p>
-      <p class="tt269-caution">${sentences((first?.warning || '').replace(/\n/g, ''))}</p>
+      <section class="tt269-access"><h3 class="tt269-access-title">行き方</h3><p class="tt269-caution">${sentences((first?.warning || '').replace(/\n/g, ''))}</p>${ways}</section>
       <p class="tt269-foot">${sentences('運賃・所要時間は目安です。時刻は「経路を見る」（Google Maps）で確認。')}</p>`;
     page.scrollTop = 0;
   }
 
+  // v2.0.118: 十分's 平渓天燈祭 opens 見所 → イベント on its day (js/events.js window.tabiEventsShowDay)
+  page.addEventListener('click', e => {
+    const ev = e.target.closest('.tt269-event[data-date]');
+    if (!ev || !ev.dataset.date) return;
+    e.preventDefault();
+    const date = ev.dataset.date;
+    const open = () => {
+      const tab = document.querySelector('#guide .tt2-chapter-tab[data-tt2-tab="event"]');
+      if (tab && tab.getAttribute('aria-selected') !== 'true') tab.click();
+      setTimeout(() => window.tabiEventsShowDay?.(date), 250);
+    };
+    document.addEventListener('tt:viewchange', () => setTimeout(open, 120), {once: true});
+    location.hash = '#view/sights';
+  });
   // one way open at a time
   page.addEventListener('click', e => {
     const head = e.target.closest('.tt269-way-head');
@@ -465,7 +477,16 @@
       w.classList.remove('is-open'); w.querySelector('.tt269-way-head').setAttribute('aria-expanded', 'false'); w.querySelector('.tt269-way-body').hidden = true;
     }
     if (!open) return;
-    way.classList.add('is-open'); head.setAttribute('aria-expanded', 'true'); way.querySelector('.tt269-way-body').hidden = false;
+    way.classList.add('is-open'); head.setAttribute('aria-expanded', 'true');
+    const body = way.querySelector('.tt269-way-body');
+    body.hidden = false;
+    // v2.0.118: the route map unfolds (height and fade) and the page follows it (tt2Reveal waits for it)
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const h = body.offsetHeight;
+      body.style.overflow = 'hidden';
+      body.animate([{height: '0px', opacity: 0}, {height: h + 'px', opacity: 1}], {duration: 360, easing: 'cubic-bezier(.22,1,.36,1)'})
+        .finished.then(() => { body.style.overflow = ''; }, () => { body.style.overflow = ''; });
+    }
     window.tt2Reveal?.(way, {settle: page}); // v2.0.102: an opened way rises into sight
   });
 

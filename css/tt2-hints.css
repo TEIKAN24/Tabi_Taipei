@@ -1,0 +1,42 @@
+/* TABI TAIPEI v2.0.136 — css/tt2-hints.css: the first-time hints (js/tt2-hints.js). A small dark capsule with a caret; only the 料理辞典 walk dims the page around its focus. */
+.tt2-hint {
+  position: fixed; z-index: 400; left: 0; top: 0; max-width: 320px; box-sizing: border-box;
+  padding: 9px 14px; border: 1px solid #363636; border-radius: 10px; background: rgba(17,17,17,.94);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  font: 400 11pt/22px var(--tt2-ui, -apple-system, 'Hiragino Kaku Gothic ProN', sans-serif); letter-spacing: .02em; color: #ededed;
+  pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,.45);
+}
+.tt2-hint[hidden] {display: none;}
+.tt2-hint-text {white-space: pre-line;} /* v2.0.135: a \n in a hint's text is a line break */
+.tt2-hint-caret {
+  position: absolute; left: var(--caret, 50%); bottom: -5px; width: 9px; height: 9px; margin-left: -4.5px;
+  background: rgba(17,17,17,.94); border-right: 1px solid #363636; border-bottom: 1px solid #363636; transform: rotate(45deg);
+}
+.tt2-hint.is-below .tt2-hint-caret {bottom: auto; top: -5px; transform: rotate(225deg);}
+.tt2-hint.is-inside .tt2-hint-caret {display: none;}   /* v2.0.136: over the map itself */
+/* ripple rings (pins, the logo, the search field) and two fingertips (the map) */
+.tt2-hint-ripple {position: fixed; z-index: 399; box-sizing: border-box; border: 1.5px solid rgba(255,255,255,.9); border-radius: 50%; pointer-events: none;}
+.tt2-hint-ring {position: fixed; z-index: 399; box-sizing: border-box; border: 1.5px solid rgba(255,255,255,.9); pointer-events: none;}
+.tt2-hint-fingers {position: fixed; z-index: 399; width: 0; height: 0; pointer-events: none;}
+.tt2-hint-fingers i {position: absolute; left: -13px; top: -13px; width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,.28); border: 1.5px solid rgba(255,255,255,.85); box-shadow: 0 2px 10px rgba(0,0,0,.4);}
+/* the 料理辞典 walk: the floating tip with 「次へ」 under its text on the right; the page around the
+   part in focus darkened softly (the oval is drawn in hints.js); no touches but 「次へ」 */
+.tt2-hint.is-tour {display: grid; grid-template-columns: auto 1fr; column-gap: 8px; max-width: 320px;}
+/* v2.0.136: every hint goes with its own button (「次へ」 or 「OK」) under the text */
+.tt2-hint.is-ask {display: grid; grid-template-columns: 1fr;}
+/* the step count (1/5 …) is the walk's only; the plain hints never show it */
+.tt2-hint-step {display: none; color: #8a8a8a; font-variant-numeric: tabular-nums;}
+.tt2-hint.is-tour .tt2-hint-step {display: inline; margin: 0;}
+.tt2-hint-next {display: none;}
+.tt2-hint:is(.is-tour, .is-ask) .tt2-hint-next {
+  display: block; grid-column: 1 / -1; justify-self: end; position: relative; margin-top: 10px; height: 30px; padding: 0 16px;
+  border: 1px solid #e6e6e6; border-radius: 100px; background: #e6e6e6; color: #111;
+  font: 500 14px/28px var(--tt2-ui, -apple-system, 'Hiragino Kaku Gothic ProN', sans-serif);
+  letter-spacing: .04em; pointer-events: auto; cursor: pointer; transition: opacity .2s; -webkit-tap-highlight-color: transparent;
+}
+.tt2-hint-next::before {content: ''; position: absolute; inset: -8px -6px;}   /* 44px to touch */
+.tt2-hint-next:disabled {opacity: .3; cursor: default;}
+.tt2-hint-dim {position: fixed; inset: 0; z-index: 397; pointer-events: none;}
+.tt2-hint-block {position: fixed; inset: 0; z-index: 398; touch-action: none;}
+.tt2-hint-dim[hidden], .tt2-hint-block[hidden] {display: none;}

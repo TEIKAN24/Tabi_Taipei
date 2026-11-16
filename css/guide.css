@@ -320,7 +320,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 
 #food-explorer, #food-explorer *, #food-explorer *::before, #food-explorer *::after{ box-sizing: border-box; }
 
-#food-explorer{-webkit-text-size-adjust:100%;--page:#191a1a;--surface:#252727;--text:#f0f2f0;--muted:#aab0ac;--border:#393d3a;--soft:#2d312e;--accent:#83d3b0;--accent-faint:#233c30;--focus:#4bbf8b;font-family:-apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif}
+#food-explorer{--page:#191a1a;--surface:#252727;--text:#f0f2f0;--muted:#aab0ac;--border:#393d3a;--soft:#2d312e;--accent:#83d3b0;--accent-faint:#233c30;--focus:#4bbf8b;font-family:-apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif}
 
 
 #food-explorer .search-svg{ display: block; color: var(--muted); width: 20px; height: 20px; flex-shrink: 0; }
@@ -896,31 +896,6 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content .area-directory-section .area-intro-description {
   margin:0;color:#AEBCC5;font-size:12px;line-height:1.65;
 }
-.site-content .area-directory-section .tab-panel > .area-category-list {
-  margin:0;padding:0;overflow:hidden;
-  background:#222D35;border:1px solid #3C4951;border-radius:12px;
-}
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion {
-  margin:0;border:0;border-bottom:1px solid #35414A;border-radius:0;
-  background:transparent;box-shadow:none;
-}
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion:last-child {
-  border-bottom:0;
-}
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion > summary {
-  padding:13px 36px 13px 14px;
-  font-size:13px;line-height:1.5;
-  background:transparent;
-}
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion > summary h4 {
-  margin:0;font-size:13px;line-height:1.5;font-weight:690;
-}
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion[open] > summary {
-  border-bottom:1px solid #35414A;
-}
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion > .indented {
-  padding:3px 2px 12px;
-}
 @media(max-width:365px){
   .site-content .area-directory-section .area-intro-description {font-size:11.5px;}
 }
@@ -1006,9 +981,7 @@ a:hover,.site-content a:hover,.site-content a[href^="https://maps.app.goo.gl"]:h
 .site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),
 .site-content details.root-accordion:not(.travel-caution):not(.travel-twac),
 .site-content details.nested-accordion,
-.site-content details.destination-card,
-.site-content .area-directory-section .tab-panel > .area-category-list,
-.site-content .area-directory-section .tab-panel .area-category-list > details.nested-accordion {
+.site-content details.destination-card {
  background:transparent!important; background-image:none!important;
  border-color:var(--outline-white)!important; box-shadow:none!important;
 }
@@ -1081,10 +1054,10 @@ body{color:var(--mono-body)}
 :root{--mono-line:rgba(245,245,245,.4);--tag-gold:#EBC489;color-scheme:dark;--bg:#0D0D0D;--paper:#0D0D0D;--ink:#EDEDED;--muted:#A1A1A1;--line:#303030;--accent:#FFFFFF;--shadow:none;--text-heading:#F7F7F7;--text-body:#E7E7E7;--text-secondary:#BDBDBD;--text-caption:#929292;--link:#F3F3F3;--link-hover:#FFFFFF;--mono-main:#F7F7F7;--mono-body:#E7E7E7;--mono-sub:#BDBDBD;--mono-muted:#929292;--outline-white:#484848;--outline-divider:#303030;--outline-strong:#E8E8E8}
 html,body{background:#0D0D0D!important;color:#E7E7E7;}
 /* Surfaces are transparent. Thin dividers carry hierarchy instead of boxed panels. */
-.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),.site-content .area-directory-section .tab-panel>.area-category-list,.site-content .destination-info-group,.site-content .destination-card .tab-panel,.site-content .venue-directory-section .venue-secondary-links a{
+.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),.site-content .destination-info-group,.site-content .destination-card .tab-panel,.site-content .venue-directory-section .venue-secondary-links a{
  background:transparent!important;background-image:none!important;box-shadow:none!important;
 }
-.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)),.site-content .area-directory-section .tab-panel>.area-category-list{border-color:#424242!important;}
+.site-content details:not(.travel-caution):not(.travel-twac):not(:where(#taipei-recommender *)){border-color:#424242!important;}
 .site-content details:not(.travel-caution):not(.travel-twac) > summary:not(:where(#taipei-recommender *)),
 .site-content details:not(.travel-caution):not(.travel-twac)[open] > summary,
 .site-content .venue-directory-section li.venue-row,
@@ -1245,10 +1218,9 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
 .site-content .area-directory-section .tab-panel {scroll-padding-top:10px;}
 
 /* Stable accordion focus inside the independent area directory scrollport. */
-.site-content .area-directory-section .tab-panel,.site-content .area-directory-section .area-category-list {
+.site-content .area-directory-section .tab-panel {
   overflow-anchor:none;
 }
-.site-content .area-directory-section .area-category-list > details[open] > summary{color:#FAFAFA!important;box-shadow:inset 2px 0 0 #EAEAEA}
 
 /* =================== CSS 22: nightmarket-and-editorial-tags-20261015 =================== */
 
@@ -1277,17 +1249,6 @@ html, body, .nav-button, .site-content a:not(:where(#taipei-recommender *)), .si
 
 /* Drinks and night markets share the same in-list focus treatment as area directories.
    Do not change other food bubbles or make the entire page a nested scrollport. */
-.site-content .venue-directory-section .tab-panel.guided-focus-panel {
-  scroll-padding-top:10px;
-  overflow-anchor:none;
-}
-.site-content .venue-directory-section .tab-panel.guided-focus-panel > .indented {
-  overflow-anchor:none;
-}
-.site-content .venue-directory-section .tab-panel.guided-focus-panel > .indented > details[open] > summary {
-  color:#FAFAFA!important;
-  box-shadow:inset 2px 0 0 #EAEAEA;
-}
 
 /* =================== CSS 24: daytrips-editorial-redesign-20261015 =================== */
 
@@ -2271,21 +2232,7 @@ body.food-swipe-dragging > .hero,body.food-swipe-dragging #guide > .divider,body
 /* Food dictionary drawer follows theme; original green selection remains green. */
 
 /* The subtle global fixed back-to-top and experimental switch. */
-.theme-preview-toggle{
- position:fixed;top:calc(14px + env(safe-area-inset-top));right:71px;z-index:121;
- display:inline-flex;align-items:center;justify-content:center;gap:5px;
- min-width:77px;min-height:41px;padding:7px 10px;
- font:700 11px/1.2 -apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;
- background:rgba(29,31,32,.95);color:#F2F2F2;border:1px solid #535A5D;border-radius:999px;
- box-shadow:0 3px 12px rgba(0,0,0,.18);cursor:pointer;white-space:nowrap;
- -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-}
-.theme-preview-toggle:hover{filter:brightness(1.08)}
-.theme-preview-toggle:focus-visible{outline:2px solid #398AC0;outline-offset:2px;}
 
-body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
-@media(max-width:355px){.theme-preview-toggle{min-width:71px;right:69px;padding:7px 8px;font-size:10.5px;}}
-@media(prefers-reduced-motion:reduce){.theme-preview-toggle{transition:none;}}
 
 /* ========== v30.9.27 Light-mode polish: five requested details ========== */
 /* Travel caution: remove inner dark warning strip without losing priority. */
@@ -2381,47 +2328,11 @@ body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
 /* Brighter, warm-gold recommendation text without losing tiny-label contrast. */
 
 
-.hero.wrapper .theme-preview-toggle{
-  position:absolute!important;z-index:15!important;
-
-  padding:0!important;gap:0!important;line-height:1!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-
-  transition:background .2s,color .2s,border-color .2s,box-shadow .2s!important;
-}
-.hero.wrapper .theme-preview-toggle svg{flex:none;display:block;}
 
 /* ========== v30.9.42 patch: header lockup + subtler theme button + system sync ========== */
 .hero.wrapper{position:relative;}
-.hero.wrapper .theme-preview-toggle{
-  top:clamp(28px,6vw,44px)!important;
-  right:0!important;
 
-  border-radius:999px!important;
-  border:1px solid rgba(173,181,186,.24)!important;
 
-  color:#88949b!important;
-}
-.hero.wrapper .theme-preview-toggle:hover{
-  filter:none!important;
-  opacity:.92;
-  border-color:rgba(173,181,186,.38)!important;
-  background:rgba(255,255,255,.04)!important;
-}
-.hero.wrapper .theme-preview-toggle:focus-visible{
-  outline:2px solid rgba(89,149,191,.65)!important;
-  outline-offset:2px!important;
-  opacity:1;
-}
-
-.hero.wrapper .theme-preview-toggle[data-theme-mode="system"]{opacity:.58;}
-
-@media(max-width:600px){
-  .hero.wrapper .theme-preview-toggle{
-    top:28px!important;
-    right:0!important;
-  }
-}
 
 .hero{
   padding-top:clamp(28px,6vw,44px)!important;
@@ -2525,10 +2436,6 @@ body.food-drawer-open .theme-preview-toggle{opacity:0;pointer-events:none;}
   background:#B1B1B3!important;
 }
 
-body.food-drawer-open .hero.wrapper .theme-preview-toggle{
-  opacity:0!important;
-  pointer-events:none!important;
-}
 
 /* ========== v30.9.43 — masthead alignment and v30.9.41 intro typography ========== */
 /* Align the slash to the letter bottoms; no overlong tip above the wordmark. */
@@ -2623,15 +2530,6 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 /* About +200% white space, i.e. three times the prior 17px gap. */
 .hero h1.hero-masthead{margin-bottom:51px!important;}
 /* Quiet appearance switch without sacrificing the tap target. */
-.hero.wrapper .theme-preview-toggle{
-  min-width:40px!important;min-height:40px!important;
-  width:40px!important;height:40px!important;
-  background:transparent!important;border-color:transparent!important;
-  box-shadow:none!important;opacity:.42!important;
-}
-.hero.wrapper .theme-preview-toggle svg{width:14px!important;height:14px!important;}
-.hero.wrapper .theme-preview-toggle:hover,
-.hero.wrapper .theme-preview-toggle:focus-visible{opacity:.83!important;}
 
 /* Display original full-color transit operator artwork in light mode only. */
 
@@ -2645,36 +2543,13 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 /* Short scrollports: first three complete options plus part of a fourth.
    Gradient is only present while there is more content below. */
 
-#guide .venue-directory-section .tab-panel.four-row-teaser.teaser-can-scroll:not([data-teaser-end="true"]){
-  -webkit-mask-image:linear-gradient(to bottom, #000 0%,#000 73%,transparent 100%)!important;
-  mask-image:linear-gradient(to bottom, #000 0%,#000 73%,transparent 100%)!important;
-}
-#guide .venue-directory-section .tab-panel.four-row-teaser[data-teaser-end="true"]{
-  -webkit-mask-image:none!important;mask-image:none!important;
-}
 /* Expanded dish descriptions retain the original sentence, with an explicit new
    second paragraph containing up to 50 Japanese characters of added context. */
 
 /* =================== v30.9.46 — pinned directory headings & scroll hints =================== */
 /* The region's title and the selected bubble bar live outside the scrolling
    rows: only the results themselves scroll, not the entire tab panel. */
-#guide .venue-directory-section .tab-panel.four-row-teaser{overflow-y:auto!important;overscroll-behavior:contain;max-height:none!important;overflow:visible!important;-webkit-mask-image:none!important;mask-image:none!important}
-#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
-  min-height:0;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior-y:contain;
-  overflow-anchor:none;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:thin;
-  scrollbar-color:#646464 transparent;
-
-}
 /* Mask only the rows (never the region title) until the actual scroll-end. */
-#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body[data-teaser-end="true"]{
-  -webkit-mask-image:none!important;
-  mask-image:none!important;
-}
 /* Recommendation-list active pills settle in the second slot, leaving half
    the preceding bubble visible through a subtle left-edge fade. */
 #guide .venue-directory-section:not(.area-directory-section) .tab-pills::after{
@@ -2707,66 +2582,15 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 }
 
 /* =================== v30.9.47 — list heading transition and frameless theme toggle =================== */
-#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
-  scroll-behavior:smooth;
-}
 /* Retain a touch-friendly target but never draw the button's old circular
    backdrop/border/outline while it is being pressed or focused. */
-.hero.wrapper .theme-preview-toggle,.hero.wrapper .theme-preview-toggle:hover,.hero.wrapper .theme-preview-toggle:active,.hero.wrapper .theme-preview-toggle:focus,.hero.wrapper .theme-preview-toggle:focus-visible{
-  border-color:transparent!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  outline:none!important;
-  -webkit-tap-highlight-color:transparent;
-}
 /* Keyboard focus highlights only the pictogram, never a circle around it. */
-.hero.wrapper .theme-preview-toggle:focus-visible svg{opacity:1;filter:drop-shadow(0 0 2px currentColor);}
-@media(prefers-reduced-motion:reduce){
-  #guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{scroll-behavior:auto!important;}
-}
 
 /* ================= v30.9.48: pinned directory heading and animated food detail ================= */
 /* Expanded heading lives OUTSIDE the inner list scrollport, beneath the pills
    and any region intro. Only the content below it scrolls or fades. */
-#guide .venue-directory-section .tab-panel > .guided-fixed-heading{
-  position:relative;z-index:2;
-  margin:0;
-  padding:0;
-  max-height:0;
-  overflow:hidden;
-  opacity:0;
-  transform:translateY(7px);
-  transition:opacity .27s ease,transform .32s cubic-bezier(.22,1,.36,1),
-    max-height .32s ease,margin .32s ease;
-}
-#guide .venue-directory-section .tab-panel > .guided-fixed-heading.is-active{
-  opacity:1;transform:translateY(0);
-  max-height:80px;
-  margin:7px 0 2px;
-}
-#guide .venue-directory-section .tab-panel > .guided-fixed-heading > button{
-  width:100%;box-sizing:border-box;display:flex;align-items:center;
-  min-height:41px;padding:10px 28px 10px 12px;
-  border:1px solid var(--line,#414141);border-radius:9px;
-  color:var(--ink,#f6f6f6);background:var(--paper,#202020);
-  font:700 13px/1.45 inherit;text-align:left;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-#guide .area-directory-section .tab-panel > .guided-fixed-heading > button{
-  font-size:14px;font-weight:700;
-}
-#guide .venue-directory-section .tab-panel > .guided-fixed-heading > button::after{
-  content:"+";position:absolute;right:13px;top:50%;transform:translateY(-50%) rotate(45deg);line-height:1;
-  color:var(--muted,#a0a0a0);font-size:18px;font-weight:400;
-}
-#guide .venue-directory-section .tab-panel > .guided-fixed-heading > button:focus-visible{
-  outline:2px solid var(--accent,#83d3b0);outline-offset:2px;
-}
 
 /* Keep the faded fourth row below the fixed heading, never fade the heading. */
-#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body{
-  scroll-padding-top:0!important;
-}
 #guide #food-explorer .food-entry-toggle .desc{
   display:grid;
   grid-template-rows:minmax(0,1fr) minmax(0,0fr);
@@ -2792,7 +2616,6 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 /* Grid animation cannot work if the legacy `[hidden]` display:none is set;
    JavaScript now uses aria-hidden while keeping both elements mounted. */
 @media(prefers-reduced-motion:reduce){
-  #guide .venue-directory-section .tab-panel > .guided-fixed-heading,
   #guide #food-explorer .food-entry-toggle .desc,
   #guide #food-explorer .food-desc-preview,
   #guide #food-explorer .food-desc-full{transition:none!important;}
@@ -2801,36 +2624,7 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 /* ================= v30.9.48 — appearance icon: state-neutral and top-aligned =================
    Match the SVG's top (not the centre of its 40px touch target) to the
    TAIPEI CITY GUIDE overline. Theme changes are the only source of color changes. */
-.hero.wrapper .theme-preview-toggle,
-.hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible){
-  top:calc(clamp(28px,6vw,44px) - 13px)!important;
-  right:0!important;
-  width:40px!important;height:40px!important;
-  min-width:40px!important;min-height:40px!important;
-  padding:0!important;
-  border:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  outline:none!important;
-  color:#88949B!important;
-  opacity:.42!important;
-  filter:none!important;
-  transform:none!important;
-  transition:color .18s ease!important;
-  -webkit-tap-highlight-color:transparent;
-}
 
-.hero.wrapper .theme-preview-toggle svg,
-.hero.wrapper .theme-preview-toggle:is(:hover,:active,:focus,:focus-visible) svg{
-  display:block!important;
-  width:14px!important;height:14px!important;
-  opacity:1!important;
-  filter:none!important;
-  -webkit-filter:none!important;
-}
-@media(prefers-reduced-motion:reduce){
-  .hero.wrapper .theme-preview-toggle{transition:none!important;}
-}
 
 /* v30.9.49 — respect the JavaScript-measured compact food list height.
    The containing section still fills the drawer, but the list itself caps
@@ -2878,10 +2672,6 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
     transition:none!important;
   }
 }
-#guide .venue-directory-section .tab-panel.four-row-teaser > .teaser-scroll-body.teaser-can-scroll:not([data-teaser-end="true"]){
-  -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
-  mask-image:linear-gradient(to bottom,#000 0%,#000 83%,transparent 100%)!important;
-}
 #guide .travel-twac a.external-action-link {
   padding-inline:5px!important;
   gap:3px!important;
@@ -2892,12 +2682,8 @@ body.food-drawer-open .hero.wrapper .theme-preview-toggle{
 
 
 
-#guide .venue-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > summary{visibility:hidden;display:none!important}
 /* Preserve a small reading gap after the pinned title, but not the old summary's
    full-height placeholder. Leave other accordion spacing completely unchanged. */
-#guide .area-directory-section .tab-panel .teaser-scroll-body > details.guided-title-pinned > .indented {
-  margin-top:4px!important;
-}
 
 /* The full document is very tall. Translating it a whole drawer width and
    applying a filter forces the browser to repaint large raster surfaces. */
@@ -2966,9 +2752,6 @@ html:has(body.food-swipe-active)::after{top:auto;bottom:0;height:calc(26px + env
 
 /* v30.9.129 — an open nested menu (e.g. 雑貨) keeps its own title at the top of
    that menu while its items scroll, and lets go when the menu ends. */
-#guide .venue-directory-section .tab-panel .teaser-scroll-body > details[open] > summary{
-  position:sticky;top:0;z-index:3;background:#0D0D0D!important;
-}
 
 #guide hr.chapter-divider{margin:40px 0 28px!important;}
 #guide .chapter-eyebrow{padding:0!important;text-transform:uppercase}
@@ -3137,18 +2920,8 @@ html:has(body.food-swipe-active)::after{top:auto;bottom:0;height:calc(26px + env
   transform:translate3d(calc((min(100vw - 24px,440px) + 16px) * (1 - var(--food-swipe-progress,0))),0,0);
   opacity:var(--food-swipe-progress,0);pointer-events:none;
 }
-body.food-drawer-open .food-theme-dock,
-body.food-drawer-open .food-theme-dock .theme-preview-toggle{pointer-events:auto!important;visibility:visible!important;opacity:1;}
+body.food-drawer-open .food-theme-dock{pointer-events:auto!important;visibility:visible!important;opacity:1;}
 @media(min-width:600px){.food-theme-dock{right:16px;top:max(8px,calc(max(16px,calc(50dvh - 300px)) - 52px));}}
-.food-theme-dock .theme-preview-toggle{
-  position:static!important;inset:auto!important;transform:none!important;
-  display:inline-flex!important;align-items:center;gap:8px;width:auto!important;height:auto!important;min-height:38px;
-  padding:0 16px 0 13px!important;margin:0!important;border-radius:999px!important;
-  border:1px solid #3A3A3A!important;background:#121212!important;color:#EDEDED!important;
-  font:700 13px/1 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif!important;letter-spacing:.08em;
-  box-shadow:0 8px 24px rgba(0,0,0,.35)!important;cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-.food-theme-dock .theme-dot{width:15px;height:15px;border-radius:50%;background:#EDEDED;flex:none;}
 
 /* more room between 03 SIGHTS and 04 CITY WALK */
 /* 撮影スポット: its own block under 名所・博物館 */
@@ -3252,31 +3025,26 @@ body.food-drawer-open .food-theme-dock .theme-preview-toggle{pointer-events:auto
 
 
 
-#guide .walk-inline-detail .area-panel{
-  display:flex!important;flex:1;flex-direction:column;min-height:0!important;
-  height:auto!important;max-height:none!important;overflow:hidden!important;
-  margin:0!important;padding:0!important;border:0!important;background:transparent!important;
+#guide .walk-inline-detail .area-panel{flex:1;max-height:none!important;
+  margin:0!important;border:0!important;background:transparent!important;
 }
-#guide .walk-inline-detail .area-cats{
-  display:flex;flex:none;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
-  scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
-  margin:0!important;padding:0 0 14px!important;gap:6px;
+#guide .walk-inline-detail .area-cats{flex-wrap:nowrap;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  margin:0!important;padding:0 0 14px!important;
   -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);
   mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);
 }
 #guide .walk-inline-detail .area-cats::-webkit-scrollbar{display:none}
 
-#guide .walk-inline-detail .area-cat{
-  flex:0 0 auto;min-height:28px;padding:0 13px;font-size:11.5px;font-weight:600;
+#guide .walk-inline-detail .area-cat{min-height:28px;font-size:11.5px;font-weight:600;
   letter-spacing:.02em;
 }
 #guide .walk-inline-detail .area-cat-count{display:none}
 
 /* The list scrolls under a fixed glow in the area's tone. */
 #guide .walk-inline-detail .area-cat-panes{
-  position:relative;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;
+  position:relative;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
-  border-top:0;padding:0 2px 12px;margin:0;
+  border-top:0;margin:0;
   -webkit-mask-image:none!important;mask-image:none!important;
 }
 #guide .walk-inline-detail .area-cat-panes::before{
@@ -3295,40 +3063,14 @@ body.food-drawer-open .food-theme-dock .theme-preview-toggle{pointer-events:auto
 
 #guide .walk-inline-detail .area-cat-pane{position:relative;z-index:1}
 #guide .walk-inline-detail .area-cat-pane[hidden]{display:none!important}
-#guide .walk-inline-detail .area-cat-pane .numbered-list{max-width:100%;margin:0!important;padding:0!important}
+#guide .walk-inline-detail .area-cat-pane .numbered-list{max-width:100%;}
 
 /* Rows: index · name · tags on the right */
-#guide .walk-inline-detail .area-cat-pane li.venue-row{
-  display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;column-gap:6px!important;align-items:center;
-  min-height:62px;padding:12px 0!important;margin:0!important;
-  border:0!important;border-bottom:1px solid #2A2A2A!important;
-}
-#guide .walk-inline-detail .area-cat-pane .venue-row-index{
-  align-self:center;font-size:9.5px!important;font-weight:500!important;letter-spacing:.04em;
-  color:#6E6E6E!important;line-height:1;
-}
-#guide .walk-inline-detail .area-cat-pane .venue-row-body{
-  display:flex!important;flex-direction:row!important;align-items:center;gap:10px!important;min-width:0;
+#guide .walk-inline-detail .area-cat-pane li.venue-row{border-bottom:1px solid #2A2A2A!important;
 }
 #guide .walk-inline-detail .area-cat-pane .venue-name-line{
-  flex:1 1 auto;min-width:0;margin:0!important;
-  display:flex!important;flex-wrap:wrap;align-items:center;gap:4px 8px!important;
+  flex:1 1 auto;
 }
-#guide .walk-inline-detail .area-cat-pane .venue-primary-links{min-width:0;max-width:100%}
-#guide .walk-inline-detail .area-cat-pane .venue-secondary-links{flex:none;margin:0!important}
-#guide .walk-inline-detail .area-cat-pane a.venue-main-link{
-  font-size:15px!important;font-weight:500!important;letter-spacing:.03em;line-height:1.45;
-  color:var(--ink)!important;text-decoration:none!important;
-  word-break:normal!important;overflow-wrap:break-word!important;
-}
-#guide .walk-inline-detail .area-cat-pane .venue-tag-list{
-  flex:0 1 auto;max-width:52%;justify-content:flex-end;margin:0!important;gap:4px 5px!important;
-}
-#guide .walk-inline-detail .area-cat-pane .venue-tag{
-  font-size:10px!important;line-height:1.3!important;padding:3px 6px!important;border-radius:5px!important;
-  white-space:nowrap;
-}
-#guide .walk-inline-detail .area-cat-pane a{color:var(--ink)}
 
 /* Light theme */
 
@@ -3499,10 +3241,6 @@ html{--drawer-chrome-edge:#0D0D0D;}
 html.hero-intro-skip #top .hero-greeting-line{opacity:1;animation:none;transform:none;}
 
 /* Timeline */
-#top.hero--intro .hero-brandline{transition:opacity .6s cubic-bezier(.4,0,.2,1) .2s;}
-#top.hero--intro .hero-lockup{transition:transform 1.1s cubic-bezier(.65,0,.25,1) .3s;}
-#top.hero--intro .hero-brandstack-text{transition:transform 1.6s cubic-bezier(.33,.8,.25,1) 1.3s,opacity 1s ease 1.3s;}
-#top.hero--intro .hero-horizon{transition:transform 2.3s cubic-bezier(.5,0,.15,1) .35s,opacity 2.3s ease .35s;}
 :is(#top.hero--settled,html.hero-intro-skip #top) .hero-brandline{opacity:0;}
 :is(#top.hero--settled,html.hero-intro-skip #top) .hero-lockup{transform:scale(var(--hero-shrink));}
 :is(#top.hero--settled,html.hero-intro-skip #top) .hero-brandstack-text{transform:none;opacity:1;}

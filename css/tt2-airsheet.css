@@ -8,7 +8,7 @@
 html.tt2-fidelity.tt2-airsheet #guide .airport-access-subheading {display:none!important;}
 
 html.tt2-fidelity .tt2-airsheet-backdrop {
-  position:fixed;inset:0;z-index:196;background:rgba(0,0,0,.3);
+  position:fixed;inset:0;z-index:196;background:rgba(0,0,0,.5); /* v2.0.114: the page behind 50 % darker (was 30 %), as 料理辞典's */
   opacity:0;visibility:hidden;transition:opacity .42s ease,visibility 0s linear .43s;
 }
 html.tt2-fidelity.tt2-airsheet-open .tt2-airsheet-backdrop {opacity:1;visibility:visible;transition:opacity .62s cubic-bezier(.22,1,.36,1),visibility 0s;}
@@ -26,6 +26,9 @@ html.tt2-fidelity #tt2-airport-sheet {
 }
 html.tt2-fidelity.tt2-airsheet-open #tt2-airport-sheet {transform:none;visibility:visible;transition:transform .62s cubic-bezier(.22,1,.36,1),height .5s cubic-bezier(.22,1,.36,1),visibility 0s;}
 html.tt2-fidelity #tt2-airport-sheet.is-expanded {height:calc(100dvh - min(150px,17.6dvh));}
+/* v2.0.133: drag the grab bar or the title row down to close (js/tt2-airsheet.js), as 料理辞典 */
+html.tt2-fidelity.tt2-airsheet-open #tt2-airport-sheet.is-dragging {transform:translateY(var(--tt2as-drag,0px));transition:none;}
+html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-grab, html.tt2-fidelity #tt2-airport-sheet .tt2-airsheet-head {touch-action:none;}
 @media (prefers-reduced-motion:reduce){
   html.tt2-fidelity #tt2-airport-sheet, html.tt2-fidelity .tt2-airsheet-backdrop {transition:none!important;}
 }

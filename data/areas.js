@@ -2479,6 +2479,68 @@ window.TABI_AREAS={
           ]
         },
         {
+          "id": "3cdeecf1-cec7-40f1-859b-21510a413f2d",
+          "title": "カフェ・スイーツ",
+          "items": [
+            {
+              "id": "11d16674-f197-4b76-b99a-d4540a6dd2d8",
+              "name": "再再咖啡",
+              "mapUrl": "https://www.google.com/maps/place/%E5%86%8D%E5%86%8D%E5%92%96%E5%95%A1/@25.1689519,121.4466155,17z/data=!3m1!4b1!4m6!3m5!1s0x3442af0029c2a53f:0xca90968ac745e24a!8m2!3d25.1689519!4d121.4466155!16s%2Fg%2F11vsgsb0s3?entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "レトロ",
+                  "tone": "auto"
+                }
+              ],
+              "links": []
+            },
+            {
+              "id": "b5588902-5dc8-4bd7-8fee-e7addea6b26a",
+              "name": "淡水紅樓咖啡館",
+              "mapUrl": "https://www.google.com/maps/place/%E6%B7%A1%E6%B0%B4%E7%B4%85%E6%A8%93%E5%92%96%E5%95%A1%E9%A4%A8/@25.1712396,121.4394089,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a5574f560369:0x6567c8c1eca11afa!8m2!3d25.1712396!4d121.4394089!16s%2Fg%2F11cnb8b7s7?entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "レトロ",
+                  "tone": "auto"
+                },
+                {
+                  "text": "人気",
+                  "tone": "auto"
+                }
+              ],
+              "links": []
+            },
+            {
+              "id": "2a05261b-daa1-415d-96a9-33506a2a2998",
+              "name": "去年在馬倫巴",
+              "mapUrl": "https://www.google.com/maps/place/%E5%8E%BB%E5%B9%B4%E5%9C%A8%E9%A6%AC%E5%80%AB%E5%B7%B4/@25.1728469,121.4355208,19z/data=!4m6!3m5!1s0x3442a55a9826a089:0x4a623388ecb6f6bf!8m2!3d25.1728469!4d121.4355208!16s%2Fg%2F11c3mq_r75?entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "川沿い",
+                  "tone": "auto"
+                }
+              ],
+              "links": []
+            },
+            {
+              "id": "539eeb31-a83e-4d7d-a656-7238d88634dd",
+              "name": "日落月出",
+              "mapUrl": "https://www.google.com/maps/place/%E6%97%A5%E8%90%BD%E6%9C%88%E5%87%BA+%EF%BC%88%E6%B7%A1%E6%B0%B4%E8%80%81%E8%A1%97%E7%9F%B3%E8%8A%B1%E5%87%8D%EF%BC%89/@25.1689159,121.4407448,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a5a6c8f3d81b:0xd9c1dd6e030d426!8m2!3d25.1689159!4d121.4433197!16s%2Fg%2F11kskxm_12?entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "石花凍",
+                  "tone": "auto"
+                }
+              ],
+              "links": []
+            }
+          ]
+        },
+        {
           "id": "areas-mvtov9l3-81r0p",
           "title": "スポット",
           "items": [

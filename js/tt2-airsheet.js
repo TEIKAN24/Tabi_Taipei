@@ -95,6 +95,30 @@
     if (root.classList.contains('tt-nav-open')) doc.getElementById('tt-menu-toggle')?.click();
     open();
   }, true);
+  // v2.0.133: drag the grab bar or the title row down to close (as 料理辞典)
+  let drag = null;
+  const handle = e => e.target instanceof Element && (e.target === sheet || e.target.closest('.tt2-airsheet-grab, .tt2-airsheet-head')) && !e.target.closest('button');
+  sheet.addEventListener('pointerdown', e => {
+    if (!isOpen() || !handle(e) || e.button > 0) return;
+    drag = {y: e.clientY, dy: 0, t: performance.now(), id: e.pointerId};
+    sheet.classList.add('is-dragging');
+  });
+  addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    drag.dy = Math.max(0, e.clientY - drag.y);
+    sheet.style.setProperty('--tt2as-drag', drag.dy + 'px');
+  }, {passive: true});
+  const end = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const fast = drag.dy > 30 && drag.dy / Math.max(1, performance.now() - drag.t) > .6;
+    const off = drag.dy > 110 || fast;
+    drag = null;
+    sheet.classList.remove('is-dragging');
+    sheet.style.setProperty('--tt2as-drag', '0px');
+    if (off) shut();
+  };
+  addEventListener('pointerup', end);
+  addEventListener('pointercancel', end);
   window.tt2AirSheet = {open, close: shut};
 
   // an old link straight to the airport screen: home, with the sheet open

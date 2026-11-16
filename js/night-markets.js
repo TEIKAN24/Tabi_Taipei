@@ -104,6 +104,22 @@ function tabiSpotMap(cfg) {
   const allItems = nmItems.slice();
 
   // ---- Details ----------------------------------------------------------------
+  // v2.0.117: a line code on a light line colour (中和新蘆線 orange, 萬大線 light blue…) takes dark text
+  const lineInk = hex => { const v = parseInt(hex.slice(1), 16), c = [v >> 16, v >> 8 & 255, v & 255].map(x => { x /= 255; return x <= .03928 ? x / 12.92 : ((x + .055) / 1.055) ** 2.4; }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2] > .35 ? '#111' : '#fff'; };
+  // v2.0.117 (Figma 詳細頁提案 B): 営業時間 and 混雑時間帯 side by side. The time large, what follows it
+  // (（目安）, 年中無休…) small under it; a market open on some days only (「（火・金のみ）」) in red.
+  function whenBlock(m) {
+    const h = str(m.hours), mm = h.match(/^([^（(]+)(?:[（(]([^）)]*)[）)])?(?:・(.*))?$/);
+    const notes = mm ? [mm[2], mm[3]].filter(Boolean) : [];
+    const hours = node('div', {class: 'nm-when-cell'});
+    hours.append(node('p', {class: 'nm-when-label'}, '営業時間'), node('span', {class: 'nm-when-time'}, mm ? mm[1].trim() : h));
+    if (notes.length) hours.append(node('span', {class: 'nm-when-note' + (/のみ/.test(mm[2] || '') ? ' is-alert' : '')}, notes.join('・')));
+    const crowd = node('div', {class: 'nm-when-cell'});
+    crowd.append(node('p', {class: 'nm-when-label'}, '混雑時間帯'), node('span', {class: 'nm-when-value'}, str(m.crowded)));
+    const when = node('div', {class: 'nm-when'});
+    when.append(hours, crowd);
+    return when;
+  }
   function detailContent(m) {
     const out = [];
     const lead = node('p', {class: 'nm-lead'});
@@ -118,7 +134,7 @@ function tabiSpotMap(cfg) {
     } else {
       const dd = node('dd');
       const station = node('span', {class: 'nm-station'});
-      station.append(node('span', {class: 'nm-line', style: '--nm-line:' + color(access.color)}, str(access.code)), str(access.station));
+      station.append(node('span', {class: 'nm-line', style: '--nm-line:' + color(access.color) + ';--nm-line-ink:' + lineInk(color(access.color))}, str(access.code)), str(access.station));
       dd.append(station);
       if (str(access.exit)) {
         const exit = node('span', {class: 'nm-exit'});
@@ -127,8 +143,7 @@ function tabiSpotMap(cfg) {
       }
       info.append(node('dt', {}, '最寄り駅'), dd);
     }
-    info.append(node('dt', {}, '営業時間'), node('dd', {}, str(m.hours)), node('dt', {}, '混雑時間帯'), node('dd', {}, str(m.crowded)));
-    out.push(info);
+    out.push(info, whenBlock(m)); // v2.0.117: 営業時間 / 混雑時間帯 as one block (詳細頁提案 B)
     const features = (Array.isArray(m.features) ? m.features : []).map(str).filter(Boolean);
     if (features.length) {
       const ul = node('ul', {class: 'nm-features'});
@@ -143,10 +158,7 @@ function tabiSpotMap(cfg) {
         const li = node('li');
         const chip = node('button', {type: 'button', class: 'nm-specialty', 'data-food-query': str(s.query) || label,
           'aria-label': label + 'を料理辞典で見る'}, label);
-        // v2.0.112 (Figma N2A): a pill with a chevron
-        const more = svg('svg', {class: 'nm-specialty-more', viewBox: '0 0 7 12', width: 7, height: 12, 'aria-hidden': 'true', focusable: 'false'});
-        more.append(svg('path', {d: 'M1 1L6 6L1 11', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.2}));
-        chip.append(more);
+        // v2.0.130: the pill's chevron is gone (it was added in 2.0.112, Figma N2A)
         li.append(chip);
         ul.append(li);
       });
@@ -926,6 +938,16 @@ function tabiSpotMap(cfg) {
     };
     anim = requestAnimationFrame(step);
   }
+  // v2.0.136: the first-time hint (js/tt2-hints.js) shows the gestures on the map itself:
+  // zoom in, out, a drag to the left, then back to where it was
+  mapEl.tabiReady = () => new Promise(r => { const t0 = performance.now(); const w = () => (anim && performance.now() - t0 < 3000) ? setTimeout(w, 100) : r(); w(); });   // the opening glide first
+  mapEl.tabiDemo = () => {
+    const from = {...view}, at = (ms, f) => setTimeout(f, ms);
+    at(260, () => flyTo({cx: from.cx, cy: from.cy, s: Math.min(sMax, from.s * 1.8)}, 800));
+    at(1060, () => flyTo({cx: from.cx, cy: from.cy, s: from.s}, 800));
+    at(1990, () => flyTo({cx: from.cx + 60 / from.s, cy: from.cy, s: from.s}, 880));
+    at(3100, () => flyTo({cx: from.cx, cy: from.cy, s: from.s}, 700));
+  };
   function fitMembers(members) {
     interacted = true;
     const xs = members.map(m => m.x), ys = members.map(m => m.y);
@@ -949,18 +971,19 @@ function tabiSpotMap(cfg) {
   }
   // ⌖: back to the visitor's position (asks again), or 台北駅 with a note.
   let toastTimer = 0;
-  function showToast(text) {
+  function showToast(text, stay) {                    // stay: until the next ⌖ (v2.0.136: エリア外)
     toast.textContent = text; toast.classList.add('is-on');
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('is-on'), 2600);
+    clearTimeout(toastTimer); if (!stay) toastTimer = setTimeout(() => toast.classList.remove('is-on'), 2600);
   }
   locateBtn.addEventListener('click', e => {
     e.stopPropagation(); interacted = true;
-    locateBtn.classList.add('is-busy');
+    locateBtn.classList.add('is-busy'); clearTimeout(toastTimer); toast.classList.remove('is-on');
     locate().then(pos => {
       locateBtn.classList.remove('is-busy');
       located = true; userPos = pos;
       const target = pos || project(...FALLBACK);
-      if (!pos) showToast('現在地を取得できません');
+      if (outside) showToast('エリア外', true);
+      else if (!pos) showToast('現在地を取得できません');
       flyTo({cx: target[0], cy: target[1], s: Math.max(view.s, sFocus)}, 800);
     });
   });
@@ -1148,24 +1171,33 @@ function tabiSpotMap(cfg) {
       return saved && Number.isFinite(saved.lat) && Number.isFinite(saved.lng) ? saved : null;
     } catch (_) { return null; }
   }
+  let outside = false;   // v2.0.136: the last position found lay outside the map's area
   function locate() {
     return new Promise(resolve => {
+      outside = false;
       const sim = debugPosition();
-      if (sim) { const [x, y] = project(sim.lat, sim.lng); resolve(inRegion(x, y) ? [x, y] : null); return; }
+      if (sim) { const [x, y] = project(sim.lat, sim.lng); outside = !inRegion(x, y); resolve(outside ? null : [x, y]); return; }
       if (!navigator.geolocation || !window.isSecureContext) { resolve(null); return; }
       navigator.geolocation.getCurrentPosition(p => {
         const {latitude: lat, longitude: lng, accuracy} = p.coords;
         // iPhone without 正確な位置情報 reports a few km of uncertainty: still useful here.
         if (!Number.isFinite(lat) || !Number.isFinite(lng) || !(accuracy <= 10000)) { resolve(null); return; }
         const [x, y] = project(lat, lng);
-        resolve(inRegion(x, y) ? [x, y] : null);
+        outside = !inRegion(x, y);
+        resolve(outside ? null : [x, y]);
       }, () => resolve(null), {enableHighAccuracy: false, timeout: 15000, maximumAge: 30000});
     });
+  }
+  function forget() {                       // v2.0.137: back to the default — no position, no エリア外
+    userPos = null; located = false; outside = false;
+    clearTimeout(toastTimer); toast.classList.remove('is-on');
+    lastScale = NaN;
   }
   let introToken = 0, sizeWaiter = null;
   function intro() {
     const token = ++introToken;
-    interacted = false; userPos = null;
+    interacted = false;
+    forget();   // v2.0.137: nothing kept from before (the position, エリア外)
     // Figma 3-1: render the Taipei-focused first frame immediately for 夜市.
     // Preserve the existing GPS/fallback glide, map bounds, pin interactions and
     // the wider overview used by the 街歩きエリア map (the same map engine).
@@ -1173,27 +1205,15 @@ function tabiSpotMap(cfg) {
     const [ox, oy] = project(...(startAtTaipei ? FALLBACK : OVERVIEW));
     Object.assign(view, {cx: ox, cy: oy, s: startAtTaipei ? sFocus : sMin});
     clampView(); lastScale = NaN; render();
-    const opened = performance.now();
-    let settled = false, fellBack = false;
     const glideTo = (pos, duration) => {
       if (token !== introToken || interacted) return;
       flyTo({cx: pos[0], cy: pos[1], s: sFocus}, duration);
     };
-    // While the visitor answers the location prompt: show 台北駅 after a while,
-    // then move on to their position if it arrives later.
-    const fallbackTimer = setTimeout(() => {
-      if (settled || token !== introToken) return;
-      fellBack = true; glideTo(project(...FALLBACK), 2000);
-    }, 4200);
-    locate().then(pos => {
-      if (token !== introToken) return;
-      settled = true; clearTimeout(fallbackTimer);
-      userPos = pos; located = true; lastScale = NaN; requestRender();
-      status.textContent = pos ? '現在地の周辺を表示しています。' : '台北駅の周辺を表示しています。';
-      if (fellBack) { if (pos) glideTo(pos, 1200); return; }
-      const hold = Math.max(0, 600 - (performance.now() - opened));
-      setTimeout(() => glideTo(pos || project(...FALLBACK), 2000), hold);
-    });
+    // v2.0.136: no location prompt on opening (it fought the first-time hints) — only ⌖ asks;
+    // a position found earlier in this visit is still used.
+    status.textContent = '台北駅の周辺を表示しています。';
+    // v2.0.139: 夜市 already opens on 台北駅 — no glide (an empty 2s glide held back the first-time hint's demo)
+    if (!startAtTaipei) setTimeout(() => glideTo(project(...FALLBACK), 2000), 600);
   }
   // ?debugLocation=1: a new simulated position moves the map there at once.
   document.addEventListener('tabi:debug-location', () => {
@@ -1216,6 +1236,12 @@ function tabiSpotMap(cfg) {
       else if (!start()) sizeWaiter = start;
     }).catch(showFallbackList);
   }
+  // v2.0.119 (js/tt2-reset.js): leaving 散策 or its 夜市 / 商圏 tab — no detail page; with {map: true}
+  // (leaving the chapter) the map also goes back to the view it opens with.
+  document.addEventListener('tt2:reset-places', e => {
+    if (stage.dataset.view === 'detail') setView('map');
+    if (e.detail?.map && W) { stopMotion(); intro(); }
+  });
   function onClose() { introToken++; stopMotion(); sizeWaiter = null; }
   new ResizeObserver(() => {
     if (!isLive()) return;
@@ -1263,12 +1289,8 @@ function tabiSpotMap(cfg) {
     const token = ++introToken;
     interacted = false;
     const go = pos => { if (token === introToken && !interacted) flyTo({cx: pos[0], cy: pos[1], s: sFocus}, 1900); };
-    if (located) { go(userPos || project(...FALLBACK)); return; }
-    locate().then(pos => {
-      if (token !== introToken) return;
-      userPos = pos; located = true; lastScale = NaN; requestRender();
-      go(pos || project(...FALLBACK));
-    });
+    forget();                              // v2.0.137: another tab starts afresh too
+    go(project(...FALLBACK));              // v2.0.136: no location prompt here either (only ⌖ asks)
   }
   function swapTo(S) {
     stopMotion(); introToken++;

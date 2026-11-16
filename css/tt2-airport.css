@@ -61,7 +61,6 @@
 .tt2-airsheet-body :is(.airport-access-subheading,.airport-mode-name,.airport-route-stop,.airport-fare-amount,.destination-title,.venue-name-line,.area-intro-title,.travel-topic-title):not(.travel-caution *) {color:var(--mono-main)!important}
 .site-content :is(.airport-fare-label,.airport-fare-time,.airport-root-meta,.airport-direction-text small,.destination-pr,.destination-lead,.destination-guide-label,.destination-info-title,.metro-transfer-note,.metro-route-key-item,.venue-row-index,.venue-extra-note,.area-intro-description,.section-note):not(.travel-caution *):not(.travel-twac *) {color:var(--mono-sub)!important}
 .site-content :is(.airport-direction-text strong,.airport-direction-button,.selected-value,.venue-main-link,.section-jump-button):not(#food-explorer *) {color:var(--mono-main)!important}
-.site-content :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon,.section-jump-arrow) {color:var(--mono-body)!important}
 .site-content .airport-direction-switcher :is(.airport-direction-icon,.airport-direction-indicator,.airport-mode-icon),
 .site-content .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon),
 .tt2-airsheet-body .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon) {filter:none!important;}
@@ -78,29 +77,23 @@
 .tt2-airsheet-body .airport-direction-switcher :is(.airport-mode-icon,.airport-access .tab-pill img,.airport-access .tab-pill .icon),
 .tt2-airsheet-body .airport-direction-switcher .airport-access .tab-pill :is(img,.inline-category-icon,.icon) {filter:none!important;}
 #guide .airport-route-selector .section-top,
-#tt2-airport-sheet .airport-route-selector .section-top {justify-content:space-between;align-items:center;}
+#tt2-airport-sheet .airport-route-selector .section-top {justify-content:space-between;}
 #guide .airport-route-selector .section-top h2,
 #tt2-airport-sheet .airport-route-selector .section-top h2 {margin:0}
-#guide .airport-route-selector .selector,
-#tt2-airport-sheet .airport-route-selector .selector {border:1px solid var(--line);border-radius:13px;position:relative;isolation:isolate;background:transparent}
 #guide .airport-route-selector .selrow,
-#tt2-airport-sheet .airport-route-selector .selrow {min-height:68px;display:grid;grid-template-columns:49px minmax(0,1fr) 15px;gap:11px;align-items:center;padding:9px 15px;position:relative}
+#tt2-airport-sheet .airport-route-selector .selrow {display:grid;}
 #guide .airport-route-selector .selrow+.selrow,
 #tt2-airport-sheet .airport-route-selector .selrow+.selrow {border-top:1px solid #303030}
-#guide .airport-route-selector .sel-label,
-#tt2-airport-sheet .airport-route-selector .sel-label {font-size:11px;color:#999;font-weight:650}
 #guide .airport-route-selector .sel-value,
-#tt2-airport-sheet .airport-route-selector .sel-value {width:100%;min-width:0;appearance:none;-webkit-appearance:none;border:0;background:transparent;font-size:13px;font-weight:720;padding:14px 0;line-height:1.4;cursor:pointer;outline:0}
+#tt2-airport-sheet .airport-route-selector .sel-value {min-width:0;-webkit-appearance:none;outline:0}
 #guide .airport-route-selector .sel-value option,
 #tt2-airport-sheet .airport-route-selector .sel-value option {color:#F7F7F7;background:#181818}
 #guide .airport-route-selector .chev,
-#tt2-airport-sheet .airport-route-selector .chev {width:7px;height:7px;border-right:1.5px solid #AAA;border-bottom:1.5px solid #AAA;transform:rotate(45deg);pointer-events:none}
+#tt2-airport-sheet .airport-route-selector .chev {border-right:1.5px solid #AAA;border-bottom:1.5px solid #AAA;transform:rotate(45deg);}
 #guide .airport-route-selector .swap,
-#tt2-airport-sheet .airport-route-selector .swap {position:absolute;top:50%;right:28px;transform:translateY(-50%);z-index:3;height:33px;width:33px;border:1px solid #5B5B5B;border-radius:50%;display:grid;place-items:center;color:white;background:#191919;cursor:pointer;transition:background .15s}
+#tt2-airport-sheet .airport-route-selector .swap {right:28px;cursor:pointer;transition:background .15s}
 #guide .airport-route-selector .swap:hover,
 #tt2-airport-sheet .airport-route-selector .swap:hover {background:#303030}
-#guide .airport-route-selector .swap svg,
-#tt2-airport-sheet .airport-route-selector .swap svg {width:16px;height:16px}
 #guide .airport-route-selector .rule,
 #tt2-airport-sheet .airport-route-selector .rule {height:1px;background:#303030;margin:20px 0 19px}
 #guide .airport-route-selector .tab,
@@ -136,13 +129,7 @@
 #guide .airport-route-selector .stop-name,
 #tt2-airport-sheet .airport-route-selector .stop-name {font-size:13px;font-weight:760;line-height:1.5;color:#F5F5F5;overflow-wrap:anywhere}
 #guide .airport-route-selector .code,
-#tt2-airport-sheet .airport-route-selector .code {display:inline-flex;align-items:center;border:1px solid #666;color:#CCC;border-radius:5px;padding:2px 5px;font-size:10px;line-height:1.2;font-weight:760;white-space:nowrap}
-#guide .airport-route-selector .code--brown,
-#tt2-airport-sheet .airport-route-selector .code--brown {color:#E5C89E;border-color:#856941}
-#guide .airport-route-selector .code--blue,
-#tt2-airport-sheet .airport-route-selector .code--blue {color:#AFD5F0;border-color:#3979AA}
-#guide .airport-route-selector .code--purple,
-#tt2-airport-sheet .airport-route-selector .code--purple {color:#E1C8F1;border-color:#7C599D}
+#tt2-airport-sheet .airport-route-selector .code {white-space:nowrap}
 #guide .airport-route-selector .timeline-leg,
 #tt2-airport-sheet .airport-route-selector .timeline-leg {min-height:92px;--travel-color:var(--purple)}
 #guide .airport-route-selector .timeline-leg::before,
@@ -161,14 +148,12 @@
 #tt2-airport-sheet .airport-route-selector .direction {font-size:14px;line-height:1.55;font-weight:730;color:#F3F3F3;margin:4px 0 0;word-break:keep-all;overflow-wrap:anywhere}
 #guide .airport-route-selector .direction-note,
 #tt2-airport-sheet .airport-route-selector .direction-note {font-size:11px;line-height:1.5;color:#989898;margin-top:3px}
-#guide .airport-route-selector .facts,
-#tt2-airport-sheet .airport-route-selector .facts {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:15px}
 #guide .airport-route-selector .fact,
-#tt2-airport-sheet .airport-route-selector .fact {border:1px solid #383838;border-radius:10px;padding:12px 7px 11px;text-align:center;min-width:0;display:flex;flex-direction:column;gap:7px;background:transparent}
+#tt2-airport-sheet .airport-route-selector .fact {text-align:center;min-width:0;}
 #guide .airport-route-selector .fact-label,
-#tt2-airport-sheet .airport-route-selector .fact-label {font-size:10px;color:#A8A8A8;white-space:nowrap}
+#tt2-airport-sheet .airport-route-selector .fact-label {white-space:nowrap}
 #guide .airport-route-selector .fact-value,
-#tt2-airport-sheet .airport-route-selector .fact-value {font-size:14px;color:#F3F3F3;font-weight:760;letter-spacing:-.015em;white-space:nowrap}
+#tt2-airport-sheet .airport-route-selector .fact-value {white-space:nowrap}
 #guide .airport-route-selector .footnote,
 #tt2-airport-sheet .airport-route-selector .footnote {font-size:10.5px;line-height:1.75;color:#999;margin:14px 0 0}
 @media (max-width:354px){
@@ -195,8 +180,6 @@
 #tt2-airport-sheet .airport-route-selector [hidden] {display:none!important}
 #guide .airport-route-selector .section-top,
 #tt2-airport-sheet .airport-route-selector .section-top {margin-bottom:12px}
-#guide .airport-route-selector .selector,
-#tt2-airport-sheet .airport-route-selector .selector {margin-bottom:23px}
 #guide .airport-route-selector .airsel-tab,
 #tt2-airport-sheet .airport-route-selector .airsel-tab {border:1px solid #555;border-radius:20px;min-height:30px;padding:4px 12px;color:#CBCBCB;font-size:12px;font-weight:700;background:transparent;cursor:pointer;white-space:nowrap;line-height:1.3}
 #guide .airport-route-selector .airsel-tab[aria-selected="true"],
@@ -210,13 +193,13 @@
 #guide .airport-route-selector .airsel-company-mark img[data-ready="true"],
 #tt2-airport-sheet .airport-route-selector .airsel-company-mark img[data-ready="true"] {display:block}
 #guide .airport-route-selector .airsel-company-fallback,
-#tt2-airport-sheet .airport-route-selector .airsel-company-fallback {display:inline-flex;align-items:center;justify-content:center;color:#F4F4F4;width:20px;height:20px;flex:0 0 20px}
+#tt2-airport-sheet .airport-route-selector .airsel-company-fallback {display:inline-flex;align-items:center;justify-content:center;}
 #guide .airport-route-selector .airsel-company-mark:has(img[data-ready="true"]) .airsel-company-fallback,
 #tt2-airport-sheet .airport-route-selector .airsel-company-mark:has(img[data-ready="true"]) .airsel-company-fallback {display:none}
 #guide .airport-route-selector .selector select,
 #tt2-airport-sheet .airport-route-selector .selector select {color-scheme:dark}
 #guide .airport-route-selector .sel-value,
-#tt2-airport-sheet .airport-route-selector .sel-value {color:#F2F2F2!important;text-shadow:none!important}
+#tt2-airport-sheet .airport-route-selector .sel-value {text-shadow:none!important}
 #guide .airport-route-selector .timeline-stop,
 #tt2-airport-sheet .airport-route-selector .timeline-stop {padding:0;margin:0;border:0}
 #guide .airport-route-selector .timeline-leg,
@@ -228,7 +211,7 @@
 #tt2-airport-sheet .airport-route-selector .timeline-status,
 #tt2-airport-sheet .airport-route-selector .fact-label {letter-spacing:normal}
 #guide .airport-route-selector .fact,
-#tt2-airport-sheet .airport-route-selector .fact {width:auto;box-shadow:none}
+#tt2-airport-sheet .airport-route-selector .fact {width:auto;}
 @media(max-width:354px){
 #guide .airport-route-selector .airsel-tab,
 #tt2-airport-sheet .airport-route-selector .airsel-tab {padding-inline:9px}
@@ -242,9 +225,7 @@
 #guide .airport-route-selector .airsel-company-mark img[src*="Taipei_Metro_Logo"],
 #tt2-airport-sheet .airport-route-selector .airsel-company-mark img[src*="Taipei_Metro_Logo"] {max-width:28px;max-height:20px;}
 #guide .airport-route-selector .airsel-transport-tab,
-#tt2-airport-sheet .airport-route-selector .airsel-transport-tab {line-height:1.45;gap:7px;cursor:pointer;white-space:nowrap;font-family:inherit}
-#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"],
-#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"] {background:#F5F5F5;border-color:#F5F5F5}
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab {gap:7px;cursor:pointer;white-space:nowrap;}
 #guide .airport-route-selector .airsel-transport-tab:focus-visible,
 #tt2-airport-sheet .airport-route-selector .airsel-transport-tab:focus-visible {outline:2px solid #DDD;outline-offset:2px}
 #guide .airport-route-selector .airsel-transport-tab > span,
@@ -272,7 +253,6 @@
 }
 #guide .airport-route-selector .airsel-route-fields .sel-value,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {
-  font-family:inherit;
   outline:none;
 }
 @media(max-width:354px){
@@ -282,7 +262,7 @@
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields::before {left:22px;}
 }
 #guide .airport-route-selector .airsel-route-fields,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields {isolation:isolate;border-radius:0!important}
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields {isolation:isolate;}
 
 #guide .airport-route-selector .airsel-route-fields .selrow,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {
@@ -290,26 +270,8 @@
 }
 #guide .airport-route-selector .airsel-route-fields .selrow--origin::after,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--origin::after {position:absolute;bottom:0;left:3px;right:0;height:1px;background:#333;}
-#guide .airport-route-selector .airsel-route-fields .selrow--destination,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {border-bottom:1px solid #333!important;}
-#guide .airport-route-selector .airsel-transport,
-#tt2-airport-sheet .airport-route-selector .airsel-transport {
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:0;margin:0 0 11px;border-bottom:1px solid #353535;
-}
-#guide .airport-route-selector .airsel-transport-tab,
-#tt2-airport-sheet .airport-route-selector .airsel-transport-tab {
-  position:relative;min-height:39px;border:0!important;
-  border-radius:0!important;background:transparent!important;
-  color:#9B9B9B!important;box-shadow:none!important;
-  padding:8px 2px 10px;font-size:12.5px;font-weight:670;
-  letter-spacing:.005em;display:flex;align-items:center;justify-content:center;
-}
-#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"],
-#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"] {color:#F5F5F5!important;font-weight:775;}
 #guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after,
-#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after {
-  content:"";position:absolute;bottom:-1px;left:19%;width:62%;height:2px;
+#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after {position:absolute;bottom:-1px;left:19%;width:62%;height:2px;
   background:#ECECEC;border-radius:2px;
 }
 #guide .airport-route-selector .route-panel,
@@ -320,27 +282,23 @@
   flex-wrap:nowrap;
 }
 #guide .airport-route-selector #airsel-rail-head-name,
-#tt2-airport-sheet .airport-route-selector #airsel-rail-head-name {color:#EDEDED;min-width:0;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#tt2-airport-sheet .airport-route-selector #airsel-rail-head-name {min-width:0;overflow:hidden;text-overflow:ellipsis;}
 #guide .airport-route-selector .airsel-tabs,
 #tt2-airport-sheet .airport-route-selector .airsel-tabs {
-  display:flex;align-items:center;position:relative;gap:0;min-width:0;
-  flex:0 0 auto;margin:0 0 0 auto!important;
+  display:flex;align-items:center;gap:0;min-width:0;
+  flex:0 0 auto;
   padding:0!important;
 }
 #guide .airport-route-selector .airsel-train-select,
-#tt2-airport-sheet .airport-route-selector .airsel-train-select {
-  appearance:none;-webkit-appearance:none;
-  padding:6px 16px 6px 6px;font:680 11px/1.45 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
-  color:#D6D6D6;border:0;border-bottom:1px solid #525252;border-radius:0;
-  background:transparent;max-width:126px;outline-offset:2px;cursor:pointer;
+#tt2-airport-sheet .airport-route-selector .airsel-train-select {-webkit-appearance:none;
+  color:#D6D6D6;border-bottom:1px solid #525252;border-radius:0;max-width:126px;outline-offset:2px;
 }
 #guide .airport-route-selector .airsel-train-select option,
 #tt2-airport-sheet .airport-route-selector .airsel-train-select option {background:#161616;color:#F3F3F3;}
 #guide .airport-route-selector .airsel-train-chevron,
 #tt2-airport-sheet .airport-route-selector .airsel-train-chevron {
-  position:absolute;right:3px;top:50%;width:6px;height:6px;
   transform:translateY(-69%) rotate(45deg);
-  border-right:1px solid #999;border-bottom:1px solid #999;pointer-events:none;
+  border-right:1px solid #999;border-bottom:1px solid #999;
 }
 @media(max-width:354px){
 #guide .airport-route-selector .airsel-route-fields .selrow,
@@ -352,9 +310,7 @@
 }
 #guide .airport-route-selector .airsel-recommend-badge,
 #tt2-airport-sheet .airport-route-selector .airsel-recommend-badge {
-  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
-  font:720 9.5px/1.3 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
-  color:#D4C5A6;background:rgba(170,145,102,.095);
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(170,145,102,.095);
   border:1px solid rgba(173,149,108,.31);border-radius:5px;
   padding:3px 6px;white-space:nowrap;letter-spacing:0;
 }
@@ -365,7 +321,7 @@
 #tt2-airport-sheet .airport-route-selector .airsel-transport,
 #tt2-airport-sheet .airport-route-selector .route-panel {touch-action:pan-y;}
 #guide .airport-route-selector .airsel-company-fallback.airsel-ground-icon,
-#tt2-airport-sheet .airport-route-selector .airsel-company-fallback.airsel-ground-icon {font-size:17px;line-height:1;}
+#tt2-airport-sheet .airport-route-selector .airsel-company-fallback.airsel-ground-icon {line-height:1;}
 @media(max-width:354px){
 #guide .airport-route-selector .rail-title,
 #tt2-airport-sheet .airport-route-selector .rail-title {gap:6px;}
@@ -380,20 +336,16 @@
 }
 #guide .airport-route-selector .section-top,
 #tt2-airport-sheet .airport-route-selector .section-top {margin:0 0 11px!important}
-#guide .airport-route-selector .section-top h2,
-#tt2-airport-sheet .airport-route-selector .section-top h2 {font-weight:760!important;}
 #guide .airport-route-selector .airsel-route-fields .selrow,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow {
   gap:10px!important;
 
 }
 
-#guide .airport-route-selector .airsel-route-fields .selrow--destination,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {margin-top:10px!important;}
 #guide .airport-route-selector .airsel-route-fields .swap:disabled,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap:disabled {opacity:.42;cursor:default}
 #guide .airport-route-selector .airsel-route-disclosure,
-#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {box-sizing:border-box;display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;color:#F3F3F3;text-align:left;cursor:pointer;}
+#tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {width:100%;align-items:center;justify-content:space-between;gap:12px;color:#F3F3F3;text-align:left;cursor:pointer;}
 #guide .airport-route-selector .airsel-route-disclosure[hidden],
 #guide .airport-route-selector .airsel-results-clip[hidden],
 #tt2-airport-sheet .airport-route-selector .airsel-route-disclosure[hidden],
@@ -418,10 +370,6 @@
 #tt2-airport-sheet .airport-route-selector .airsel-results-clip.is-open {grid-template-rows:1fr}
 #guide .airport-route-selector .airsel-results-inner,
 #tt2-airport-sheet .airport-route-selector .airsel-results-inner {min-height:0;padding-top:0}
-#guide .airport-route-selector .airsel-transport,
-#tt2-airport-sheet .airport-route-selector .airsel-transport {position:relative;margin-top:13px!important}
-#guide .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after,
-#tt2-airport-sheet .airport-route-selector .airsel-transport-tab[aria-selected="true"]::after {display:none!important}
 #guide .airport-route-selector .airsel-transport-ink,
 #tt2-airport-sheet .airport-route-selector .airsel-transport-ink {
   position:absolute;bottom:-1px;left:calc(var(--active-index,0) * (100% / 3) + 15px);
@@ -452,16 +400,8 @@
 #guide .airport-route-selector .airsel-route-disclosure,
 #tt2-airport-sheet .airport-route-selector .airsel-route-disclosure {transition:none!important}
 }
-#guide .airport-route-selector .section-top,
-#tt2-airport-sheet .airport-route-selector .section-top {display:none!important}
-#guide .airport-route-selector .section-top h2,
-#tt2-airport-sheet .airport-route-selector .section-top h2 {font-size:12px!important;letter-spacing:.018em!important;color:#C4C4C4!important}
 #guide .airport-route-selector .airsel-route-fields,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields {
-  display:grid!important;
-  position:relative!important;
-  border:0!important;background:transparent!important;box-shadow:none!important;
-  padding:0!important;overflow:visible!important;
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields {overflow:visible!important;
 }
 #guide .airport-route-selector .airsel-route-fields::before,
 #guide .airport-route-selector .airsel-route-fields .selrow--origin::after,
@@ -479,24 +419,13 @@
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow:focus-within {border-color:#D4D4D4!important;}
 #guide .airport-route-selector .airsel-route-fields .sel-label,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-label {letter-spacing:.015em!important;}
-#guide .airport-route-selector .airsel-route-fields .sel-value,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {
-  color:#F4F4F4!important;
-  letter-spacing:-.01em!important;
-}
 #guide .airport-route-selector .airsel-route-fields .chev,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .chev {border-color:#9A9A9A!important;}
 #guide .airport-route-selector .airsel-route-fields .swap,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {
-  position:absolute!important;right:auto!important;
-  z-index:5!important;
-  border:1px solid #555!important;
-  border-radius:50%!important;background:#151515!important;color:#EAEAEA!important;
-  display:grid!important;place-items:center!important;
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {right:auto!important;
+  z-index:5!important;place-items:center!important;
   transition:border-color .2s ease,background-color .2s ease!important;
 }
-#guide .airport-route-selector .airsel-route-fields .swap svg,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap svg {width:15px!important;height:15px!important}
 #guide .airport-route-selector .airsel-route-fields .swap:hover,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap:hover {background:#252525!important;border-color:#AAA!important}
 #guide .airport-route-selector .airsel-route-disclosure,
@@ -523,70 +452,39 @@
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {transition:none!important}
 }
-#guide .airport-route-selector .airsel-route-fields,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields {
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  gap:32px!important;align-items:start!important;margin:0 0 14px!important;
-}
 #guide .airport-route-selector .airsel-route-fields .selrow,
 #guide .airport-route-selector .airsel-route-fields .selrow--destination,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow--destination {
-  display:block!important;position:relative!important;min-width:0!important;
-  width:100%!important;min-height:0!important;height:auto!important;
-  margin:0!important;padding:0!important;
-  border:0!important;border-radius:0!important;
-  background:transparent!important;box-shadow:none!important;
+  display:block!important;min-height:0!important;height:auto!important;border-radius:0!important;box-shadow:none!important;
 }
 #guide .airport-route-selector .airsel-route-fields .selrow:focus-within,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow:focus-within {background:transparent!important;border:0!important;box-shadow:none!important;}
 #guide .airport-route-selector .airsel-route-fields .sel-field,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-field {
-  display:flex!important;flex-direction:column!important;gap:8px!important;
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-field {flex-direction:column!important;gap:8px!important;
   min-width:0!important;
 }
 #guide .airport-route-selector .airsel-route-fields .sel-label,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-label {
-  display:block!important;padding:0 3px!important;
-  font-size:10.5px!important;line-height:1.25!important;
-  color:#A4A4A4!important;font-weight:670!important;
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-label {padding:0 3px!important;
 }
 #guide .airport-route-selector .airsel-route-fields .sel-choice-bubble,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble {
-  display:grid;grid-template-columns:minmax(0,1fr) 6px;align-items:center;
-  column-gap:4px;min-width:0;height:45px;
-  width:calc(100% - 16px);max-width:185px;margin-inline:auto;
-  padding:0 11px 0 12px;border:1px solid #505050;border-radius:999px;
-  background:transparent;transition:border-color .2s ease,background-color .2s ease;
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble {grid-template-columns:minmax(0,1fr) 6px;align-items:center;
+  column-gap:4px;min-width:0;
+  width:calc(100% - 16px);max-width:185px;margin-inline:auto;border-radius:999px;transition:border-color .2s ease,background-color .2s ease;
 }
 #guide .airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-choice-bubble:focus-within {border-color:#D4D4D4;background:rgba(255,255,255,.047);}
 #guide .airport-route-selector .airsel-route-fields .sel-value,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {
-  display:block!important;width:100%!important;min-width:0!important;
-  height:100%!important;min-height:0!important;max-width:100%!important;
-  padding:0!important;margin:0!important;border:0!important;background:transparent!important;
-  font-size:12.5px!important;line-height:1.35!important;font-weight:720!important;
-  white-space:nowrap!important;text-overflow:ellipsis!important;overflow:hidden!important;
+#tt2-airport-sheet .airport-route-selector .airsel-route-fields .sel-value {min-width:0!important;min-height:0!important;max-width:100%!important;
+  white-space:nowrap!important;overflow:hidden!important;
 }
-#guide .airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .selrow.is-empty .sel-value {color:#A5A5A5!important;font-weight:580!important;}
 #guide .airport-route-selector .airsel-route-fields .chev,
 #tt2-airport-sheet .airport-route-selector .airsel-route-fields .chev {
-  display:block!important;width:6px!important;height:6px!important;
   align-self:center!important;justify-self:center!important;
   border-right:1.5px solid #A0A0A0!important;
   border-bottom:1.5px solid #A0A0A0!important;
   border-top:0!important;border-left:0!important;
   transform:translateY(-2px) rotate(45deg)!important;
-  pointer-events:none!important;
-}
-#guide .airport-route-selector .airsel-route-fields .swap,
-#tt2-airport-sheet .airport-route-selector .airsel-route-fields .swap {
-  top:calc(10.5px * 1.25 + 8px + 22.5px)!important;left:50%!important;
-  transform:translate(-50%,-50%)!important;
-  width:30px!important;height:30px!important;
-  box-shadow:none!important;
 }
 @media(max-width:355px){
 #guide .airport-route-selector .airsel-route-fields,
@@ -702,7 +600,7 @@
 #guide .sights-day-trips .airport-route-selector .rail-title .daytrip-tra-mark.logo-unavailable > .daytrip-tra-fallback {display:block!important;}
 #guide #airport-route-selector .facts .fact-value,
 #guide .airport-route-selector:not(.daytrip-airport-reuse) .facts .fact-value,
-#tt2-airport-sheet #airport-route-selector .facts .fact-value {white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:1.45;min-width:0;}
+#tt2-airport-sheet #airport-route-selector .facts .fact-value {white-space:normal!important;overflow-wrap:anywhere;word-break:normal;min-width:0;}
 #guide .sights-day-trips .daytrip-bus-route[data-route="taxi"] .timeline-leg[style*="D9B65F"]::before {background:var(--taipei-taxi-route)!important;}
 #guide #airport-route-selector .airsel-results-inner,
 #tt2-airport-sheet #airport-route-selector .airsel-results-inner {isolation:isolate;}
@@ -723,7 +621,7 @@
 #tt2-airport-sheet #airport-route-selector .timeline.airsel-timeline-pending .timeline-leg::before {opacity:1!important;}
 }
 #guide #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg,
-#tt2-airport-sheet #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg {display:block;width:20px;height:20px;color:inherit;stroke:currentColor;fill:none;}
+#tt2-airport-sheet #airport-route-selector .airsel-company-fallback.airsel-ground-icon svg {display:block;stroke:currentColor;fill:none;}
 #guide .airport-route-selector .timeline-stop.transfer .node,
 #tt2-airport-sheet .airport-route-selector .timeline-stop.transfer .node {
   box-sizing:border-box!important;
@@ -747,31 +645,23 @@
 }
 #guide #airport-route-selector .airsel-route-fields,
 #tt2-airport-sheet #airport-route-selector .airsel-route-fields {
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  gap:clamp(32px,7vw,42px)!important;
-  padding:0!important;
   margin-inline:0!important;
 }
-#guide #airport-route-selector .airsel-route-fields .selrow,
-#tt2-airport-sheet #airport-route-selector .airsel-route-fields .selrow {min-width:0!important;}
 #guide #airport-route-selector .airsel-route-fields .sel-field,
 #tt2-airport-sheet #airport-route-selector .airsel-route-fields .sel-field {min-width:0!important;align-items:stretch!important;}
 #guide #airport-route-selector .airsel-route-fields .sel-choice-bubble,
 #tt2-airport-sheet #airport-route-selector .airsel-route-fields .sel-choice-bubble {
   width:100%!important;max-width:none!important;
-  margin:0!important;box-sizing:border-box!important;
 }
 #guide #airport-route-selector .airsel-route-fields .sel-label,
 #tt2-airport-sheet #airport-route-selector .airsel-route-fields .sel-label {
-  align-self:flex-start!important;margin:0!important;
+  align-self:flex-start!important;
   padding:0!important;text-align:left!important;
 }
 @media(max-width:355px){
 #guide #airport-route-selector .airsel-route-fields,
 #tt2-airport-sheet #airport-route-selector .airsel-route-fields {gap:32px!important;}
 }
-#guide #airport-route-selector .airsel-route-fields,
-#tt2-airport-sheet #airport-route-selector .airsel-route-fields {column-gap:clamp(48px,12vw,56px)!important;}
 #guide .airport-access-subheading,
 #tt2-airport-sheet .airport-access-subheading {margin:30px 0 10px!important;font-size:16px!important;line-height:1.35!important;font-weight:780!important;letter-spacing:-.01em!important;}
 
@@ -799,42 +689,31 @@ html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #a
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector::-webkit-scrollbar,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector::-webkit-scrollbar {display:none;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top {
-  display:flex!important;align-items:center;box-sizing:border-box;height:34px;margin:0!important;padding:0 0 1px!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top {align-items:center;height:34px;margin:0!important;padding:0 0 1px!important;
   border:0!important;border-top:1px solid transparent!important;border-bottom:1px solid rgba(239,239,239,.43)!important;background:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top h2,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2 {margin:0!important;padding:0!important;font:400 15px/1.1 var(--tt2-serif)!important;letter-spacing:0!important;color:#fff!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2 {margin:0!important;padding:0!important;font:400 15px/1.1 var(--tt2-serif)!important;color:#fff!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top h2::before,
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .section-top h2::after,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2::before,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .section-top h2::after {content:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selector,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selector {
-  position:relative!important;display:block!important;box-sizing:border-box;height:45px;margin:0!important;padding:0!important;
-  border:0!important;border-bottom:.67px solid #666464!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  position:relative!important;border-bottom:.67px solid #666464!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow {position:absolute!important;top:4px!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow--origin,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow--origin {left:7px!important;right:auto!important;width:114px!important;}
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow--destination,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow--destination {left:222px!important;right:13px!important;width:auto!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow {box-shadow:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector :is(.sel-field,.sel-choice-bubble),
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector :is(.sel-field,.sel-choice-bubble) {
-  position:relative;display:block!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:0!important;
-  border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+  position:relative;width:100%!important;border-radius:0!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .sel-label,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-label {display:block!important;margin:0 0 1px!important;padding:0!important;font:400 8.67px/13px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-label {margin:0 0 1px!important;padding:0!important;font:400 8.67px/13px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector select.sel-value,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector select.sel-value {
-  -webkit-appearance:none;appearance:none;display:block!important;box-sizing:border-box;width:100%!important;height:23px!important;
-  margin:0!important;padding:0 18px 0 0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
-  font:500 16px/23px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;text-overflow:ellipsis;cursor:pointer;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector select.sel-value {appearance:none;border-radius:0!important;
+  font:500 16px/23px var(--tt2-ui)!important;
 }
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .selrow.is-empty select.sel-value,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .selrow.is-empty select.sel-value {color:#9e9e9e!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .sel-choice-bubble .chev,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-choice-bubble .chev {
   position:absolute!important;right:0;top:9px;width:8px!important;height:5px!important;margin:0!important;border:0!important;transform:none!important;
@@ -845,47 +724,30 @@ html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-choice-bubble .chev::before,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .sel-choice-bubble .chev::after {content:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-swap,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap {
-  position:absolute!important;left:152px!important;top:0!important;right:auto!important;bottom:auto!important;display:flex!important;align-items:center;justify-content:center;
-  width:56px!important;height:45px!important;min-width:0!important;margin:0!important;padding:0!important;box-sizing:border-box;
-  border:0!important;border-left:.67px solid #666464!important;border-right:.67px solid #666464!important;border-radius:0!important;
-  background:transparent!important;box-shadow:none!important;color:#fff!important;transform:none!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap {left:152px!important;top:0!important;right:auto!important;bottom:auto!important;display:flex!important;justify-content:center;min-width:0!important;border-left:.67px solid #666464!important;border-right:.67px solid #666464!important;
 }
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-swap svg,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap svg {width:15px!important;height:17px!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-swap:disabled svg,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-swap:disabled svg {opacity:.35!important;}
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-route-disclosure,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-route-disclosure {display:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector :is(.airsel-results-clip,.airsel-results-inner),
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector :is(.airsel-results-clip,.airsel-results-inner) {margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport {
-  position:relative!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:0!important;box-sizing:border-box;height:45px;
-  margin:0!important;padding:0!important;border:0!important;border-bottom:.67px solid #666464!important;border-radius:0!important;background:none!important;box-shadow:none!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport {border-bottom:.67px solid #666464!important;border-radius:0!important;
 }
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-ink,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-ink {display:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-tab,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab {
-  position:relative;display:flex!important;align-items:flex-start;justify-content:center;height:45px!important;min-height:0!important;margin:0!important;
-  padding:14px 0 0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;
-  font:400 12px/17px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;
+  position:relative;display:flex!important;align-items:flex-start;justify-content:center;min-height:0!important;
+  font:400 12px/17px var(--tt2-ui)!important;
 }
-html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-tab[aria-selected='true'],
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab[aria-selected='true'] {font-weight:700!important;color:#fff!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-transport-tab[aria-selected='true']::after,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab[aria-selected='true']::after {content:''!important;display:block!important;position:absolute;left:50%;bottom:0;width:54px;height:2px;margin-left:-27px;background:#fff;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-transport-tab[aria-selected='true']::after {position:absolute;left:50%;bottom:0;width:54px;height:2px;margin-left:-27px;background:#fff;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .route-panel,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .route-panel {display:flex!important;flex-direction:column!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .route-panel {display:flex!important;flex-direction:column!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .rail-title,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .rail-title {
-  position:relative!important;display:flex!important;align-items:flex-start;gap:7px;
-  box-sizing:border-box;height:78px;margin:0!important;padding:24px 0 0 12px!important;border:0!important;background:none!important;
+  position:relative!important;align-items:flex-start;gap:7px;height:78px;margin:0!important;padding:24px 0 0 12px!important;border:0!important;background:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-company-mark,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-company-mark {
-  display:inline-flex!important;align-items:center;justify-content:flex-start;flex:none!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-company-mark {justify-content:flex-start;flex:none!important;
   width:auto!important;height:22px!important;margin:0!important;border-radius:0!important;overflow:visible!important;background:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-company-mark img,
@@ -895,10 +757,9 @@ html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #a
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector :is(.airsel-company-fallback,.airsel-company-fallback svg),
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector :is(.airsel-company-fallback,.airsel-company-fallback svg) {width:18px!important;height:18px!important;flex:0 0 18px!important;font-size:15px!important;color:#fff!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-rail-head-name,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-rail-head-name {display:block!important;margin:0!important;font:500 12px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;white-space:nowrap;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-rail-head-name {margin:0!important;font:500 12px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;white-space:nowrap;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-recommend-badge,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-recommend-badge {
-  position:absolute!important;right:5px;top:28px;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-recommend-badge {right:5px;top:28px;padding:0!important;border:0!important;border-radius:0!important;background:none!important;
   font:500 11px/15px var(--tt2-ui)!important;letter-spacing:0!important;color:#cca46e!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .rail-title:has(> .airsel-tabs:not([hidden])) #airsel-recommend-badge,
@@ -906,8 +767,7 @@ html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #a
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-recommend-badge[hidden],
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-recommend-badge[hidden] {display:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-tabs,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs {
-  position:absolute!important;right:6px;top:24px;display:block!important;box-sizing:border-box;width:115px!important;height:24px;margin:0!important;padding:0!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs {display:block!important;width:115px!important;height:24px;padding:0!important;
   border:0!important;border-bottom:1px solid #9e9e9e!important;background:none!important;box-shadow:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-tabs[hidden],
@@ -918,7 +778,7 @@ html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-tabs:has(option[value='local']:checked)::before {background:#478ed1;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector #airsel-train-select,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector #airsel-train-select {
-  -webkit-appearance:none;appearance:none;display:block!important;box-sizing:border-box;width:100%!important;height:23px!important;margin:0!important;
+  -webkit-appearance:none;appearance:none;display:block!important;width:100%!important;height:23px!important;margin:0!important;
   padding:0 16px 0 9px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
   font:500 13px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;cursor:pointer;
 }
@@ -933,28 +793,25 @@ html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #a
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-train-chevron::after {content:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline {
-  display:flex!important;flex-direction:column!important;box-sizing:border-box;
      /* v2.0.62: the Figma size; only short screens compress it (end of file) */
-  min-height:0!important;margin:0!important;padding:0!important;border:0!important;background:none!important;
+  min-height:0!important;margin:0!important;border:0!important;background:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline::before,
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline::after,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline::before,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline::after {content:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop {
-  position:relative!important;display:block!important;flex:none;box-sizing:border-box;min-height:39px;margin:0!important;padding:0 0 0 84px!important;
-  border:0!important;background:none!important;box-shadow:none!important;
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop {display:block!important;flex:none;min-height:39px;padding:0 0 0 84px!important;background:none!important;box-shadow:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-status,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-status {
   position:absolute!important;left:12px;top:4px;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;
-  font:400 10px/14px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;
+  font:400 10px/14px var(--tt2-ui)!important;color:#9e9e9e!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop .node,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop .node {
-  position:absolute!important;left:39.5px;top:4.5px;box-sizing:border-box;width:13px!important;height:13px!important;margin:0!important;
-  border:2px solid #fff!important;border-radius:50%!important;background:#000!important;box-shadow:none!important;transform:none!important;
+  position:absolute!important;left:39.5px;top:4.5px;width:13px!important;height:13px!important;margin:0!important;
+  border:2px solid #fff!important;background:#000!important;box-shadow:none!important;transform:none!important;
 }
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .timeline-stop.end .node,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop.end .node {background:#fff!important;}
@@ -963,16 +820,16 @@ html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop .node::before,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .timeline-stop .node::after {content:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body {display:flex!important;flex-wrap:wrap;align-items:center;gap:0 6px;margin:0!important;padding:0!important;border:0!important;background:none!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body {gap:0 6px;margin:0!important;padding:0!important;border:0!important;background:none!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-station-label,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-station-label {display:contents!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-name,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-name {order:0;margin:0!important;font:500 15px/22px var(--tt2-ui)!important;letter-spacing:0!important;color:#fff!important;white-space:nowrap;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .airsel-station-ja,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-station-ja {order:2;flex:0 0 100%;display:block!important;margin:1px 0 0!important;font:400 11px/16px var(--tt2-ui)!important;letter-spacing:0!important;color:#9e9e9e!important;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .airsel-station-ja {order:2;flex:0 0 100%;display:block!important;margin:1px 0 0!important;font:400 11px/16px var(--tt2-ui)!important;letter-spacing:0!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code {
-  order:1;display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;height:16px!important;min-width:24px;margin:0!important;
+  order:1;display:inline-flex!important;align-items:center;justify-content:center;height:16px!important;min-width:24px;margin:0!important;
   padding:0 4px!important;border:1.5px solid var(--tt2a-code, #8246af)!important;border-radius:3px!important;background:#fff!important;box-shadow:none!important;
   font:700 9px/14px 'Inter',var(--tt2-ui)!important;letter-spacing:0!important;color:#0d0d0d!important;
 }
@@ -983,7 +840,7 @@ html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #a
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code--blue,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code--blue {--tt2a-code:#0070bd;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .stop-body .code.tt2a-code-sq,
-html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code.tt2a-code-sq {flex-direction:column;width:20px!important;height:20px!important;min-width:0;padding:0!important;border-width:2px!important;border-radius:3px!important;gap:0;}
+html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .stop-body .code.tt2a-code-sq {flex-direction:column;width:20px!important;height:20px!important;min-width:0;padding:0!important;border-width:2px!important;gap:0;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-code-l,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .tt2a-code-l {display:block;font:700 8px/7px 'Inter',var(--tt2-ui);}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .tt2a-code-n,
@@ -1114,3 +971,16 @@ html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .facts {margin-top:clamp(12px, calc(100cqh - 630px), 23px)!important;}
 html.tt2-fidelity.tt2-airport-open[data-tt-view='travel'] #guide #airport-route-selector .footnote,
 html.tt2-fidelity.tt2-airsheet:not([data-tt-airsheet-off]) #tt2-airport-sheet #airport-route-selector .footnote {margin-top:clamp(16px, calc(100cqh - 637px), 36px)!important;}
+
+/* v2.0.122: a field still to choose (出発地を選択 / 目的地を選択) breathes — its words brighten and glow,
+   then settle, every 2.4s — to show where to tap; it stops once something is chosen (guide.js drops
+   .is-empty). The words' colour is set !important above, so the breath is a filter. */
+@keyframes tt2-air-breathe {
+  0%, 100% {filter:brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));}
+  50% {filter:brightness(1.75) drop-shadow(0 0 6px rgba(255,255,255,.45));}
+}
+html.tt2-fidelity #airport-route-selector .selrow.is-empty select.sel-value:not(#_x) {animation:tt2-air-breathe 2.4s ease-in-out infinite;}
+html.tt2-fidelity #airport-route-selector .selrow.is-empty select.sel-value:not(#_x):focus {animation:none;}
+@media (prefers-reduced-motion:reduce) {
+  html.tt2-fidelity #airport-route-selector .selrow.is-empty select.sel-value:not(#_x) {animation:none;}
+}

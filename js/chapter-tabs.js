@@ -403,7 +403,6 @@
     const h = Math.round(Math.min(MAX_H, Math.max(MIN_H, window.innerHeight - top - BOTTOM_AIR - insetBottom)));
     ch.roots.forEach(r => r.style.setProperty('--ct-h', h + 'px'));
     requestAnimationFrame(() => {
-      window.tabiSyncTeasers?.();                      // venue lists fill the box
       window.tabiFitLists?.();
       window.dispatchEvent(new Event('ct-resize'));   // maps re-measure
     });

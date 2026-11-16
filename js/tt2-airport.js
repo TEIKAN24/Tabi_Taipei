@@ -1,4 +1,4 @@
-/* TABI TAIPEI v2.0.101 — js/tt2-airport.js: 空港アクセス: the route finder
+/* TABI TAIPEI v2.0.122 — js/tt2-airport.js: 空港アクセス: the route finder
    Was js/figma-airport-v259.js until 2.0.101 (cleanup phase 3). */
 /* TABI TAIPEI v2.0.59 — 空港アクセス, Figma 「空港アクセス 新案 A1 / A2」 (css/figma-airport-v255.css).
  * guide.js rebuilds the timeline for every route; after each build this adds what the markup lacks:
@@ -56,4 +56,25 @@
   new MutationObserver(run).observe(timeline, {childList: true});
   run();
 
+})();
+
+/* v2.0.122: the fields still to choose breathe (css/tt2-airport.css tt2-air-breathe) in step: every
+   such animation is set to the same clock (the page's timeline from 0) whenever a field is chosen or
+   cleared, or the sheet opens — a CSS animation otherwise starts when its rule starts to match. */
+(() => {
+  'use strict';
+  if (!document.getAnimations) return;
+  let queued = 0;
+  const sync = () => {
+    cancelAnimationFrame(queued);
+    queued = requestAnimationFrame(() => {
+      for (const a of document.getAnimations()) if (a.animationName === 'tt2-air-breathe') a.startTime = 0;
+    });
+  };
+  const watch = {subtree: true, attributes: true, attributeFilter: ['class', 'hidden', 'aria-hidden']};
+  new MutationObserver(sync).observe(document.documentElement, {attributes: true, attributeFilter: ['class', 'data-tt-view']});
+  const selector = document.getElementById('airport-route-selector');
+  if (selector) new MutationObserver(sync).observe(selector, watch);
+  document.addEventListener('focusout', sync, true);
+  sync();
 })();

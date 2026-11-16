@@ -112,27 +112,7 @@
     if (!panel) return;
     panel.scrollTop = 0;
   }
-  let guidedScrollRequest=0;
-  function alignGuidedCategoryAtTop(detail){
-    const body=detail.parentElement;
-    const summary=detail.querySelector(':scope > summary');
-    if(!body || !summary)return;
-    const request=++guidedScrollRequest;
-    // Opening height animation begins on this same click; wait one paint for
-    // expanded content to establish the scroll range. Never call scrollIntoView,
-    // which could also move the main document and cause unexpected refocusing.
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      if(request!==guidedScrollRequest || !detail.open || !body.isConnected)return;
-      const scrollable=body.scrollHeight>body.clientHeight+3;
-      if(!scrollable)return;
-      // Once the fixed heading is created, its original summary is removed
-      // from layout. Align using the details row itself, not that hidden summary.
-      const current=detail.getBoundingClientRect();
-      const viewport=body.getBoundingClientRect();
-      const wanted=Math.max(0,body.scrollTop+current.top-viewport.top);
-      body.scrollTo({top:wanted,behavior:reduceMotion.matches?'instant':'smooth'});
-    }));
-  }
+
   const siteContent = document.querySelector('.site-content');
   siteContent?.addEventListener('click', event => {
     const summary = event.target.closest('summary');
@@ -145,22 +125,11 @@
     // A link inside a summary must continue to work like a normal link.
     if (event.target.closest('a, button')) return;
     event.preventDefault(); // avoid a second native <details> toggle
-    const isAreaCategory = detail.parentElement?.classList.contains('area-category-list');
-    const guidedPanel = detail.closest('.venue-directory-section .tab-panel.guided-focus-panel');
-    const isFoodSubcategory = Boolean(guidedPanel && detail.parentElement === guidedPanel.querySelector(':scope > .indented'));
-    const isGuidedCategory = isAreaCategory || isFoodSubcategory;
-    // Within the three four-row directories, never refocus or move the page
-    // just because a nested heading expands. Other accordion types keep their
-    // existing scroll-to-open behavior.
     if (detail.open) {
       closeBranch(detail);
     } else {
       openAccordion(detail);
-      // Moving just the scrollable list keeps the bubble row, regional intro,
-      // and the whole document steady. The title becomes the first visible row.
-      if (isGuidedCategory) alignGuidedCategoryAtTop(detail);
-      else if (!detail.classList.contains('daytrip-inline-accordion'))
-        scrollOpenedSummaryIntoView(detail);
+      if (!detail.classList.contains('daytrip-inline-accordion')) scrollOpenedSummaryIntoView(detail);
     }
   });
   // Also enforce sibling exclusivity if a detail is opened by other scripts.
@@ -247,7 +216,7 @@
       pill.addEventListener('click',()=>{
         activateTab(tablist,index);
         const panel=tablist.nextElementSibling?.children[index];
-        if (isAreaTablist || isRecommendedTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+        if (isAreaTablist || isRecommendedTablist) prepareGuidedTab(panel);
         if (isRecommendedTablist || isNightTablist) alignRecommendationPill(tablist, pill);
       });
       pill.addEventListener('keydown',e=>{
@@ -257,7 +226,7 @@
         const normalized=(next+pills.length)%pills.length;
         activateTab(tablist,next,true);
         const panel=tablist.nextElementSibling?.children[normalized];
-        if (isAreaTablist || isRecommendedTablist || panel?.classList.contains('guided-focus-panel')) prepareGuidedTab(panel);
+        if (isAreaTablist || isRecommendedTablist) prepareGuidedTab(panel);
         if (isRecommendedTablist || isNightTablist) alignRecommendationPill(tablist, pills[normalized]);
       });
     });
@@ -3178,63 +3147,6 @@ update();
 })();
 
 
-/* v30.9.8 — browser back/forward restore for Maps round-trips. */
-(()=>{
-  'use strict';
-  const key='taipei-city-guide:reading-state:v30.9.8';
-  const read=()=>{try{return JSON.parse(sessionStorage.getItem(key)||'null');}catch(_){return null;}};
-  const save=()=>{
-    try{
-      sessionStorage.setItem(key,JSON.stringify({
-        at:Date.now(),
-        y:window.scrollY,
-        details:[...document.querySelectorAll('#guide details[open][id]')].map(e=>e.id),
-        panels:[...document.querySelectorAll('#guide .tab-pills')].map(list=>{
-          const selected=list.querySelector(':scope > button[aria-selected="true"]');
-          return selected?selected.id:null;
-        }).filter(Boolean),
-        daytrip:document.querySelector('#guide .daytrip-destination-button[aria-expanded="true"]')?.id||null
-      }));
-    }catch(_){}
-  };
-  window.addEventListener('pagehide',save);
-  // Clicks that launch Maps are saved immediately (even when the OS launches
-  // the native app without issuing a reliable pagehide event).
-  document.querySelectorAll('#guide a[href*="google.com/maps"],#guide a[href*="maps.app.goo.gl"]').forEach(a=>{
-    a.addEventListener('click',save,{capture:true});
-  });
-  const navigation=performance.getEntriesByType('navigation')[0];
-  if(navigation?.type!=='back_forward')return;
-  const saved=read();
-  if(!saved||Date.now()-saved.at>3600000)return;
-  // Reopen the same category before native scrolling is restored. Existing
-  // controllers remain responsible for ARIA/tab state and animations.
-  // Only restore panels that differ from the saved selection.
-  const restore=()=>{
-    (saved.details||[]).forEach(id=>{
-      const d=document.getElementById(id);
-      if(d?.tagName==='DETAILS')d.open=true;
-    });
-    (saved.panels||[]).forEach(id=>{
-      const tab=document.getElementById(id);
-      if(tab && tab.getAttribute('aria-selected')!=='true')tab.click();
-    });
-    if(saved.daytrip){
-      const button=document.getElementById(saved.daytrip);
-      if(button&&button.getAttribute('aria-expanded')!=='true')button.click();
-    }
-    // The website's guided-focus controllers may schedule their own scroll
-    // after a tab click. Settle on the actual saved reading position at the end.
-    if(Number.isFinite(saved.y)&&saved.y>0){
-      requestAnimationFrame(()=>window.scrollTo({top:saved.y,behavior:'instant'}));
-      window.setTimeout(()=>window.scrollTo({top:saved.y,behavior:'instant'}),280);
-    }
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restore,{once:true});
-  else restore();
-})();
-
-
 /* =================== JS 16: daytrip-compact-destination-toolbar-v30.9.17 =================== */
 (()=>{
   'use strict';
@@ -3449,7 +3361,7 @@ update();
   const hasNestedScroller=target=>{
     let node=target instanceof Element?target:null;
     while(node && node!==document.body){
-      if(node.matches('#food-search, #results, .tab-panel, .area-category-list')){
+      if(node.matches('#food-search, #results, .tab-panel')){
         const cs=getComputedStyle(node);
         if(node.scrollHeight>node.clientHeight+12 && /(auto|scroll)/.test(cs.overflowY))return true;
       }
@@ -3541,7 +3453,6 @@ update();
   const before=new WeakMap();
   const selector=[
     '.venue-directory-section details.nested-accordion',
-    '.area-directory-section .area-category-list > details',
     '.sights-day-trips details.daytrip-inline-accordion'
   ].join(',');
   const selected=e=>{
@@ -3596,103 +3507,7 @@ update();
     const from=before.get(detail);before.delete(detail);
     if(detail.open)animate(detail,from,detail.getBoundingClientRect().height);
   });
-  // When changing destinations, give the newly revealed itinerary a short
-  // downward reveal. Does not scroll the viewport or affect transit animations.
-  const trip=root.querySelector('.sights-day-trips');
-  if(trip){
-    const buttons=trip.querySelectorAll('.daytrip-destination-buttons > .daytrip-destination-button');
-    trip.addEventListener('click',e=>{
-      if(!e.target.closest('.daytrip-destination-buttons > .daytrip-destination-button'))return;
-      if(reduce.matches)return;
-      const visible=trip.querySelector('.daytrip-destination-panel:not([hidden])');
-      if(!visible)return;
-      visible.getAnimations().filter(a=>a.effect?.getTiming?.().duration===360).forEach(a=>a.cancel());
-      visible.animate([
-        {opacity:0,transform:'translate3d(0,-8px,0)'},
-        {opacity:1,transform:'translate3d(0,0,0)'}
-      ],{duration:360,easing:'cubic-bezier(.22,1,.36,1)'});
-    });
-  }
-})();
-
-
-/* =================== JS 21: fixed-heading four-row directory teaser v30.9.46 =================== */
-(()=>{
-  'use strict';
-  const root=document.querySelector('#guide');if(!root)return;
-  const lists=[...root.querySelectorAll('.venue-directory-section:not(.area-directory-section) .tab-panel.guided-focus-panel, .area-directory-section .tab-panel')];
-  const getBody=panel=>panel.querySelector(':scope > .indented');
-  function sync(panel){
-    if(panel.hidden||!panel.getClientRects().length)return;
-    const body=getBody(panel);
-    const rows=body?[...body.children].filter(el=>el.matches('details')):[];
-    // Remove old panel constraints unconditionally. The header/intro must
-    // remain outside the scrolling list, while short lists remain unmasked.
-    panel.style.removeProperty('max-height');
-    panel.classList.remove('teaser-can-scroll');
-    panel.removeAttribute('data-teaser-end');
-    if(!body)return;
-    if(rows.length<2 || (rows.length<5 && !rows.some(row=>row.open))){
-      panel.classList.remove('four-row-teaser');
-      body.classList.remove('teaser-scroll-body','teaser-can-scroll');
-      body.style.removeProperty('max-height');
-      body.removeAttribute('data-teaser-end');
-      return;
-    }
-    const gap=parseFloat(getComputedStyle(body).rowGap)||0;
-    const rowHeight=el=>{
-      const summary=el.querySelector(':scope > summary');if(!summary)return 0;
-      const css=getComputedStyle(el);
-      return summary.getBoundingClientRect().height+(parseFloat(css.marginTop)||0)+(parseFloat(css.marginBottom)||0)+gap;
-    };
-    // Allow more of the existing recommendation list to be read at once.
-    // Five complete headings and part of the sixth are the target, while
-    // actual row sizes (including tags/secondary lines) determine the height.
-    // v30.9.134: 注目の街歩きエリア shows six complete rows (all of 赤峰街・中山駅,
-    // down to 体験・その他) with the same rule for every district; other lists keep
-    // five complete rows and part of the sixth.
-    const fullRows=panel.closest('.area-directory-section')?6:5;
-    const visibleCount=Math.min(rows.length,fullRows+1);
-    const h=rows.slice(0,visibleCount).map(rowHeight);
-    const natural=h.reduce((total,height,i)=>total+height*(i===fullRows?.48:1),0)+4;
-    // v30.9.172: an open block (heading, bubbles, intro and this list) fits on screen.
-    const block=panel.closest('details.root-accordion');
-    const overhead=block?block.getBoundingClientRect().height-body.getBoundingClientRect().height:0;
-    const room=window.innerHeight-overhead-32;
-    const cap=Math.max(200,Math.min(window.innerHeight*.72,560,room));
-    // Expanded lists contain taller shop rows (name, tags, notes). Reserve
-    // a larger inner viewport for those, without affecting page scrolling.
-    const expandedTarget=rows.some(row=>row.open)
-      ? Math.min(480,Math.max(275,window.innerHeight*.56))
-      : 0;
-    let max=Math.round(Math.min(cap,Math.max(natural,Math.min(expandedTarget,cap))));
-    // v30.9.278: inside a chapter tab (js/chapter-tabs.js, a box of fixed height) the
-    // list fills the rest of the box instead.
-    if(block&&block.classList.contains('ct-selected')){
-      const fill=Math.round(block.getBoundingClientRect().bottom-body.getBoundingClientRect().top-14);
-      if(fill>120)max=fill;
-    }
-    panel.classList.add('four-row-teaser');
-    body.classList.add('teaser-scroll-body');
-    if(body.style.maxHeight!==max+'px')body.style.setProperty('max-height',max+'px','important');
-    updateFade(body);
-  }
-  function updateFade(body){
-    const canScroll=body.scrollHeight>body.clientHeight+5;
-    body.classList.toggle('teaser-can-scroll',canScroll);
-    body.dataset.teaserEnd=canScroll && body.scrollTop+body.clientHeight>=body.scrollHeight-8 ? 'true':'false';
-  }
-  lists.forEach(panel=>{
-    const body=getBody(panel);
-    body?.addEventListener('scroll',()=>updateFade(body),{passive:true});
-    panel.addEventListener('toggle',()=>requestAnimationFrame(()=>sync(panel)),true);
-  });
-  const observer=new MutationObserver(()=>requestAnimationFrame(()=>lists.forEach(sync)));
-  root.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(tab=>observer.observe(tab,{attributes:true,attributeFilter:['aria-selected']}));
-  tabiOnResize(()=>lists.forEach(sync));
-  window.tabiSyncTeasers=()=>lists.forEach(sync);   // v30.9.278: chapter tabs re-fit the lists
-  window.addEventListener('load',()=>lists.forEach(sync),{once:true});
-  requestAnimationFrame(()=>lists.forEach(sync));
+  // v2.0.115: the destination change no longer slides here; js/tt2-motion.js fades the 遠出 page.
 })();
 
 
@@ -3769,101 +3584,13 @@ update();
 })();
 
 
-/* ================= JS 23: pinned expanded directory heading v30.9.48 ================= */
-(()=>{
-  'use strict';
-  const guide=document.getElementById('guide');
-  if(!guide)return;
-  // v30.9.129: the open row's own title now stays at the top of that row
-  // (position:sticky in guide.css) instead of a copy pinned above every row.
-  const panels=[];
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const owned=new WeakMap();
-  function bodyOf(panel){return panel.querySelector(':scope > .indented');}
-  function getOpenRow(body){
-    return [...body.children].find(child=>child.matches('details[open]'))||null;
-  }
-  function sync(panel,move=false){
-    const body=bodyOf(panel);
-    if(!body)return;
-    let holder=owned.get(panel);
-    const row=getOpenRow(body);
-    if(!row){
-      if(holder){
-        body.querySelectorAll('details.guided-title-pinned').forEach(el=>el.classList.remove('guided-title-pinned'));
-        holder.classList.remove('is-active');
-        clearTimeout(holder._hideTimer);
-        // Fade and collapse the pinned title in sync with the detail closing.
-        holder._hideTimer=setTimeout(()=>{
-          if(!getOpenRow(body) && owned.get(panel)===holder){
-            holder.remove();owned.delete(panel);
-          }
-        },330);
-      }
-      return;
-    }
-    if(holder){
-      clearTimeout(holder._hideTimer);
-      holder._hideTimer=null;
-    }
-    if(!holder){
-      holder=document.createElement('div');
-      holder.className='guided-fixed-heading';
-      const control=document.createElement('button');
-      control.type='button';
-      control.className='guided-fixed-heading-button';
-      control.setAttribute('aria-expanded','true');
-      holder.append(control);
-      // The introductory neighborhood text stays above this heading,
-      // and only the directory rows themselves are scrollable.
-      panel.insertBefore(holder,body);
-      owned.set(panel,holder);
-      control.addEventListener('click',()=>{
-        const active=body.querySelector('details.guided-title-pinned[open] > summary');
-        active?.click();
-      });
-    }
-    for(const other of body.querySelectorAll('details.guided-title-pinned')){
-      if(other!==row)other.classList.remove('guided-title-pinned');
-    }
-    const summary=row.querySelector(':scope > summary');
-    holder.querySelector('button').textContent=summary?.textContent.trim()||'';
-    holder.dataset.area=String(panel.closest('.area-directory-section')!==null);
-    row.classList.add('guided-title-pinned');
-    // A pinned heading appears while the chosen option glides into position.
-    if(!holder.classList.contains('is-active')){
-      requestAnimationFrame(()=>{
-        if(holder?.isConnected && getOpenRow(body)) holder.classList.add('is-active');
-      });
-    }
-  }
-  panels.forEach(panel=>{
-    panel.addEventListener('toggle',()=>requestAnimationFrame(()=>sync(panel)),true);
-  });
-  // Bubble switching closes old details programmatically; synchronize both
-  // old and new panes without forcing document focus or scroll.
-  guide.querySelectorAll('.venue-directory-section .tab-pills button.tab-pill').forEach(button=>{
-    button.addEventListener('click',()=>requestAnimationFrame(()=>panels.forEach(p=>sync(p))));
-  });
-  guide.addEventListener('click',event=>{
-    if(!event.target.closest('.venue-directory-section .tab-panel details > summary'))return;
-    requestAnimationFrame(()=>{
-      panels.forEach(panel=>{
-        if(panel.getClientRects().length && !panel.hidden)sync(panel,true);
-      });
-    });
-  });
-  panels.forEach(panel=>sync(panel));
-})();
-
-
 /* =================== JS 32: bubble-tab lists — fade and fit v30.9.172 =================== */
 (()=>{
   'use strict';
   const guide=document.getElementById('guide');
   if(!guide)return;
   // Plain list panels scroll themselves (the area lists are handled by JS 21).
-  const panels=()=>[...guide.querySelectorAll('details.root-accordion .tab-panel:not(.four-row-teaser)')];
+  const panels=()=>[...guide.querySelectorAll('details.root-accordion .tab-panel')];
   function paneFade(box){
     if(!box)return;
     const can=box.scrollHeight>box.clientHeight+5;
@@ -4089,6 +3816,8 @@ update();
     focusOrigin=null;
     if(!quiet)keepInView();
   };
+  // v2.0.119 (js/tt2-reset.js): leaving 散策 or 商圏 closes the area and forgets the categories chosen
+  document.addEventListener('tt2:reset-places',()=>{back({quiet:true});remembered.clear();});
   const show=(index,trigger,fromKeyboard=false)=>{
     if(index===active){back({restoreFocus:true});return;}
     if(active===-1)focusOrigin=trigger;
@@ -4145,10 +3874,13 @@ update();
     };
     const ease='cubic-bezier(.22,.8,.3,1)';
     let current=-1;
+    // v2.0.117 (詳細頁提案 A as the user edited it): 「掲載 N件」 under the wheel
+    const count=document.createElement('p');count.className='walk-count';row.after(count);
     // `enter` is the offset (px) the new list slides in from; 0 = no motion.
     const choose=(i,focus=false,enter=0,smooth=true)=>{
       current=i;
       remembered.set(index,i);
+      count.textContent='掲載 '+panes[i].querySelectorAll('li.venue-row').length+'件';
       chips.forEach((chip,j)=>{chip.setAttribute('aria-selected',String(i===j));chip.tabIndex=i===j?0:-1;});
       panes.forEach((pane,j)=>pane.hidden=j!==i);
       scroller.scrollTop=0;
