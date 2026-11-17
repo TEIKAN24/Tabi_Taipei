@@ -71,7 +71,7 @@
   drinkPill.dataset.drink = '甜度冰塊';
   drinkPill.setAttribute('aria-label', 'ドリンクの甘さと氷の表');
   drinkPill.addEventListener('click', () => search(drinkPill.dataset.drink));
-  pills.insertBefore(drinkPill, pills.children[1] || null);
+  pills.prepend(drinkPill);   // v2.0.149: first, before 鶏
   shortcuts.append(el('p', 'tt2d-label', 'よく使う字・種類'), pills);
   drawer.querySelector('.search-shell')?.after(shortcuts);
 
@@ -120,8 +120,12 @@
   // at each place, so a whole dish name always wins over a term inside it (甜不辣 never splits
   // into 甜 + 不辣). A search that holds no term keeps the dictionary exactly as before.
   const CAT = {drink: 'ドリンク', cook: '調理法', flavor: '味付け', style: '料理の形', cut: '部位', label: '表記',
-    spice: '辛さ', sugar: '甘さ', ice: '氷', fixed: '甘さ・氷', custom: '追加', order: '注文・支払い'};
+    spice: '辛さ', sugar: '甘さ', ice: '氷', fixed: '甘さ・氷', custom: 'トッピング・追加', order: '注文・支払い'};
   const PREFIX = new Set(['cook', 'flavor', 'style', 'cut', 'label']);   // 紅燒牛肉麵, 招牌…
+  // v2.0.149: toppings and milks (珍珠・椰果・燕麥奶…) lead a name only on drinks (珍珠奶茶), never on
+  // food (珍珠餛飩湯 is not a tapioca dish).
+  const isDrink = food => /飲み物/.test(String(food?.category || ''));
+  const leads = (t, food) => PREFIX.has(t.cat) || (t.cat === 'custom' && isDrink(food));
   const SUFFIX = new Set(['custom', 'label', 'style']);                  // 滷肉飯加蛋, 雞腿便當
   const SCALES = {spice: ['不辣', '微辣', '小辣', '中辣', '大辣']};
   // 甘さ and 氷 share one table on a percentage ruler (a common guide; shops differ a little).
@@ -150,7 +154,7 @@
     const found = [];
     for (let k = 0; k < 3; k++) {
       const p = longestTerm(name, true);
-      if (!p || !PREFIX.has(p.t.cat)) break;
+      if (!p || !leads(p.t, food)) break;
       found.push(p.t); name = name.slice(p.key.length);
     }
     const s = longestTerm(name, false);
@@ -313,10 +317,11 @@
     return frag;
   }
   // A term searched alone: the dish card's own layout, then the dishes that use it.
-  function termCard(t) {
+  function termCard(t, key) {
+    const shown = (key && t.zh.find(z => N(z) === key)) || t.zh[0];   // v2.0.149: the spelling typed (那堤)
     const card = el('article', 'tt2d-card tt2d-card--term');
     card.append(el('p', 'tt2d-card-label', `メニューのことば・${CAT[t.cat] || ''}`));
-    card.append(el('h3', 'tt2d-card-name', t.zh[0]));
+    card.append(el('h3', 'tt2d-card-name', shown));
     card.append(el('p', 'tt2d-card-ja', t.ja));
     if (t.note) card.append(el('p', 'tt2d-card-desc', t.note));
     const frag = [card, ...scales([t])];
@@ -352,7 +357,12 @@
     const segs = segment(value);
     const terms = [...new Set(segs.filter(s => s.term).map(s => s.term))];
     if (!terms.length) return null;
-    if (segs.length === 1) return termCard(terms[0]);
+    if (segs.length === 1) return termCard(terms[0], segs[0].key);
+    // v2.0.149: another spelling of a term inside a dish name (抹茶那堤 → 抹茶拿鐵, 咖啡歐雷 → 咖啡歐蕾)
+    if (!/\s/.test(value.trim())) {
+      const canon = segs.map(s => s.term ? N(s.term.zh[0]) : (s.key || s.other)).join('');
+      if (canon !== whole && L.dishKeys.has(canon)) return single(lookUp(canon), pick);
+    }
     // the start of a dish name (鹽酥雞 → 鹽酥雞排): the usual card, as before
     const first = /\s/.test(value.trim()) ? null : lookUp(whole).found[0];
     if (first && first.rank <= 2) return null;
@@ -363,7 +373,7 @@
       const at = segs.findIndex(s => s.food);
       const before = [...new Set(segs.slice(0, at).filter(s => s.term).map(s => s.term))];
       const after = [...new Set(segs.slice(at + 1).filter(s => s.term).map(s => s.term))].filter(t => !before.includes(t));
-      const prefix = segs.slice(0, at).filter(s => s.term && PREFIX.has(s.term.cat)).map(s => s.key).join('');
+      const prefix = segs.slice(0, at).filter(s => s.term && leads(s.term, hit.found[0]?.food)).map(s => s.key).join('');
       // A tapped suggestion is a different dish, not another interpretation of
       // the original query. Keep its candidate list, but drop all query-only
       // modifiers (and the grey prefix) and rebuild notes from its own name.
@@ -566,8 +576,9 @@
     const shortcut = originals.some(button => button.dataset.example === value);
     pills.querySelectorAll('.tt2d-pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.example === value)));
     // v2.0.146: while only 甘さ・氷 words are searched, the shortcuts stay (甘さ・氷 shown pressed)
-    const drinkOnly = Boolean(value) && termKeys.size > 0 && dict.foods().length > 0 &&
-      segment(value).every(s => s.term && ['sugar', 'ice', 'fixed', 'drink'].includes(s.term.cat));
+    // v2.0.149: a shortcut (🐔…) segments to nothing, which is not 「only 甘さ・氷 words」
+    const drinkSegs = value && !shortcut && termKeys.size > 0 && dict.foods().length > 0 ? segment(value) : [];
+    const drinkOnly = drinkSegs.length > 0 && drinkSegs.every(s => s.term && ['sugar', 'ice', 'fixed', 'drink'].includes(s.term.cat));
     drinkPill.setAttribute('aria-pressed', String(drinkOnly));
     drawer.classList.toggle('tt2d-searching', Boolean(value) && !shortcut && !drinkOnly);
     let mode = 'list', nodes = null;
