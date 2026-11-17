@@ -593,21 +593,22 @@ html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-scale-head {flex:none;
 html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-scale-step {font:400 15px/22px var(--tt2d-serif);color:#9e9e9e;}
 html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-scale-step.is-on {color:#cca46e;}
 html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-scale-note {margin:0;padding:10px 4px 0;font:400 11px/16px var(--tt2-ui);color:#8a8a8a;}
-/* the 甘さ・氷 table: two rows on one percentage ruler, each word a button, 固定 at the end */
+/* v2.0.151 the 甘さ・氷 table, slider form 2-B: per row a track of stops (％ above, word below), the chosen stop gold with the track filled up to it, 固定 the last stop past a dotted gap */
 html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink {padding:4px 4px 0;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-row,
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-ruler {display:flex;align-items:center;gap:8px;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-row {height:40px;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-head {flex:none;width:28px;font:400 11px/16px var(--tt2-ui);letter-spacing:.06em;color:#8a8a8a;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-track {position:relative;flex:1 1 auto;align-self:stretch;margin:0 22px;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) :is(.tt2d-drink-step,.tt2d-drink-fixed) {
-  margin:0;padding:0 2px;border:0;background:none;font:400 15px/22px var(--tt2d-serif);letter-spacing:.02em;color:#9e9e9e;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-step {position:absolute;top:50%;transform:translate(-50%,-50%);min-height:40px;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-fixed {flex:none;width:44px;height:40px;padding-left:8px;border-left:1px solid #2e2e2e;text-align:right;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-row {display:flex;align-items:stretch;height:64px;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-head {flex:none;width:28px;padding-top:15px;font:400 11px/16px var(--tt2-ui);letter-spacing:.06em;color:#8a8a8a;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-track {position:relative;flex:1 1 auto;margin:0 22px;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-track::before {content:'';position:absolute;left:0;right:0;top:22px;height:2px;border-radius:1px;background:#2e2e2e;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-fill {position:absolute;left:0;top:22px;width:0;height:2px;border-radius:1px;background:#cca46e;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-gap {flex:none;width:18px;height:0;margin-top:22px;border-top:2px dotted #3a3a3a;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) :is(.tt2d-drink-step,.tt2d-drink-fixed) {display:flex;flex-direction:column;align-items:center;margin:0;padding:0 2px;border:0;background:none;color:#9e9e9e;white-space:nowrap;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-step {position:absolute;top:0;height:64px;transform:translateX(-50%);}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-fixed {flex:none;width:44px;height:64px;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-pct {height:12px;font:400 10px/12px var(--tt2-ui);font-variant-numeric:tabular-nums;color:#6f6f6f;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-dot {flex:none;box-sizing:border-box;width:8px;height:8px;margin:7px 0 5px;border-radius:50%;background:#4a4a4a;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-fixed .tt2d-drink-dot {background:none;border:1.5px solid #6f6f6f;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) :is(.tt2d-drink-step,.tt2d-drink-fixed).is-on .tt2d-drink-dot {width:14px;height:14px;margin:4px 0 2px;background:#cca46e;border-color:#cca46e;}
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-word {font:400 15px/22px var(--tt2d-serif);letter-spacing:.02em;}
 html.tt2-fidelity #guide #food-search.tt2d:not(#_a) :is(.tt2d-drink-step,.tt2d-drink-fixed).is-on {color:#cca46e;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-ruler {height:22px;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-ticks {border-top:1px solid #3a3a3a;align-self:auto;height:20px;margin-top:2px;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-tick {position:absolute;top:0;transform:translateX(-50%);padding-top:5px;font:400 10px/12px var(--tt2-ui);font-variant-numeric:tabular-nums;white-space:nowrap;color:#6f6f6f;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-tick::before {content:'';position:absolute;left:50%;top:-1px;width:1px;height:4px;background:#3a3a3a;}
-html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-drink-gap {height:22px;border-left-color:#2e2e2e;}
+/* v2.0.151 the 甘さ・氷 picked for a drink, after its name */
+html.tt2-fidelity #guide #food-search.tt2d:not(#_a) .tt2d-card-order {margin-left:10px;font:inherit;font-size:18px;letter-spacing:.02em;color:#cca46e;}
