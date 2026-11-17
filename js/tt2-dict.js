@@ -65,6 +65,13 @@
     pill.addEventListener('click', () => { button.click(); input.blur(); });
     pills.append(pill);
   }
+  // v2.0.146: 甘さ・氷 opens the drink table straight away (food/terms.json: 甜度冰塊)
+  const drinkPill = el('button', 'tt2d-pill tt2d-pill--drink', '甘さ・氷');
+  drinkPill.type = 'button';
+  drinkPill.dataset.drink = '甜度冰塊';
+  drinkPill.setAttribute('aria-label', 'ドリンクの甘さと氷の表');
+  drinkPill.addEventListener('click', () => search(drinkPill.dataset.drink));
+  pills.insertBefore(drinkPill, pills.children[1] || null);
   shortcuts.append(el('p', 'tt2d-label', 'よく使う字・種類'), pills);
   drawer.querySelector('.search-shell')?.after(shortcuts);
 
@@ -106,6 +113,259 @@
     found.sort((a, b) => a.rank - b.rank || names(a.food)[0].length - names(b.food)[0].length || a.order - b.order);
     return {term, variants, found};
   }
+
+  /* ---------- v2.0.144: menu terms (food/terms.json) ---------- */
+  // 招牌・紅燒・微辣・去冰…: the words around a dish name on a Taiwanese menu. Dish names and
+  // these terms form one lexicon; a search is read left to right, taking the longest known word
+  // at each place, so a whole dish name always wins over a term inside it (甜不辣 never splits
+  // into 甜 + 不辣). A search that holds no term keeps the dictionary exactly as before.
+  const CAT = {drink: 'ドリンク', cook: '調理法', flavor: '味付け', style: '料理の形', cut: '部位', label: '表記',
+    spice: '辛さ', sugar: '甘さ', ice: '氷', fixed: '甘さ・氷', custom: '追加', order: '注文・支払い'};
+  const PREFIX = new Set(['cook', 'flavor', 'style', 'cut', 'label']);   // 紅燒牛肉麵, 招牌…
+  const SUFFIX = new Set(['custom', 'label', 'style']);                  // 滷肉飯加蛋, 雞腿便當
+  const SCALES = {spice: ['不辣', '微辣', '小辣', '中辣', '大辣']};
+  // 甘さ and 氷 share one table on a percentage ruler (a common guide; shops differ a little).
+  // Each row ends in 「固定」: the drink's sugar or ice is set by the shop.
+  const DRINK = {
+    sugar: {steps: [['無糖', 0], ['微糖', 30], ['半糖', 50], ['少糖', 70], ['全糖', 100]], fixed: '甜度固定'},
+    ice: {steps: [['去冰', 0], ['微冰', 30], ['少冰', 70], ['正常冰', 100]], fixed: '冰塊固定'}
+  };
+  const TICKS = [0, 30, 50, 70, 100];
+  const LETTER = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{L}ー々]/u;
+  let termKeys = new Map(), lex = null;
+  function longestTerm(text, atStart) {
+    let best = null;
+    for (const [key, t] of termKeys) {
+      if (key.length >= text.length || (best && key.length <= best.key.length)) continue;
+      if (atStart ? text.startsWith(key) : text.endsWith(key)) best = {key, t};
+    }
+    return best;
+  }
+  // The terms a dish's own name is made of: up to three in front (香煎 蒜香 雞腿排) and one at the
+  // end when the rest is a dish of its own (滷肉飯 + 加蛋). 墨魚香腸 holds 魚香 only by chance,
+  // so it is not read as one.
+  function nameTerms(food, dishKeys) {
+    let name = names(food)[0] || '';
+    const found = [];
+    for (let k = 0; k < 3; k++) {
+      const p = longestTerm(name, true);
+      if (!p || !PREFIX.has(p.t.cat)) break;
+      found.push(p.t); name = name.slice(p.key.length);
+    }
+    const s = longestTerm(name, false);
+    if (s && SUFFIX.has(s.t.cat) && dishKeys.has(name.slice(0, -s.key.length))) found.push(s.t);
+    return [...new Set(found)];
+  }
+  function lexicon() {
+    const foods = dict.foods();
+    if (lex && lex.foods === foods && lex.count === foods.length) return lex;
+    const byFirst = new Map(), dishKeys = new Map(), uses = new Map();
+    const add = entry => { const a = byFirst.get(entry.key[0]) || []; a.push(entry); byFirst.set(entry.key[0], a); };
+    for (const food of foods) for (const key of names(food)) {
+      if (key.length >= 2 && !dishKeys.has(key)) { dishKeys.set(key, food); add({key, food}); }
+    }
+    for (const [key, t] of termKeys) if (!dishKeys.has(key)) add({key, term: t});
+    for (const a of byFirst.values()) a.sort((x, y) => y.key.length - x.key.length || (x.food ? -1 : 1));
+    for (const food of foods) for (const t of nameTerms(food, dishKeys)) {
+      if (!uses.has(t)) uses.set(t, []);
+      uses.get(t).push(food);
+    }
+    lex = {foods, count: foods.length, byFirst, dishKeys, uses};
+    return lex;
+  }
+  // Prices, sizes in digits, spaces and symbols split the text (a pasted menu line).
+  function segment(value) {
+    const L = lexicon(), segs = [];
+    const text = Array.from(N(value)).map(ch => LETTER.test(ch) ? ch : '|').join('');
+    for (const piece of text.split('|')) {
+      let i = 0, other = '';
+      while (i < piece.length) {
+        const hit = (L.byFirst.get(piece[i]) || []).find(c => piece.startsWith(c.key, i));
+        if (hit) {
+          if (other) { segs.push({other}); other = ''; }
+          segs.push(hit); i += hit.key.length;
+        } else { other += piece[i]; i++; }
+      }
+      if (other) segs.push({other});
+    }
+    return segs;
+  }
+  const relatedFoods = t => lex?.uses.get(t) ||
+    (t.find ? dict.foods().filter(food => names(food).some(n => n.includes(N(t.find)))) : []);
+  function noteBox(head, terms) {
+    const box = el('div', 'tt2d-notes');
+    box.append(el('p', 'tt2d-notes-head', head));
+    for (const t of terms) {
+      const row = el('p', 'tt2d-note');
+      row.append(el('span', 'tt2d-note-zh', t.zh[0]), el('span', 'tt2d-note-ja', t.ja));
+      box.append(row);
+    }
+    return box;
+  }
+  function dishChips(foods) {
+    const box = el('div', 'tt2d-chips');
+    const PILL_LIMIT = 12;
+    const addChip = food => {
+      const name = String(food.name).split(/[／/]/)[0].trim();
+      const chip = el('button', 'tt2d-chip', food.name);
+      chip.type = 'button';
+      chip.addEventListener('click', () => { search(name); view.scrollTop = 0; });
+      box.append(chip);
+    };
+    foods.slice(0, PILL_LIMIT).forEach(addChip);
+    if (foods.length > PILL_LIMIT) {
+      const extra = foods.slice(PILL_LIMIT, CAND_LIMIT);
+      const more = moreButton(foods.length - PILL_LIMIT, open => {
+        box.querySelectorAll('.tt2d-chip.is-extra').forEach(n => n.remove());
+        if (open) extra.forEach(food => { addChip(food); box.lastChild.classList.add('is-extra'); });
+        box.append(more);
+      });
+      more.classList.add('tt2d-chip-more');
+      box.append(more);
+    }
+    return box;
+  }
+  // A tap in the 甘さ・氷 table: that row's word in the search is swapped for the tapped one.
+  function swapDrink(row, word) {
+    const segs = segment(input.value);
+    const keep = [];
+    for (const s of segs) {
+      if (s.term && (s.term.cat === row || s.term.cat === 'fixed' || s.term.cat === 'drink')) continue;
+      keep.push(s.term ? s.term.zh[0] : s.key || s.other);
+    }
+    // a lone 固定 stands for both rows: the other row keeps it
+    if (segs.some(s => s.term?.cat === 'fixed')) keep.push(DRINK[row === 'sugar' ? 'ice' : 'sugar'].fixed);
+    keep.push(word);
+    const y = view.scrollTop;
+    search(keep.join(' '));
+    setTimeout(() => { view.scrollTop = y; }, 120);
+  }
+  function drinkTable(terms) {
+    const on = new Set(terms.map(t => t.zh[0]));
+    const both = terms.some(t => t.cat === 'fixed');
+    const table = el('div', 'tt2d-drink');
+    const row = (cat) => {
+      const line = el('div', 'tt2d-drink-row');
+      line.append(el('span', 'tt2d-drink-head', CAT[cat]));
+      const track = el('div', 'tt2d-drink-track');
+      for (const [word, pct] of DRINK[cat].steps) {
+        const b = el('button', 'tt2d-drink-step' + (on.has(word) ? ' is-on' : ''), word);
+        b.type = 'button';
+        b.style.left = pct + '%';
+        b.setAttribute('aria-pressed', String(on.has(word)));
+        b.addEventListener('click', () => swapDrink(cat, word));
+        track.append(b);
+      }
+      const fixedOn = both || on.has(DRINK[cat].fixed);
+      const fixed = el('button', 'tt2d-drink-fixed' + (fixedOn ? ' is-on' : ''), '固定');
+      fixed.type = 'button';
+      fixed.setAttribute('aria-pressed', String(fixedOn));
+      fixed.setAttribute('aria-label', `${CAT[cat]}：固定（変えられない）`);
+      fixed.addEventListener('click', () => swapDrink(cat, DRINK[cat].fixed));
+      line.append(track, fixed);
+      return line;
+    };
+    const ruler = el('div', 'tt2d-drink-ruler');
+    ruler.setAttribute('aria-hidden', 'true');
+    ruler.append(el('span', 'tt2d-drink-head'));
+    const ticks = el('div', 'tt2d-drink-track tt2d-drink-ticks');
+    for (const pct of TICKS) {
+      const tick = el('span', 'tt2d-drink-tick', pct + '%');
+      tick.style.left = pct + '%';
+      ticks.append(tick);
+    }
+    ruler.append(ticks, el('span', 'tt2d-drink-fixed tt2d-drink-gap'));
+    table.append(row('sugar'), ruler, row('ice'));
+    return table;
+  }
+  // 甘さ・氷 (one table, always together) and 辛さ: the chosen steps in gold.
+  function scales(terms) {
+    const cats = new Set(terms.map(t => t.cat));
+    const frag = [];
+    if (cats.has('sugar') || cats.has('ice') || cats.has('fixed') || cats.has('drink')) {
+      frag.push(el('p', 'tt2d-section', '甘さと氷の目安'), drinkTable(terms),
+        el('p', 'tt2d-scale-note', '％は目安です。店によって少し違います。タップで切り替えられます。'));
+    }
+    if (cats.has('spice')) {
+      const on = new Set(terms.map(t => t.zh[0]));
+      const line = el('p', 'tt2d-scale');
+      line.append(el('span', 'tt2d-scale-head', CAT.spice));
+      for (const step of SCALES.spice) line.append(el('span', 'tt2d-scale-step' + (on.has(step) ? ' is-on' : ''), step));
+      frag.push(el('p', 'tt2d-section', '辛さの目安'), line);
+    }
+    return frag;
+  }
+  // A term searched alone: the dish card's own layout, then the dishes that use it.
+  function termCard(t) {
+    const card = el('article', 'tt2d-card tt2d-card--term');
+    card.append(el('p', 'tt2d-card-label', `メニューのことば・${CAT[t.cat] || ''}`));
+    card.append(el('h3', 'tt2d-card-name', t.zh[0]));
+    card.append(el('p', 'tt2d-card-ja', t.ja));
+    if (t.note) card.append(el('p', 'tt2d-card-desc', t.note));
+    const frag = [card, ...scales([t])];
+    const used = relatedFoods(t);
+    if (used.length) frag.push(el('p', 'tt2d-section', `「${t.zh[0]}」を使った料理　${used.length}件`), dishChips(used));
+    return frag;
+  }
+  // Terms with no dish to hang them on (an unlisted dish, or order options only): one row each.
+  function termRows(terms, unlisted) {
+    const head = el('p', 'tt2d-summary', `ことば ${terms.length}語`);
+    if (unlisted) head.append(el('span', 'tt2d-dot', '·'), '料理名は辞典に未収録');
+    const box = el('div', 'tt2d-terms');
+    for (const t of terms) {
+      const row = el('div', 'tt2d-term');
+      const text = el('span', 'tt2d-term-text');
+      text.append(el('span', 'tt2d-term-ja', t.ja));
+      if (t.note) text.append(el('span', 'tt2d-term-note', t.note));
+      row.append(el('span', 'tt2d-term-zh', t.zh[0]), text, el('span', 'tt2d-term-kind', CAT[t.cat] || ''));
+      box.append(row);
+    }
+    const frag = [head, box, ...scales(terms)];
+    const near = [];
+    for (const t of terms) for (const food of relatedFoods(t)) if (!near.includes(food)) near.push(food);
+    if (near.length) frag.push(el('p', 'tt2d-section', unlisted ? '近い料理' : 'このことばを使った料理'), dishChips(near));
+    return frag;
+  }
+  // null: not a term search, the dictionary goes on as before.
+  function termView(value, pick) {
+    if (!termKeys.size || !dict.foods().length) return null;
+    const whole = N(value).replace(/\s+/g, '');
+    const L = lexicon();
+    if (!whole || L.dishKeys.has(whole)) return null;      // a dish name: its card, with its notes
+    const segs = segment(value);
+    const terms = [...new Set(segs.filter(s => s.term).map(s => s.term))];
+    if (!terms.length) return null;
+    if (segs.length === 1) return termCard(terms[0]);
+    // the start of a dish name (鹽酥雞 → 鹽酥雞排): the usual card, as before
+    const first = /\s/.test(value.trim()) ? null : lookUp(whole).found[0];
+    if (first && first.rank <= 2) return null;
+    const dishes = [...new Set(segs.filter(s => s.food).map(s => s.key))];
+    if (dishes.length === 1) {
+      const hit = lookUp(dishes[0]);
+      if (!hit.found.length) return null;
+      const at = segs.findIndex(s => s.food);
+      const before = [...new Set(segs.slice(0, at).filter(s => s.term).map(s => s.term))];
+      const after = [...new Set(segs.slice(at + 1).filter(s => s.term).map(s => s.term))].filter(t => !before.includes(t));
+      const prefix = segs.slice(0, at).filter(s => s.term && PREFIX.has(s.term.cat)).map(s => s.key).join('');
+      return single(hit, pick, {prefix, before, after});
+    }
+    if (!dishes.length) {
+      // a dish's own words (招牌・去骨・腿排…) with no dish found: an unlisted dish name
+      const unlisted = segs.some(s => s.other && /\p{Script=Han}/u.test(s.other)) || terms.some(t => PREFIX.has(t.cat));
+      return termRows(terms, unlisted);
+    }
+    return null;                                            // several dishes: the usual multi view
+  }
+  fetch('food/terms.json', {cache: 'no-cache'})
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data || !Array.isArray(data.terms)) return;
+      termKeys = new Map();
+      for (const t of data.terms) for (const z of t.zh) termKeys.set(N(z), t);
+      lex = null;
+      if (input.value.trim()) render();
+    })
+    .catch(() => {});
 
   /* ---------- pieces ---------- */
   function mark(parent, text, variants) {
@@ -155,17 +415,34 @@
   }
 
   /* ---------- b: one word ---------- */
-  function single(hit, pick) {
+  function single(hit, pick, extra) {
     const {term, variants, found} = hit;
-    const best = pick ? found.find(item => item.food === pick) : found[0];
+    const best = (pick && found.find(item => item.food === pick)) || found[0];
     const others = found.filter(item => item !== best);
     const card = el('article', 'tt2d-card');
     card.append(el('p', 'tt2d-card-label', 'いちばん近い候補'));
-    card.append(el('h3', 'tt2d-card-name', best.food.name));
+    const nameLine = el('h3', 'tt2d-card-name');
+    // v2.0.144: a term typed in front of the dish (招牌…) stays there, small and grey
+    if (extra?.prefix && best === found[0]) nameLine.append(el('span', 'tt2d-card-prefix', extra.prefix));
+    nameLine.append(best.food.name);
+    card.append(nameLine);
     const ja = jaName(best.food);
     if (ja) card.append(el('p', 'tt2d-card-ja', ja));   // v2.0.52: no 「日本語名」 label
     const text = bodyText(best.food);
     if (text) card.append(el('p', 'tt2d-card-desc', text));
+    // v2.0.144: 「名前のことば」 in reading order: the terms typed before the dish, those its own
+    // name is made of, then those typed after it (加麵, 去冰…)
+    if (termKeys.size) {
+      const words = [...(extra?.before || [])];
+      for (const t of [...nameTerms(best.food, lexicon().dishKeys), ...(extra?.after || [])]) if (!words.includes(t)) words.push(t);
+      if (words.length) card.append(noteBox('名前のことば', words));
+    }
+    // a drink ordered with 微糖・少冰…: the 甘さ・氷 table right under its card
+    const typed = [...(extra?.before || []), ...(extra?.after || [])];
+    if (typed.length) {
+      const frag = [card, ...scales(typed)];
+      if (frag.length > 1) { frag.push(...single(hit, pick).slice(1)); return frag; }
+    }
     const frag = [card];
     const show = food => { render(food); view.scrollTop = 0; };
     // 「含む料理」: other dishes whose name holds the word; 「ほかの候補」: the rest.
@@ -265,12 +542,18 @@
     const value = input.value.trim();
     const terms = N(value).split(/\s+/).filter(Boolean);
     const loaded = dict.foods().length;
-    if (loaded) sub.textContent = `${loaded}品。中国語・日本語どちらの表記でも探せます`;
+    if (loaded) sub.textContent = `${loaded}件。中国語・日本語どちらの表記でも探せます`;
     const shortcut = originals.some(button => button.dataset.example === value);
     pills.querySelectorAll('.tt2d-pill').forEach(p => p.setAttribute('aria-pressed', String(p.dataset.example === value)));
-    drawer.classList.toggle('tt2d-searching', Boolean(value) && !shortcut);
+    // v2.0.146: while only 甘さ・氷 words are searched, the shortcuts stay (甘さ・氷 shown pressed)
+    const drinkOnly = Boolean(value) && termKeys.size > 0 && dict.foods().length > 0 &&
+      segment(value).every(s => s.term && ['sugar', 'ice', 'fixed', 'drink'].includes(s.term.cat));
+    drinkPill.setAttribute('aria-pressed', String(drinkOnly));
+    drawer.classList.toggle('tt2d-searching', Boolean(value) && !shortcut && !drinkOnly);
     let mode = 'list', nodes = null;
-    if (loaded && terms.length > 1) {
+    const termNodes = loaded && value && !shortcut ? termView(value, pick) : null;   // v2.0.144
+    if (termNodes) { mode = 'single'; nodes = termNodes; }
+    else if (loaded && terms.length > 1) {
       mode = 'multi';
       nodes = multi([...new Set(terms)].map(lookUp));
     } else if (loaded && terms.length === 1 && !shortcut) {   // a shortcut always lists
