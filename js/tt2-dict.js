@@ -146,6 +146,7 @@
   // so it is not read as one.
   function nameTerms(food, dishKeys) {
     let name = names(food)[0] || '';
+    const displayedName = name;  // only annotate words in the displayed dish name
     const found = [];
     for (let k = 0; k < 3; k++) {
       const p = longestTerm(name, true);
@@ -154,6 +155,10 @@
     }
     const s = longestTerm(name, false);
     if (s && SUFFIX.has(s.t.cat) && dishKeys.has(name.slice(0, -s.key.length))) found.push(s.t);
+    // These two single-character words are meaningful *inside* recorded dish
+    // names (肉羹・雞肉燴飯), not as arbitrary one-character query fragments.
+    if (displayedName.includes('羹') && termKeys.has(N('羹'))) found.push(termKeys.get(N('羹')));
+    if (/燴[飯麵]/.test(displayedName) && termKeys.has(N('燴'))) found.push(termKeys.get(N('燴')));
     return [...new Set(found)];
   }
   function lexicon() {
@@ -190,14 +195,26 @@
     }
     return segs;
   }
-  const relatedFoods = t => lex?.uses.get(t) ||
-    (t.find ? dict.foods().filter(food => names(food).some(n => n.includes(N(t.find)))) : []);
-  function noteBox(head, terms) {
+  // An explicit find is for literal menu terms such as 羹・燴 that may occur after the
+  // main ingredient; ordinary terms keep boundary-aware nameTerms to avoid false hits
+  // such as 魚香 inside 墨魚香腸.
+  const relatedFoods = t => t.find
+    ? dict.foods().filter(food => names(food).some(n => n.includes(N(t.find))))
+    : (lex?.uses.get(t) || []);
+  // 蘑菇 is a mushroom in general, but a sauce in specific breakfast dishes.
+  // Only label a selected dish as sauce when its own name gives that context.
+  function displayTerm(t, food) {
+    if (t.id === 'mogu' && food && names(food).some(n => /^蘑菇.*(?:鐵板麵|燴飯|豬排)$/.test(n))) {
+      return 'マッシュルームソース';
+    }
+    return t.ja;
+  }
+  function noteBox(head, terms, food) {
     const box = el('div', 'tt2d-notes');
     box.append(el('p', 'tt2d-notes-head', head));
     for (const t of terms) {
       const row = el('p', 'tt2d-note');
-      row.append(el('span', 'tt2d-note-zh', t.zh[0]), el('span', 'tt2d-note-ja', t.ja));
+      row.append(el('span', 'tt2d-note-zh', t.zh[0]), el('span', 'tt2d-note-ja', displayTerm(t, food)));
       box.append(row);
     }
     return box;
@@ -347,7 +364,10 @@
       const before = [...new Set(segs.slice(0, at).filter(s => s.term).map(s => s.term))];
       const after = [...new Set(segs.slice(at + 1).filter(s => s.term).map(s => s.term))].filter(t => !before.includes(t));
       const prefix = segs.slice(0, at).filter(s => s.term && PREFIX.has(s.term.cat)).map(s => s.key).join('');
-      return single(hit, pick, {prefix, before, after});
+      // A tapped suggestion is a different dish, not another interpretation of
+      // the original query. Keep its candidate list, but drop all query-only
+      // modifiers (and the grey prefix) and rebuild notes from its own name.
+      return single(hit, pick, pick ? undefined : {prefix, before, after});
     }
     if (!dishes.length) {
       // a dish's own words (招牌・去骨・腿排…) with no dish found: an unlisted dish name
@@ -435,7 +455,7 @@
     if (termKeys.size) {
       const words = [...(extra?.before || [])];
       for (const t of [...nameTerms(best.food, lexicon().dishKeys), ...(extra?.after || [])]) if (!words.includes(t)) words.push(t);
-      if (words.length) card.append(noteBox('名前のことば', words));
+      if (words.length) card.append(noteBox('名前のことば', words, best.food));
     }
     // a drink ordered with 微糖・少冰…: the 甘さ・氷 table right under its card
     const typed = [...(extra?.before || []), ...(extra?.after || [])];
