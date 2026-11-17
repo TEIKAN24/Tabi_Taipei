@@ -410,6 +410,19 @@
               ],
               "links": [],
               "mapUrl": "https://maps.app.goo.gl/Q6uvpdJh7GZ6BEJ8A"
+            },
+            {
+              "id": "souvenirs-da92698a-xb",
+              "name": "小北百貨",
+              "className": "venue-list-item",
+              "tags": [
+                {
+                  "text": "台湾のドン・キホーテ",
+                  "tone": "auto"
+                }
+              ],
+              "links": [],
+              "mapUrl": "https://www.google.com/maps/search/%E5%B0%8F%E5%8C%97%E7%99%BE%E8%B2%A8+%E5%8F%B0%E5%8C%97/@25.0474206,121.5143574,14z/data=!3m1!4b1?authuser=0&entry=ttu&g_ep=EgoyMDI2MTExMC4wIKXMDSoASAFQAw%3D%3D"
             }
           ]
         },
